@@ -229,6 +229,13 @@ const DEMO_FINDING_POOL: { section: string; finding: string; priority: FindingPr
   { section: "6. Summary Details", finding: "Fixtures & Fittings", priority: "GREEN", actionRequired: "Minor wear noted in communal areas. Monitor at next internal audit." },
 ];
 
+// Source PDF contains "N/A" and unchecked priority boxes — anything
+// outside the RAG scale becomes null (rendered as UNMARKED).
+function normalisePriority(raw: string | null): FindingPriority | null {
+  const v = raw?.trim().toUpperCase();
+  return v === "RED" || v === "AMBER" || v === "GREEN" ? v : null;
+}
+
 export function buildFindings(): Finding[] {
   const findings: Finding[] = [];
 
@@ -241,7 +248,7 @@ export function buildFindings(): Finding[] {
       centreId: "riverside",
       section: f.section,
       finding: f.finding,
-      priority: (f.priority as FindingPriority | null) ?? null,
+      priority: normalisePriority(f.priority),
       actionRequired: f.actionRequired,
       evidenceDueDays: f.evidenceDueDays,
       raisedOn,
