@@ -26,6 +26,11 @@ const NAV_ITEMS: NavItem[] = [
     path: "/standards",
     isActive: (p) => p.startsWith("/standards"),
   },
+  {
+    label: "KPI Framework",
+    path: "/kpis",
+    isActive: (p) => p.startsWith("/kpis"),
+  },
 ];
 
 // Genesis pill-button sub-nav pattern, Peppard-toned: selected pill is
