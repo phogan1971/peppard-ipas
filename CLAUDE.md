@@ -146,10 +146,13 @@ editing tokens.ts + one sed rename, zero component redesign.)
 - **Peppard red `#E01E1F` lives in `tokens.peppard`** — client identity
   only (banner centre logo, documents), never app chrome. Philip asked
   for the red theme to be toned down in favour of Origin colours.
-- Banner: Origin lockup top-left (`OriginLogo` in AppShell — donut mark
-  `public/origin-mark.png` + composed wordmark), Peppard logo centred,
-  Reset demo right.
-- Typography: **Cambria headings / Calibri body**
+- Banner: **navy top bar** (`brand.topBar` = hsl(199,57%,23%), Genisis3
+  AppHeader exact) — Origin lockup top-left in white (`OriginLogo dark`),
+  Peppard logo centred in a white chip, Reset demo right.
+- Typography: **Roboto throughout** (Genisis3 main.tsx scale mirrored in
+  `theme/index.ts`: h4 34/700 navy, h6 20/600 navy, body1 15px,
+  overline caps labels). Cambria/Calibri were dropped 11 Jul 2026 when
+  Philip asked to mimic Genisis3 exactly.
 - **Alert red is exclusively status.** RAG crimson (`tokens.rag`), always
   colour + text label, never colour alone.
 - Logos: `public/peppard-logo.jpg`, `public/origin-mark.png`,
@@ -165,10 +168,19 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - **Standard page shell** — implemented once in `src/components/PageShell.tsx`
   (sticky sub-nav at `top: 64`, icon + h5 title at 1.75rem, subtitle 14px,
   divider, content). Every page uses it.
-- **Pill-button sub-nav** — `src/components/PortalSubNav.tsx` (selected =
-  brand red, the Genesis navy-on-select pattern re-toned).
-- **RAG / compliance chips** — `src/components/RagChip.tsx`.
-- Cards: white Paper, 1px warm border, no elevation.
+- **Pill-button sub-nav** — `src/components/PortalSubNav.tsx`: Genisis3
+  PortalSubNav verbatim — pills with startIcons inside a #f0f2f5 rounded
+  container, borderless, navy-on-select with soft shadow.
+- **Stat cards** — `src/components/StatCard.tsx`: Genesis "Alert Summary"
+  pattern (large coloured value, tinted 48px icon chip top-right, hover
+  lift). Accents from `tokens.accent` (navy/green/blue/orange/purple/red).
+- **Accordions** — `src/components/AccordionBlock.tsx`: Genesis §6 block
+  (#ebf5ef wrapper, #dde3e6 clickable header hover #cdd5d9, navy bold
+  title + caption, navy chevron). Used for HIQA themes + KPI domains.
+- **RAG / compliance chips** — `src/components/RagChip.tsx` (theme gives
+  all chips Genesis 20px radius).
+- Cards/Paper: white, radius 10, 1px #e0e0e0 border, shadow
+  `0 2px 4px rgba(0,0,0,0.08)`; table heads navy on #fafafa (theme-level).
 - Reuse map from Genisis3 (adapt, don't import): `components/kpi/` (KPI
   tiles, sparklines), `kpiRegistry.json` config-as-data pattern (the 74
   KPIs become configuration, not code), `components/governance/` (board

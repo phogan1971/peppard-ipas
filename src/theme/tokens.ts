@@ -8,14 +8,35 @@
 // Primary matches the Genesis platform (#00465c); supporting tones come
 // from the Origin donut mark (teal / green / mint / navy).
 export const brand = {
-  primary: "#00465C", // Genesis navy — structural accent: nav selection, buttons, headings
-  primaryDark: "#003D4D", // hover / pressed state
+  primary: "#00465c", // Genesis navy — structural accent: nav selection, buttons, headings
+  primaryDark: "#003347", // hover / pressed state (Genesis exact)
+  primaryHover: "rgba(0, 70, 92, 0.08)", // unselected-pill hover wash
+  topBar: "hsl(199, 57%, 23%)", // Genesis AppBar toolbar colour
   teal: "#0E7F8B", // Origin mark teal — secondary accent
   green: "#23A566", // Origin mark green — positive accent
   mint: "#9FCFA8", // Origin mark pale green — tints
-  charcoal: "#26262A", // body text
+  charcoal: "#26262A", // Peppard charcoal (documents)
   tint: "#E6F0F2", // navy-tinted panels, selected-row highlight
-  border: "#E0E0E0", // card and divider borders (Genesis neutral)
+  border: "#e0e0e0", // card and divider borders (Genesis neutral)
+} as const;
+
+// Genesis stat-card accent palette (DESIGN_SYSTEM_HELPER §4)
+export const accent = {
+  navy: "#00465c", // neutral totals
+  green: "#2e7d32", // healthy / compliance
+  blue: "#1976d2", // informational / low risk
+  orange: "#ed6c02", // warnings / medium risk
+  purple: "#9c27b0", // actions
+  red: "#f44336", // errors / high risk
+} as const;
+
+// Genesis accordion header block (DESIGN_SYSTEM_HELPER §6)
+export const accordion = {
+  wrapperBg: "#ebf5ef",
+  headerBg: "#dde3e6",
+  headerHover: "#cdd5d9",
+  hoverRing: "0 0 0 2px rgba(0, 70, 92, 0.1)",
+  hoverBorder: "#00465c60",
 } as const;
 
 // Peppard Investments brand (client identity — kept for the centre logo
@@ -65,13 +86,14 @@ export const surface = {
 } as const;
 
 export const text = {
-  primary: brand.charcoal,
-  secondary: "#5F6368",
+  primary: "#424242", // Genesis body text
+  secondary: "#666666",
   muted: "#8A8F94",
   onDark: "#FFFFFF",
 } as const;
 
+// Genesis typography: Roboto throughout (main.tsx theme)
 export const fonts = {
-  heading: '"Cambria", "Georgia", serif',
-  body: '"Calibri", "Segoe UI", "Inter", "Roboto", sans-serif',
+  heading: '"Roboto", "Helvetica", "Arial", sans-serif',
+  body: '"Roboto", "Helvetica", "Arial", sans-serif',
 } as const;
