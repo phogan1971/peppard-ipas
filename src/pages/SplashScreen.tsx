@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -6,7 +8,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useNavigate } from "react-router-dom";
 import { OriginLogo } from "../components/AppShell";
-import { brand } from "../theme/tokens";
+import { brand, surface } from "../theme/tokens";
 
 const GENESIS_URL = "https://genesishealthcarenew.netlify.app/";
 
@@ -41,9 +43,68 @@ const PLATFORMS: PlatformCard[] = [
   },
 ];
 
-// Platform launcher in the connects.health idiom: navy hero, white cards.
+const LOGO_HOLD_MS = 2600;
+
+// Stage 1: Peppard Investments brand splash — the logo alone on the white
+// field it was designed for, then on to the platform chooser.
+// Stage 2: platform launcher in the connects.health idiom: navy hero, white cards.
 export default function SplashScreen() {
   const navigate = useNavigate();
+  const [stage, setStage] = useState<"logo" | "choose">("logo");
+
+  useEffect(() => {
+    if (stage !== "logo") return;
+    const t = window.setTimeout(() => setStage("choose"), LOGO_HOLD_MS);
+    return () => window.clearTimeout(t);
+  }, [stage]);
+
+  if (stage === "logo") {
+    return (
+      <Box
+        role="button"
+        tabIndex={0}
+        aria-label="Continue to platform selection"
+        onClick={() => setStage("choose")}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") setStage("choose");
+        }}
+        sx={{
+          minHeight: "100vh",
+          backgroundColor: surface.cardBg,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          "&:focus-visible": { outline: "none" },
+          "@keyframes splashLogoIn": {
+            from: { opacity: 0, transform: "translateY(14px) scale(0.97)" },
+            to: { opacity: 1, transform: "translateY(0) scale(1)" },
+          },
+        }}
+      >
+        <Box
+          component="img"
+          src="/peppard-logo.jpg"
+          alt="Peppard Investments Limited"
+          sx={{
+            width: "min(72vw, 620px)",
+            height: "auto",
+            animation: "splashLogoIn 1.1s ease-out both",
+            "@media (prefers-reduced-motion: reduce)": { animation: "none" },
+          }}
+        />
+      </Box>
+    );
+  }
+
+  return (
+    <Fade in timeout={600}>
+      {renderChooser(navigate)}
+    </Fade>
+  );
+}
+
+function renderChooser(navigate: ReturnType<typeof useNavigate>) {
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: brand.primary, display: "flex", flexDirection: "column" }}>
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", px: 2, py: 6 }}>
