@@ -72,7 +72,13 @@ export default function AppShell({ children }: { children: ReactNode }) {
             aria-label="Back to platform home"
             sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
           >
-            <OriginLogo height={34} dark />
+            {/* Official white lockup — supplied asset, used verbatim */}
+            <Box
+              component="img"
+              src="/origin-logo-white.png"
+              alt="Origin Care Group"
+              sx={{ height: 42, width: "auto" }}
+            />
           </Box>
 
           <Box
