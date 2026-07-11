@@ -5,7 +5,9 @@ import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import LinearProgress from "@mui/material/LinearProgress";
 import ButtonBase from "@mui/material/ButtonBase";
+import Button from "@mui/material/Button";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import SummarizeIcon from "@mui/icons-material/Summarize";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
@@ -40,6 +42,11 @@ export default function GroupOverview() {
       icon={DashboardIcon}
       title="Group Overview"
       subtitle="Compliance position across all 8 Peppard accommodation centres"
+      actions={
+        <Button variant="contained" disableElevation startIcon={<SummarizeIcon />} onClick={() => navigate("/board-pack")}>
+          Board pack
+        </Button>
+      }
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={6} md={3}>

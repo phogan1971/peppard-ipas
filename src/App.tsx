@@ -6,6 +6,7 @@ import FindingsTracker from "./pages/FindingsTracker";
 import StandardsRegister from "./pages/StandardsRegister";
 import KpiFramework from "./pages/KpiFramework";
 import ReadinessPack from "./pages/ReadinessPack";
+import BoardPack from "./pages/BoardPack";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/findings" element={<FindingsTracker />} />
         <Route path="/standards" element={<StandardsRegister />} />
         <Route path="/kpis" element={<KpiFramework />} />
+        <Route path="/board-pack" element={<BoardPack />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>

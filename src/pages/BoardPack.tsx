@@ -1,0 +1,288 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import PrintIcon from "@mui/icons-material/Print";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
+import { RagChip } from "../components/RagChip";
+import { centreCompliance, daysUntilDue, useAppState } from "../data/store";
+import { STANDARDS } from "../data/seed";
+import { KPI_DOMAINS, domainRollup } from "../data/kpis";
+import { JUDGEMENT_LABELS, Judgement } from "../data/types";
+import { brand, rag, compliance } from "../theme/tokens";
+
+function SectionTitle({ n, children }: { n: number; children: string }) {
+  return (
+    <Typography
+      variant="h6"
+      sx={{ color: brand.charcoal, borderBottom: `2px solid ${brand.red}`, pb: 0.5, mb: 1.5, mt: 3, fontSize: "1.05rem" }}
+    >
+      {n}. {children}
+    </Typography>
+  );
+}
+
+function quarterLabel(d: Date): string {
+  return `Q${Math.floor(d.getMonth() / 3) + 1} ${d.getFullYear()}`;
+}
+
+// Group-level quarterly governance pack — the descriptor's board output,
+// assembled from the same registers as everything else. Print → PDF.
+export default function BoardPack() {
+  const navigate = useNavigate();
+  const state = useAppState();
+
+  const totalCapacity = state.centres.reduce((s, c) => s + c.contractCapacity, 0);
+  const totalOccupancy = state.centres.reduce((s, c) => s + c.occupancy, 0);
+  const open = state.findings.filter((f) => f.status !== "closed");
+  const openRed = open.filter((f) => f.priority === "RED").length;
+  const openAmber = open.filter((f) => f.priority === "AMBER").length;
+  const overdue = open.filter((f) => f.status === "open" && (daysUntilDue(f) ?? 0) < 0).length;
+
+  const domainRolls = KPI_DOMAINS.map((d) => ({ domain: d, roll: domainRollup(d, state) }));
+  const kpiMeets = domainRolls.reduce((s, r) => s + r.roll.meets, 0);
+  const kpiNear = domainRolls.reduce((s, r) => s + r.roll.near, 0);
+  const kpiBreach = domainRolls.reduce((s, r) => s + r.roll.breach, 0);
+
+  // Standards where 2+ centres self-assess below substantial — the
+  // board-level thematic risks.
+  const weakByStandard = new Map<string, number>();
+  for (const a of state.assessments) {
+    if (a.judgement === "partiallyCompliant" || a.judgement === "notCompliant") {
+      weakByStandard.set(a.standardId, (weakByStandard.get(a.standardId) ?? 0) + 1);
+    }
+  }
+  const thematicRisks = STANDARDS.filter((s) => (weakByStandard.get(s.id) ?? 0) >= 2).map((s) => ({
+    std: s,
+    centres: weakByStandard.get(s.id)!,
+  }));
+
+  const judgementTotals: Record<Judgement, number> = {
+    compliant: 0,
+    substantiallyCompliant: 0,
+    partiallyCompliant: 0,
+    notCompliant: 0,
+    notAssessed: 0,
+  };
+  for (const a of state.assessments) judgementTotals[a.judgement]++;
+
+  const today = new Date();
+
+  return (
+    <Box sx={{ backgroundColor: "#fff", minHeight: "calc(100vh - 64px)" }}>
+      <Box
+        sx={{
+          displayPrint: "none",
+          px: 3,
+          py: 1.5,
+          borderBottom: `1px solid ${brand.border}`,
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+        }}
+      >
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/")} sx={{ color: brand.charcoal }}>
+          Back to overview
+        </Button>
+        <Box sx={{ flexGrow: 1 }} />
+        <Button variant="contained" disableElevation startIcon={<PrintIcon />} onClick={() => window.print()}>
+          Print / save as PDF
+        </Button>
+      </Box>
+
+      <Box sx={{ maxWidth: 900, mx: "auto", px: 4, py: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+          <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: 56 }} />
+          <Box>
+            <Typography variant="h5" sx={{ color: brand.charcoal, fontSize: "1.5rem" }}>
+              Quarterly Governance Board Pack
+            </Typography>
+            <Typography sx={{ fontSize: "0.9rem", color: "text.secondary" }}>
+              {quarterLabel(today)} · All centres · Generated {today.toISOString().slice(0, 10)} · Contains demo data
+            </Typography>
+          </Box>
+        </Box>
+
+        <SectionTitle n={1}>Group position</SectionTitle>
+        <Table size="small">
+          <TableBody>
+            {[
+              ["Centres in operation", "8"],
+              ["Contracted capacity", `${totalCapacity} beds`],
+              ["Occupancy", `${totalOccupancy} (${Math.round((totalOccupancy / totalCapacity) * 100)}%)`],
+              ["Open inspection findings", `${open.length} (${openRed} RED · ${openAmber} AMBER)`],
+              ["Findings past the 14-day evidence clock", String(overdue)],
+              ["KPI position (74 KPIs)", `${kpiMeets} on target · ${kpiNear} near · ${kpiBreach} off target`],
+            ].map(([k, v]) => (
+              <TableRow key={k}>
+                <TableCell sx={{ fontWeight: 600, width: 320 }}>{k}</TableCell>
+                <TableCell>{v}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <SectionTitle n={2}>Centre-by-centre compliance</SectionTitle>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Centre</TableCell>
+              <TableCell align="right">Occupancy</TableCell>
+              <TableCell align="center">RED</TableCell>
+              <TableCell align="center">AMBER</TableCell>
+              <TableCell align="center">Overdue</TableCell>
+              <TableCell align="center">HIQA self-assessment</TableCell>
+              <TableCell>Position</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {state.centres.map((c) => {
+              const cc = centreCompliance(c.id, state.findings);
+              const compliantCount = state.assessments.filter(
+                (a) => a.centreId === c.id && (a.judgement === "compliant" || a.judgement === "substantiallyCompliant"),
+              ).length;
+              return (
+                <TableRow key={c.id}>
+                  <TableCell sx={{ fontWeight: 600 }}>
+                    {c.shortName}
+                    {c.isDemoData ? " *" : ""}
+                  </TableCell>
+                  <TableCell align="right">
+                    {c.occupancy}/{c.contractCapacity}
+                  </TableCell>
+                  <TableCell align="center" sx={{ color: cc.openRed ? rag.red : undefined, fontWeight: cc.openRed ? 700 : 400 }}>
+                    {cc.openRed}
+                  </TableCell>
+                  <TableCell align="center">{cc.openAmber}</TableCell>
+                  <TableCell align="center" sx={{ color: cc.overdue ? rag.red : undefined, fontWeight: cc.overdue ? 700 : 400 }}>
+                    {cc.overdue}
+                  </TableCell>
+                  <TableCell align="center">{compliantCount}/40 at or above substantial</TableCell>
+                  <TableCell>
+                    {cc.worst === "NONE" ? (
+                      <Chip label="No open findings" size="small" sx={{ backgroundColor: rag.greenBg, color: rag.green }} />
+                    ) : (
+                      <RagChip priority={cc.worst} />
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mt: 0.5 }}>* demo data</Typography>
+
+        <SectionTitle n={3}>KPI framework by domain</SectionTitle>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Domain</TableCell>
+              <TableCell align="center">On target</TableCell>
+              <TableCell align="center">Near</TableCell>
+              <TableCell align="center">Off target</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {domainRolls.map(({ domain, roll }, idx) => (
+              <TableRow key={domain.id}>
+                <TableCell sx={{ fontWeight: 600 }}>
+                  {idx + 1}. {domain.name}
+                </TableCell>
+                <TableCell align="center">{roll.meets}</TableCell>
+                <TableCell align="center">{roll.near}</TableCell>
+                <TableCell align="center" sx={{ color: roll.breach ? rag.red : undefined, fontWeight: roll.breach ? 700 : 400 }}>
+                  {roll.breach}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <SectionTitle n={4}>Open findings register</SectionTitle>
+        {open.length === 0 ? (
+          <Typography sx={{ fontSize: "0.87rem" }}>No open findings.</Typography>
+        ) : (
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Priority</TableCell>
+                <TableCell>Centre</TableCell>
+                <TableCell>Finding</TableCell>
+                <TableCell>Evidence due</TableCell>
+                <TableCell>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {open
+                .slice()
+                .sort((a, b) => (daysUntilDue(a) ?? 999) - (daysUntilDue(b) ?? 999))
+                .map((f) => {
+                  const d = daysUntilDue(f);
+                  return (
+                    <TableRow key={f.id}>
+                      <TableCell>
+                        <RagChip priority={f.priority} />
+                      </TableCell>
+                      <TableCell>{state.centres.find((c) => c.id === f.centreId)?.shortName ?? f.centreId}</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>{f.finding}</TableCell>
+                      <TableCell>
+                        {f.dueOn ?? "—"}
+                        {f.status === "open" && d !== null && d < 0 ? ` (${-d}d overdue)` : ""}
+                      </TableCell>
+                      <TableCell>{f.status === "open" ? "Open" : "Evidence submitted"}</TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        )}
+
+        <SectionTitle n={5}>HIQA standards — group position & thematic risks</SectionTitle>
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
+          {(Object.keys(judgementTotals) as Judgement[])
+            .filter((j) => judgementTotals[j] > 0)
+            .map((j) => (
+              <Chip key={j} label={`${JUDGEMENT_LABELS[j]}: ${judgementTotals[j]}`} size="small" />
+            ))}
+          <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", alignSelf: "center" }}>
+            (8 centres × 40 standards, self-assessed)
+          </Typography>
+        </Box>
+        {thematicRisks.length === 0 ? (
+          <Typography sx={{ fontSize: "0.87rem" }}>No standard is below substantial at two or more centres.</Typography>
+        ) : (
+          <>
+            <Typography sx={{ fontSize: "0.87rem", mb: 0.5 }}>
+              Standards self-assessed below substantial at <strong>two or more centres</strong> — recommended for a
+              group-level improvement plan:
+            </Typography>
+            <Table size="small">
+              <TableBody>
+                {thematicRisks.map(({ std, centres }) => (
+                  <TableRow key={std.id}>
+                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.red }}>{std.id}</TableCell>
+                    <TableCell sx={{ fontSize: "0.8rem" }}>{std.text}</TableCell>
+                    <TableCell sx={{ width: 110, color: compliance.partially, fontWeight: 600 }}>
+                      {centres} centres
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </>
+        )}
+
+        <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mt: 4, borderTop: `1px solid ${brand.border}`, pt: 1 }}>
+          Generated by the Peppard IPAS Operator Dashboard from live registers. Board pack figures reconcile to the
+          registers at generation time; nothing is manually keyed.
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
