@@ -197,7 +197,12 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   register @4.65 m²), Findings & Actions (14-day evidence clock +
   workflow), HIQA Standards (self-assessment + sector benchmark bars),
   KPI Framework (13 domains / 74 KPIs, 6 computed live from registers).
-- Inspection readiness pack: `/centres/:id/readiness`, print → PDF.
+- All three generated documents (shared `PrintDoc` frame, print → PDF):
+  readiness pack `/centres/:id/readiness`, Department return
+  `/centres/:id/return`, quarterly board pack `/board-pack`.
+- PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (11 slides,
+  real app screenshots in `docs/screens/`; regenerate screenshots with
+  Playwright channel:"chrome" against the dev server).
 - Demo store: localStorage persistence, Reset-demo button in top bar,
   ErrorBoundary so a render error never blanks a live demo.
 - Riverside finding lifecycle dates are demo-anchored to "today" so
@@ -205,14 +210,14 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 
 ## What is NOT done yet
 
-- Remaining output views: daily ops digest, quarterly board pack,
-  Department return generator (descriptor says price the return
-  generator + room register as discrete work packages).
+- Remaining output views: daily ops digest, audit & assurance view
+  (board pack, return generator and readiness pack are DONE as demo
+  documents; the descriptor says price the return generator + room
+  register as discrete work packages for the real build).
 - Wire remaining 68 KPIs to real registers (Phase 2); incident /
   complaints / fire registers themselves.
 - Mackin EHS tracker ingestion (rollout ~Sep 2026, Maeve overseeing).
 - Backend + auth (AWS/Cognito vs Supabase — open commercial question),
   multi-user, audit trail.
-- PPT export fallback for the Department meeting (screens exist; a
-  deck can be assembled from screenshots if needed).
-- GitHub remote + CI (repo is local-only so far).
+- GitHub remote + CI (repo is local-only so far; repo creation needs
+  Philip's approval or a repo created in the GitHub UI).
