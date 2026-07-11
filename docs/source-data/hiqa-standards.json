@@ -1,0 +1,267 @@
+{
+  "source": "national-standards.pdf",
+  "title": "National Standards for accommodation offered to people in the protection process",
+  "counts": { "themes": 10, "standards": 40 },
+  "themes": [
+    {
+      "number": 1,
+      "name": "Governance, Accountability and Leadership",
+      "standards": [
+        {
+          "id": "1.1",
+          "text": "The service provider performs its functions as outlined in relevant legislation, regulations, national policies and standards to protect residents living in the accommodation centre in a manner that promotes their welfare and respects their dignity.",
+          "summary": "Indicators cover: staff knowledge; analysis; responsiveness; compliance; cooperation."
+        },
+        {
+          "id": "1.2",
+          "text": "The service provider has effective leadership, governance arrangements and management arrangements in place and staff are clearly accountable for areas within the service.",
+          "summary": "Indicators cover: governance lines; competent persons; manager skills; management structure; leadership; governance and culture; resources; plans; management systems; data protection; child protection; monitoring and evaluation; risk management; records; complaints; transition; quality improvement; consultation; information."
+        },
+        {
+          "id": "1.3",
+          "text": "There is a residents' charter which accurately and clearly describes the services available to children and adults living in the centre, including how and where the services are provided.",
+          "summary": "Indicators cover: residents' charter; arrival; access to records; confidentiality."
+        },
+        {
+          "id": "1.4",
+          "text": "The service provider monitors and reviews the quality of care and experience of children and adults living in the centre and this is improved on an ongoing basis.",
+          "summary": "Indicators cover: participation; improvement audits; quality review; transition; public sector duty."
+        },
+        {
+          "id": "1.5",
+          "text": "Management regularly consult residents on their views and allow them to participate in decisions which affect them as much as possible.",
+          "summary": "Indicators cover: residents' committee; open consultations; individual consultation."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "name": "Responsive Workforce",
+      "standards": [
+        {
+          "id": "2.1",
+          "text": "There are safe and effective recruitment practices in place for staff and management.",
+          "summary": "Indicators cover: employment and equality laws; vetting; job roles; induction; probationary period."
+        },
+        {
+          "id": "2.2",
+          "text": "Staff have the required competencies to manage and deliver person-centred, effective and safe services to children and adults living in the centre.",
+          "summary": "Indicators cover: staffing levels; retention; professional skills; codes of conduct/practice."
+        },
+        {
+          "id": "2.3",
+          "text": "Staff are supported and supervised to carry out their duties to promote and protect the welfare of all children and adults living in the centre.",
+          "summary": "Indicators cover: responsibilities; accountability; risk to staff; supports and supervision; appraisal; personnel files; protected disclosures."
+        },
+        {
+          "id": "2.4",
+          "text": "Continuous training is provided to staff to improve the service provided for all children and adults living in the centre.",
+          "summary": "Indicators cover: person-centred services; training and development; supervision training; needs analysis; reporting abuse; health and safety; policies and procedures; specified training areas (child protection, SGBV, equality and diversity, mental health, LGBTI+, torture and trauma, conflict resolution, anti-bullying, disability, human trafficking indicators, self-care, first aid)."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "name": "Contingency Planning and Emergency Preparedness",
+      "standards": [
+        {
+          "id": "3.1",
+          "text": "The service provider will carry out a regular risk analysis of the service and develop a risk register.",
+          "summary": "Indicators cover: identifying risk; continuity of service; emergency planning; fire drills."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "name": "Accommodation",
+      "standards": [
+        {
+          "id": "4.1",
+          "text": "The service provider, in planning, designing and allocating accommodation within the centre, is informed by the identified needs and best interests of residents, and the best interests of the child.",
+          "summary": "Indicators cover: room allocation; room and health; criteria; factors; liaison."
+        },
+        {
+          "id": "4.2",
+          "text": "The service provider makes available accommodation which is homely, accessible and sufficiently furnished.",
+          "summary": "Indicators cover: regulatory compliance; minimum space requirements (4.65 sq m per resident per bedroom); ceiling height; space; fittings; bedroom guidelines; Wi-Fi; telephone; bedrooms; bunk-beds; disability; repairs; maintenance and repairs."
+        },
+        {
+          "id": "4.3",
+          "text": "The privacy, dignity and safety of each resident is protected and promoted in accommodation centres. The physical environment promotes the safety, health and wellbeing of residents.",
+          "summary": "Indicators cover: locks; bathroom quality; single bedrooms; lockers; storage facilities."
+        },
+        {
+          "id": "4.4",
+          "text": "The privacy and dignity of family units is protected and promoted in accommodation centres. Children and their care-givers are provided with child friendly accommodation which respects and promotes family life and is informed by the best interests of the child.",
+          "summary": "Indicators cover: families together; children; private living space; family bedrooms; family bathroom; non-family members; own-door accommodation; beds."
+        },
+        {
+          "id": "4.5",
+          "text": "The accommodation centre has adequate and accessible facilities, including dedicated child-friendly, play and recreation facilities.",
+          "summary": "Indicators cover: consultation; children's spaces; toys and games; adults' spaces; facilities for children; meeting spaces; socialisation; worship; reception space; booking facilities; furnishings; accessibility."
+        },
+        {
+          "id": "4.6",
+          "text": "The service provider makes available, in the accommodation centre, adequate and dedicated facilities and materials to support the educational development of each child and young person.",
+          "summary": "Indicators cover: study facilities; creche; pre-school; study club; educational supports; study spaces; study materials."
+        },
+        {
+          "id": "4.7",
+          "text": "The service provider commits to providing an environment which is clean and respects, and promotes the independence of residents in relation to laundry and cleaning.",
+          "summary": "Indicators cover: clean areas; laundry services; ventilation; drying; drainage; consultation; materials."
+        },
+        {
+          "id": "4.8",
+          "text": "The service provider has in place security measures which are sufficient, proportionate and appropriate. The measures ensure the right to privacy and dignity of residents is protected.",
+          "summary": "Indicators cover: security risk assessment; training; violence; licensing; private space; right to private life; data protection; identity."
+        },
+        {
+          "id": "4.9",
+          "text": "The service provider makes available sufficient and appropriate non-food items and products to ensure personal hygiene, comfort, dignity, health and wellbeing.",
+          "summary": "Indicators cover: toiletries; nappies; contraception; towels; bedding; non-food products; choice; access."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "name": "Food, Catering and Cooking Facilities",
+      "standards": [
+        {
+          "id": "5.1",
+          "text": "Food preparation and dining facilities meet the needs of residents, support family life and are appropriately equipped and maintained.",
+          "summary": "Indicators cover: cooking and storage; catering option; space; access; off-site food."
+        },
+        {
+          "id": "5.2",
+          "text": "The service provider commits to meeting the catering needs and autonomy of residents which includes access to a varied diet that respects their cultural, religious, dietary, nutritional and medical requirements.",
+          "summary": "Indicators cover: 28 day menu; choice; nutritional choice and standards; supplies; snacks; hydration; health; food standards; infants; space to eat; times; consultation; feedback."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "name": "Person Centred Care and Support",
+      "standards": [
+        {
+          "id": "6.1",
+          "text": "The rights and diversity of each resident are respected, safeguarded and promoted.",
+          "summary": "Indicators cover: rights; information; equal treatment; legal support; advocacy; person centred support; religion; political rights; children's rights."
+        },
+        {
+          "id": "6.2",
+          "text": "The service provider respects and safeguards the privacy of each resident.",
+          "summary": "Indicators cover: privacy; support; consultation; bed; locks; entry with consent; property; possessions after deportation; respect for privacy; mode of address; autonomy; private information."
+        },
+        {
+          "id": "6.3",
+          "text": "The service provider respects and safeguards the dignity of each resident.",
+          "summary": "Indicators cover: supportive atmosphere; safety statement; end of life; bereavement and loss; humane treatment."
+        },
+        {
+          "id": "6.4",
+          "text": "The service provider makes information available, and communicates this, in an accessible format which is appropriate to any special requirements of residents' communication needs.",
+          "summary": "Indicators cover: literacy; interpretation and translation; intermediaries; child intermediaries; communications."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "name": "Individual, Family and Community Life",
+      "standards": [
+        {
+          "id": "7.1",
+          "text": "The service provider supports and facilitates residents to develop and maintain personal and family relationships.",
+          "summary": "Indicators cover: family and friends; culture and learning; families; visitors; high volume."
+        },
+        {
+          "id": "7.2",
+          "text": "The service provider ensures that public services, healthcare, education, community supports and leisure activities are accessible to residents, including children and young people, and where necessary through the provision of a dedicated and adequate transport service.",
+          "summary": "Indicators cover: access to services; transport service; retail; consultation; transport information; vehicles; transport for children and young people."
+        },
+        {
+          "id": "7.3",
+          "text": "The service provider supports and facilitates residents, including children and young people, to integrate and engage with the wider community, including through engagement with other agencies.",
+          "summary": "Indicators cover: integration; local community; Friends of the Centre; leisure and clubs; community involvement; demarcation; booking facilities; transition."
+        },
+        {
+          "id": "7.4",
+          "text": "Staff and management support and encourage community initiatives and a sense of community within the centre.",
+          "summary": "Indicators cover: consultation; diversity reflected; child protection and vetting."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "name": "Safeguarding and Protection",
+      "standards": [
+        {
+          "id": "8.1",
+          "text": "The service provider protects residents from abuse and neglect and promotes their safety and welfare.",
+          "summary": "Indicators cover: policies; safety policies; measures; process; conflict; liaison; community supports; valuables; protocols; consultation and information."
+        },
+        {
+          "id": "8.2",
+          "text": "The service provider takes all reasonable steps to protect each child from abuse and neglect and children's safety and welfare is promoted.",
+          "summary": "Indicators cover: policies for children; partnership; abuse or neglect; safety prioritised; Designated Liaison Person; supervision; needs informed services; information."
+        },
+        {
+          "id": "8.3",
+          "text": "The service provider manages and reviews adverse events and incidents in a timely manner and outcomes inform practice at all levels.",
+          "summary": "Indicators cover: policies; confidentiality; reporting; information; emergency contacts."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "name": "Health, Wellbeing and Development",
+      "standards": [
+        {
+          "id": "9.1",
+          "text": "The service provider promotes the health, wellbeing and development of each resident and they offer appropriate, person centred and needs-based support to meet any identified health or social care needs.",
+          "summary": "Indicators cover: health information; accessibility; referral protocols; wellbeing; private discussion; leaflets and posters; welfare rights; support services; family supports; children's welfare; child protection; primary caregivers; parenting styles; medical appointments; sexual health; infectious disease; substance abuse; positive risk management."
+        },
+        {
+          "id": "9.2",
+          "text": "The service provider makes available in the accommodation centre services which support residents' physical and psychological, health, wellbeing and development, and promote a self-care approach.",
+          "summary": "Indicators cover: communication; privacy; wellbeing activities; community activities; community self-care."
+        },
+        {
+          "id": "9.3",
+          "text": "Staff and management engage with other agencies to provide information and access to a range of services for residents to promote their health, wellbeing and development. The service provider supports residents to participate in education (both formal and non-formal), training, volunteering and employment opportunities.",
+          "summary": "Indicators cover: education and training; educational supports; study facilities; employment; volunteering; information; transport; transition."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "name": "Identification, Assessment and Response to Special Needs",
+      "standards": [
+        {
+          "id": "10.1",
+          "text": "The service provider ensures that any special reception needs notified to them by the Department of Justice and Equality are incorporated into the provision of accommodation and associated services for the resident.",
+          "summary": "Indicators cover: work plan; assessment shared; assessment outcome; liaison; room allocation; documentation."
+        },
+        {
+          "id": "10.2",
+          "text": "All staff are enabled to identify and respond to emerging and identified needs for residents.",
+          "summary": "Indicators cover: training; incident debrief; self-care; staff well-being; best practice; supports."
+        },
+        {
+          "id": "10.3",
+          "text": "The service provider has an established policy to identify, communicate and address existing and emerging special reception needs.",
+          "summary": "Indicators cover: special reception needs; identifying needs; liaison with the Department of Justice and Equality; confidentiality; informing the Department; response and referral; cooperation with services; monitoring; follow up; access; personal data and confidentiality."
+        },
+        {
+          "id": "10.4",
+          "text": "The service provider makes available a dedicated Reception Officer, who is suitably trained to support all residents' especially those people with special reception needs both inside the accommodation centre and with outside agencies.",
+          "summary": "Indicators cover: Reception Officer skills; training; manual; contact point; relationships; support services; advice; other staff; reporting; recommendations; linkages."
+        },
+        {
+          "id": "10.5",
+          "text": "In accommodation centres where a significant percentage of residents are deemed to be exceptionally vulnerable or in cases where a centre has been designated for exceptionally vulnerable international protection applicants, the service provider makes additional measures available.",
+          "summary": "Indicators cover: staff skills; diversity of staff; training; supervision; reception needs assessments; interagency cooperation; liaison with the Department of Justice and Equality; protection process; safety and security."
+        }
+      ]
+    }
+  ]
+}

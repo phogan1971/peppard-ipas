@@ -1,0 +1,497 @@
+{
+  "source": "The Riverside Park Hotel Inspection Report 24.03.2026.pdf",
+  "documentTitle": "International Protection Procurement Services Inspection Report, in accordance with the terms and conditions of the contracted provision of International Protection Accommodation Services",
+  "issuingBody": "Department of Justice, Home Affairs and Migration — International Protection and Integration | Civil Justice, 51 St Stephen's Green, Dublin 2, D02 HK52",
+  "inspectionDate": "2026-03-24",
+  "reportSignedOff": {
+    "completedBy": "Paul Donoghue",
+    "signedDate": "2026-04-07"
+  },
+  "centre": {
+    "name": "The Riverside Park Hotel",
+    "address": "Killarney Road, Codrum, Macroom, Co. Cork, F93 X859",
+    "accommodationId": "IPPS-A-00190",
+    "contractor": "Next Week and Co. Limited",
+    "inspector": "Paul Donoghue",
+    "managerOnDuty": "Peter O'Brien",
+    "typeOfAccommodation": "Hotel",
+    "independentLivingDetails": "Self Catering",
+    "telephoneNumber": "089-9739377",
+    "emailForReport": "pobrien@nextweek.ie",
+    "providerContractCapacity": 198,
+    "confirmedContractCapacity": 200,
+    "occupancyOnDay": 177,
+    "roomCount": 50,
+    "centreProfile": "Families and Single Females"
+  },
+  "areasInspectedChecklist": [
+    "Cleaning arrangements for all areas in the centre to include waste disposal and pet management",
+    "Communal areas to include corridors, stairs, reception area, public bathrooms, laundry areas, recreation rooms, play areas and any other indoor facilities",
+    "External areas such as grounds, parking, access and any other outdoor facilities",
+    "General Security and Health & Safety Arrangements including notices and visiting arrangements",
+    "In house shop where appropriate including points, dates of food and range of food",
+    "Fire Safety, including registers, notices, records and maintenance of fire safety equipment",
+    "Medical equipment and notices such as first aid, etc.",
+    "Staff Training Records to include first aid, fire safety, DLP",
+    "Kitchen Area to include cooking stations, fridges/freezers, storage, snacks available, dining area, menus & food options as applicable",
+    "Bedrooms to include lighting, heating, doors, windows, bathrooms, notices, fire detection, towels, bedlinen, duvets, toiletries/sanitary products, general upkeep/cleanliness"
+  ],
+  "registers": [
+    {
+      "name": "Latest Resident Register",
+      "status": "available",
+      "observations": null
+    },
+    {
+      "name": "Full List of Staff Employed including roles & duties",
+      "status": "available",
+      "observations": "10 staff on site. 5 full time and 5 part time."
+    },
+    {
+      "name": "Separate list of designated liaison persons for child protection",
+      "status": "available",
+      "observations": null
+    },
+    {
+      "name": "Appendix 2 visitor child-protection declaration record",
+      "status": "maintained",
+      "observations": "All visitors verbally informed of child protection policies and asked to sign an Appendix 2 declaration."
+    },
+    {
+      "name": "Visitor sign-in book",
+      "status": "available",
+      "observations": "Located at reception area. Does NOT include a CSS declaration.",
+      "cssDeclarationIncluded": false
+    },
+    {
+      "name": "Maintenance issues log",
+      "status": "available",
+      "observations": "Residents report any issues to staff and it is logged in book. Any issues identified during inspections are also recorded. Maintenance issues actioned within a timely fashion (48-72hrs): Yes."
+    },
+    {
+      "name": "Security roster",
+      "status": "not available",
+      "observations": "Security roster not available. Security provided by external company: Grennan Security. 24/7 PSA licenced security staff NOT in place."
+    },
+    {
+      "name": "Emergency Lighting Service Records",
+      "status": "reviewed",
+      "entries": [
+        { "date": "2026-03-13", "company": "A McCarthy", "comments": "30 Min Check" },
+        { "date": "2026-03-09", "company": "A McCarthy", "comments": "30 Min Check" }
+      ]
+    },
+    {
+      "name": "Fire Alarm (Panel) / Carbon Monoxide & Detection System Service Records",
+      "status": "reviewed",
+      "entries": [
+        { "date": "2026-03-23", "company": "Raymond W", "comments": "All Okay" },
+        { "date": "2026-03-16", "company": "Peter O'Brien", "comments": "All Okay" }
+      ]
+    },
+    {
+      "name": "Firefighting Equipment Service Records (Extinguishers/Hose Reels/Blankets)",
+      "status": "reviewed",
+      "entries": [
+        { "date": "2026-03-23", "company": "A McCarthy", "comments": null },
+        { "date": "2026-03-09", "company": "A. Mc Carthy", "comments": null }
+      ]
+    },
+    {
+      "name": "Fire Exit Doors/Means of Escape Inspections",
+      "status": "reviewed",
+      "entries": [
+        { "date": "2026-03-23", "name": "Raymond W", "comments": "All Clear" },
+        { "date": "2026-03-22", "name": "C. Conway", "comments": "All Clear" }
+      ]
+    },
+    {
+      "name": "Fire Drill Schedule",
+      "status": "reviewed",
+      "entries": [
+        { "dateTime": "2025-12-04", "staff": 6, "residents": 55, "evacuationTime": "8 mins", "comments": null },
+        { "dateTime": "2025-05-01", "staff": 4, "residents": 72, "evacuationTime": "20 mins", "comments": null }
+      ]
+    },
+    {
+      "name": "Staff Fire Safety Instruction & Training",
+      "status": "reviewed",
+      "entries": [
+        { "staffName": "Peter O'Brien", "courseProvider": "Peninsula", "duration": "1/2 Day", "inPerson": true, "date": "2025-01-31" },
+        { "staffName": "Emily Leggett", "courseProvider": "Peninsula", "duration": "1/2 Day", "inPerson": true, "date": "2025-01-31" }
+      ]
+    },
+    {
+      "name": "Kitchen daily cleaning record",
+      "status": "not available",
+      "observations": "No record of daily cleaning of kitchen, food service & dining areas."
+    },
+    {
+      "name": "Kitchen periodic deep-clean record",
+      "status": "not available",
+      "observations": "No record of periodic deep cleans of areas such as behind cookers/fridges etc."
+    }
+  ],
+  "rooms": [
+    { "room": "224", "bedConfig": "3S/1D", "currentOccupancy": 4, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 22.6, "suitableOccupancy": 4, "issues": ["Knife, kettle and fridge in room"] },
+    { "room": "225", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 3.5, "roomWidthM": 5.48, "dimensionsM2": 19.25, "suitableOccupancy": 4, "issues": ["Empty"] },
+    { "room": "223", "bedConfig": "2S,1D,1C", "currentOccupancy": 5, "roomLengthM": 5.46, "roomWidthM": 4.36, "dimensionsM2": 23.86, "suitableOccupancy": 5, "issues": ["Fridge in room"] },
+    { "room": "222", "bedConfig": "1D,1S", "currentOccupancy": 4, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 20.8, "suitableOccupancy": 4, "issues": ["Cooking equipment in room"] },
+    { "room": "221", "bedConfig": "3S", "currentOccupancy": 4, "roomLengthM": 4.88, "roomWidthM": 4.44, "dimensionsM2": 21.71, "suitableOccupancy": 4, "issues": [] },
+    { "room": "219", "bedConfig": "1D,1S", "currentOccupancy": 3, "roomLengthM": 4.32, "roomWidthM": 5.49, "dimensionsM2": 23.77, "suitableOccupancy": 5, "issues": ["Fridge in room"] },
+    { "room": "220", "bedConfig": "1D,2S", "currentOccupancy": 4, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 18.6, "suitableOccupancy": 4, "issues": ["Fridge, freezer, and heater"] },
+    { "room": "218", "bedConfig": "1D", "currentOccupancy": 2, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 9.3, "suitableOccupancy": 2, "issues": ["Fan and fridge in room"] },
+    { "room": "301", "bedConfig": null, "currentOccupancy": 4, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge, fan, kettle and knife in room"] },
+    { "room": "302", "bedConfig": null, "currentOccupancy": null, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": [] },
+    { "room": "303", "bedConfig": null, "currentOccupancy": 3, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge and alcohol in room"] },
+    { "room": "304", "bedConfig": null, "currentOccupancy": 5, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge, freezer, kettle and microwave in room"] },
+    { "room": "305", "bedConfig": null, "currentOccupancy": 5, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge in room"] },
+    { "room": "306", "bedConfig": "1D,3S", "currentOccupancy": 5, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": [] },
+    { "room": "307", "bedConfig": null, "currentOccupancy": 5, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Heater in room"] },
+    { "room": "308", "bedConfig": null, "currentOccupancy": 3, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge, iron in room", "Floor appears to be rotted and should be repaired/replaced", "Mould in bathroom"] },
+    { "room": "201", "bedConfig": "1D,2C", "currentOccupancy": 4, "roomLengthM": 4.71, "roomWidthM": 4.95, "dimensionsM2": 23.27, "suitableOccupancy": 5, "issues": ["Heater and dehumidifier in room"] },
+    { "room": "202", "bedConfig": "4S", "currentOccupancy": 4, "roomLengthM": 4.7, "roomWidthM": 4.95, "dimensionsM2": 23.3, "suitableOccupancy": 5, "issues": ["Fridge and heater in room"] },
+    { "room": "204", "bedConfig": "3S", "currentOccupancy": 3, "roomLengthM": 4.71, "roomWidthM": 4.8, "dimensionsM2": 22.66, "suitableOccupancy": 4, "issues": ["Fridge in room"] },
+    { "room": "203", "bedConfig": "2D", "currentOccupancy": 4, "roomLengthM": 4.72, "roomWidthM": 4.78, "dimensionsM2": 22.58, "suitableOccupancy": 4, "issues": [] },
+    { "room": "205", "bedConfig": "1D,1B", "currentOccupancy": 4, "roomLengthM": 4.81, "roomWidthM": 4.71, "dimensionsM2": 22.67, "suitableOccupancy": 4, "issues": ["Fridge, iron, fan, heater and food in room"] },
+    { "room": "206", "bedConfig": "1D,2S", "currentOccupancy": 4, "roomLengthM": 4.81, "roomWidthM": 4.71, "dimensionsM2": 22.67, "suitableOccupancy": 4, "issues": ["Fridge, iron, kettle, iron in room", "Damp on bathroom ceiling"] },
+    { "room": "208", "bedConfig": "3S", "currentOccupancy": 3, "roomLengthM": 4.85, "roomWidthM": 4.71, "dimensionsM2": 22.92, "suitableOccupancy": 4, "issues": ["Fridge, iron, microwave, and knives in room"] },
+    { "room": "207", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 4.85, "roomWidthM": 4.75, "dimensionsM2": 22.94, "suitableOccupancy": 4, "issues": ["Empty"] },
+    { "room": "209", "bedConfig": "4S", "currentOccupancy": null, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 18.6, "suitableOccupancy": null, "issues": ["Fridge, microwave, and kettle in room"] },
+    { "room": "210", "bedConfig": "2D,1C", "currentOccupancy": 4, "roomLengthM": 4.72, "roomWidthM": 4.7, "dimensionsM2": 22.23, "suitableOccupancy": 4, "issues": ["Room joined with Room 212"] },
+    { "room": "212", "bedConfig": "3S", "currentOccupancy": null, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 18.6, "suitableOccupancy": null, "issues": ["Mould in bedroom", "Room joined with Room 210"] },
+    { "room": "211", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 4.7, "roomWidthM": 4.65, "dimensionsM2": 21.88, "suitableOccupancy": 4, "issues": ["Empty"] },
+    { "room": "213", "bedConfig": "3S", "currentOccupancy": 3, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Alcohol, fridge, kettle, airfryer, microwave and kettle in room"] },
+    { "room": "215", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 4.87, "roomWidthM": 4.7, "dimensionsM2": 22.94, "suitableOccupancy": 4, "issues": ["Empty"] },
+    { "room": "214", "bedConfig": "2D", "currentOccupancy": 4, "roomLengthM": 4.87, "roomWidthM": 4.66, "dimensionsM2": 22.69, "suitableOccupancy": 4, "issues": ["Fridge, kettle in room"] },
+    { "room": "216", "bedConfig": "1D,1S", "currentOccupancy": 4, "roomLengthM": 4.72, "roomWidthM": 4.84, "dimensionsM2": 22.9, "suitableOccupancy": 4, "issues": ["Candle/incense in room", "Fridge in room"] },
+    { "room": "217", "bedConfig": "2S,1D", "currentOccupancy": 4, "roomLengthM": 4.83, "roomWidthM": 5.13, "dimensionsM2": 24.8, "suitableOccupancy": 4, "issues": ["Fridge and fan in room"] },
+    { "room": "101", "bedConfig": "3S", "currentOccupancy": 3, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": ["Fridge in room"] },
+    { "room": "102", "bedConfig": "1S,1D", "currentOccupancy": 3, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": [] },
+    { "room": "104", "bedConfig": "1D,1B", "currentOccupancy": 3, "roomLengthM": 4.72, "roomWidthM": 4.85, "dimensionsM2": 22.94, "suitableOccupancy": 4, "issues": ["Fridge in room"] },
+    { "room": "103", "bedConfig": "2S,1D", "currentOccupancy": 4, "roomLengthM": 4.91, "roomWidthM": 4.68, "dimensionsM2": 23.03, "suitableOccupancy": 4, "issues": ["Fridge", "Cockroaches in bathroom"] },
+    { "room": "105", "bedConfig": "1D,1S,1C", "currentOccupancy": 5, "roomLengthM": 4.72, "roomWidthM": 4.86, "dimensionsM2": 23.02, "suitableOccupancy": 4, "issues": ["Mould on window", "Curtain rail in room to be repaired/replaced", "Mould in bathroom"] },
+    { "room": "106", "bedConfig": "2S", "currentOccupancy": 1, "roomLengthM": 4.88, "roomWidthM": 4.72, "dimensionsM2": 23.06, "suitableOccupancy": 4, "issues": ["Fridge, kettle and alcohol in room"] },
+    { "room": "107", "bedConfig": "4S", "currentOccupancy": 4, "roomLengthM": 4.64, "roomWidthM": 4.9, "dimensionsM2": 22.78, "suitableOccupancy": 4, "issues": ["2 pin plugs in room"] },
+    { "room": "108", "bedConfig": "2D", "currentOccupancy": 4, "roomLengthM": 4.64, "roomWidthM": 4.87, "dimensionsM2": 22.66, "suitableOccupancy": 4, "issues": [] },
+    { "room": "117", "bedConfig": null, "currentOccupancy": 5, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 18.6, "suitableOccupancy": 4, "issues": [] },
+    { "room": "109", "bedConfig": null, "currentOccupancy": 4, "roomLengthM": 4.72, "roomWidthM": 4.85, "dimensionsM2": 22.93, "suitableOccupancy": 4, "issues": [] },
+    { "room": "110", "bedConfig": "1D,2S", "currentOccupancy": 4, "roomLengthM": 4.7, "roomWidthM": 4.75, "dimensionsM2": 22.39, "suitableOccupancy": 4, "issues": ["Microwave and fridge in room"] },
+    { "room": "111", "bedConfig": "1D,1S", "currentOccupancy": 3, "roomLengthM": 4.84, "roomWidthM": 4.71, "dimensionsM2": 22.81, "suitableOccupancy": 4, "issues": ["Fridge and microwave in room"] },
+    { "room": "112", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 4.7, "roomWidthM": 4.92, "dimensionsM2": 23.16, "suitableOccupancy": 4, "issues": ["Empty"] },
+    { "room": "113", "bedConfig": "4S", "currentOccupancy": 4, "roomLengthM": 4.57, "roomWidthM": 4.88, "dimensionsM2": 22.33, "suitableOccupancy": 4, "issues": ["Fridge and food in room", "Walls to be cleaned"] },
+    { "room": "114", "bedConfig": "3S", "currentOccupancy": null, "roomLengthM": 4.89, "roomWidthM": 4.71, "dimensionsM2": 23.04, "suitableOccupancy": 4, "issues": ["Family residing in room have left the centre"] },
+    { "room": "115", "bedConfig": null, "currentOccupancy": 4, "roomLengthM": null, "roomWidthM": null, "dimensionsM2": 13.95, "suitableOccupancy": 3, "issues": [] },
+    { "room": "116", "bedConfig": "1D,1C,1S", "currentOccupancy": 4, "roomLengthM": 4.56, "roomWidthM": 4.91, "dimensionsM2": 22.41, "suitableOccupancy": 4, "issues": ["Fridge and iron in room"] },
+    { "room": "227", "bedConfig": "1D,1C,1S", "currentOccupancy": 4, "roomLengthM": 4.69, "roomWidthM": 3.63, "dimensionsM2": 17.06, "suitableOccupancy": 3, "issues": ["Fridge in room", "Mould in room"] },
+    { "room": "226", "bedConfig": "1D", "currentOccupancy": 2, "roomLengthM": 3.44, "roomWidthM": 3.17, "dimensionsM2": 10.94, "suitableOccupancy": 2, "issues": ["Fridge and heater in room"] },
+    { "room": "228", "bedConfig": "1D,2S", "currentOccupancy": 4, "roomLengthM": 4.69, "roomWidthM": 3.56, "dimensionsM2": 16.72, "suitableOccupancy": 3, "issues": [] },
+    { "room": "229", "bedConfig": "0", "currentOccupancy": 0, "roomLengthM": 3.63, "roomWidthM": 4.7, "dimensionsM2": 17.11, "suitableOccupancy": 3, "issues": ["Empty"] }
+  ],
+  "bedConfigLegend": {
+    "S": "single bed",
+    "D": "double bed",
+    "C": "cot",
+    "B": "bunk (inferred)"
+  },
+  "spaceStandard": {
+    "minimumM2PerPerson": 4.65,
+    "minimumCeilingHeightM": 2.4,
+    "note": "Suitable occupancy = total room dimensions / 4.65. If a room has varying ceiling height, only the part 2.4m or higher counts."
+  },
+  "findings": [
+    {
+      "ref": 1,
+      "section": "6. Summary Details",
+      "finding": "Electrical Equipment in Room",
+      "priority": "AMBER",
+      "actionRequired": "Fridges in the majority of rooms at the centre. Inspector informed residents that they needed to be removed as soon as possible. Confirmation that this has been done to be provided within 14 days of receipt of this report. Numerous other prohibited electrical items present in rooms. Management to carry out their own inspection and remove, and provide confirmation that this has occurred within 14 days of receipt of this report.",
+      "evidenceDueDays": 14,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 2,
+      "section": "6. Summary Details",
+      "finding": "Mould/Damp",
+      "priority": "AMBER",
+      "actionRequired": "Mould and damp present in some rooms throughout the centre. Management to treat the issue where identified and provide photographic evidence that this has been resolved within 14 days of receipt of this report.",
+      "evidenceDueDays": 14,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 3,
+      "section": "6. Summary Details",
+      "finding": "Overcrowding",
+      "priority": "GREEN",
+      "actionRequired": "Several rooms are overcrowded in the centre but this may be managed locally by centre management through the reallocation of rooms.",
+      "evidenceDueDays": null,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 4,
+      "section": "6. Summary Details",
+      "finding": "Fire Safety Issues",
+      "priority": null,
+      "actionRequired": "Numerous prohibited electrical items in rooms. All items to be removed and confirmation provided within 14 days of receipt of this report.",
+      "evidenceDueDays": 14,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 5,
+      "section": "6. Summary Details",
+      "finding": "Food Safety Issues",
+      "priority": "AMBER",
+      "actionRequired": "Food in rooms throughout the centre. Residents to be reminded that food is only to be consumed in the dining area. Copies of daily cleaning records and deep cleaning records for kitchen areas to be submitted within 14 days of receipt of this report. Bug zapper in kitchen area to be repaired/replaced and photographic evidence to be submitted within 14 days of receipt of this report.",
+      "evidenceDueDays": 14,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 6,
+      "section": "6. Summary Details",
+      "finding": "Security & Staffing",
+      "priority": null,
+      "actionRequired": "Knives present in several rooms. Management to remind residents that this constitutes a safety issue and all knives should be stored in the storage provided.",
+      "evidenceDueDays": null,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    },
+    {
+      "ref": 7,
+      "section": "6. Summary Details",
+      "finding": "Fixtures & Fittings",
+      "priority": "N/A",
+      "actionRequired": null,
+      "evidenceDueDays": null,
+      "evidenceOfResolutionAttached": null,
+      "contractorComment": null
+    }
+  ],
+  "ragLegend": {
+    "RED": "Contractual breach/high risk: immediate corrective action",
+    "AMBER": "Medium risk/partial non-conformance; resolution within agreed 14-day timeframe",
+    "GREEN": "Low operational concern, monitor for improvement"
+  },
+  "sections": [
+    {
+      "title": "1.1 Office Admin",
+      "keyPoints": [
+        "Latest resident register available: Yes",
+        "Full list of staff employed including roles & duties: Yes — 10 staff on site, 5 full time and 5 part time",
+        "Separate list of designated liaison persons for child protection: Yes",
+        "Residents provided with house rules on arrival: Yes — explained at induction meeting with new arrivals by the reception/integration officer",
+        "Procedure to report maintenance issues: Yes — residents report issues to staff, logged in book; issues identified during inspections also recorded",
+        "Maintenance issues actioned within a timely fashion (48-72hrs): Yes",
+        "Self-catering points allocation: points issued to residents on a weekly basis via Soldo card",
+        "Grocery points allocated in line with IPAS guidelines: Yes",
+        "Bedrooms inspected by staff: one corridor per week, with 124 hours notice given to residents (as printed — likely 24 hours)",
+        "Residents are responsible for cleaning their own rooms",
+        "If rooms not cleaned sufficiently: staff will speak to residents and a warning will be issued if required"
+      ]
+    },
+    {
+      "title": "1.2 Child Protection",
+      "keyPoints": [
+        "Centre has a Child Safeguarding Statement: Yes",
+        "CSS completed using a risk assessment for the centre: Yes",
+        "CSS publicly displayed: Yes",
+        "All visitors verbally informed of child protection policies and asked to sign an Appendix 2 declaration: Yes",
+        "Record of the Appendix 2 maintained: Yes",
+        "DLPs have received Tusla-approved Children First Training: Yes",
+        "Centre uses the Appendix 5 form to formalise child minding arrangements: Yes"
+      ]
+    },
+    {
+      "title": "1.3 General Safety & Security",
+      "keyPoints": [
+        "24-hour staff supervision in place: Yes",
+        "24/7 PSA licenced security staff in place: No",
+        "Security roster available: No",
+        "Security provided by external company: Yes — Grennan Security",
+        "Adequate CCTV: Yes",
+        "All bedroom doors lockable by resident: Yes; key issued for bedrooms",
+        "Residents issued key/card to main door: No — front door is always open",
+        "Visitors allowed: Yes — in reception area only",
+        "Visitor sign-in book: Yes, at reception; does not include a CSS declaration",
+        "Emergency numbers list in manager's office: Yes",
+        "First aid kits: 4, located behind reception; restocked weekly by staff member Anne Marie McCarthy",
+        "First aid spot checks (in date): Plasters 09/30, Eye pad 08/30, Foil blanket 08/28",
+        "Waste removal: manager unsure of the name of contractor",
+        "Pest control: Rentokil"
+      ]
+    },
+    {
+      "title": "1.4 Resident Comfort",
+      "keyPoints": [
+        "Heating type: Gas; residents have control of heating in their bedrooms: Yes",
+        "Space available for residents with disabilities and limited mobility: Yes",
+        "Additional storage for bulky items (suitcases etc.): Yes",
+        "Tea/coffee/drinking water & healthy snacks available 24/7: No",
+        "Late-arrival meal arrangements: takeaways close by where food can be purchased, or a Supervalu if required",
+        "TV system: Smart TV",
+        "Dedicated rooms available: Meeting Room, Indoor Children's Playroom, TV Room, Outdoor Rec Space, Outdoor Children's Play Area, Study Room; no Gym, Recreation Room, non-denominational religious room, or creche on site",
+        "Wi-Fi throughout the centre: Yes — separate adult and children's wifi, children's wifi has certain sites blocked",
+        "Document printing facilitated: unanswered (both boxes unticked)"
+      ]
+    },
+    {
+      "title": "1.5 Resident Wellbeing",
+      "keyPoints": [
+        "Items provided FOC outside of weekly points allocation: Yes",
+        "Provided FOC: Feminine hygiene products (Yes), Baby wipes (Yes), Baby nappies (Yes), Baby formula (Yes), Children's toothbrush (Yes), Shampoo (Yes), Shower gel (Yes), Toothpaste (Yes), Laundry powder/tablets/liquid (Yes)",
+        "NOT provided: Baby lotions (No), Hand soap (No)",
+        "Toothbrush: unanswered (both boxes unticked); Other: unanswered",
+        "Residents' Committee: Yes — committee in place but it is not active"
+      ]
+    },
+    {
+      "title": "1.6 Transport Arrangements",
+      "keyPoints": [
+        "Transport service provided by the centre: Yes — 8 seater van in place which does drop offs for shopping, medical appointments, and creches",
+        "Timetable to be submitted within 14 days of receipt of this report"
+      ]
+    },
+    {
+      "title": "1.7 Cleaning",
+      "keyPoints": [
+        "Cleaning materials and equipment provided by the centre for resident use: Yes",
+        "Access procedure: residents have bottles in each room and are provided with sachets of cleaning materials each week",
+        "Cleaning products/equipment stored away from children: Yes"
+      ]
+    },
+    {
+      "title": "2.1 External Areas",
+      "keyPoints": [
+        "Adequate access for residents with disabilities and limited mobility: Yes",
+        "Exterior (grounds, car park, access gates) in good condition: Yes"
+      ]
+    },
+    {
+      "title": "2.2 Mandatory Public Notices",
+      "keyPoints": [
+        "Displayed: Designated Liaison Person name & contact details, parental supervision notices, HSE breastfeeding posters, complaint forms, accident/incident reporting procedures, IOM voluntary return poster, anti human-trafficking, no to violence and harassment",
+        "NOT displayed: Up to date house rules (No), IPAS House Rules (No)",
+        "Emergency numbers list displayed: Local Garda Station, Local Hospital, Local Fire Station, Duty Social Worker Team, Out of Hours GP, IPAS email address — all Yes"
+      ]
+    },
+    {
+      "title": "2.3 Fire Safety, Exits, Lighting, Detectors, Notices",
+      "keyPoints": [
+        "Exits clear from obstruction: Yes; unlocked: Yes; fire exits clearly posted: Yes",
+        "Fire doors kept closed: Yes",
+        "Emergency lighting and smoke detectors appear in good order: Yes",
+        "Service record entries — see registers"
+      ]
+    },
+    {
+      "title": "2.4 Interior Communal Areas/Corridors",
+      "keyPoints": [
+        "Area generally clean and free from obstruction: Yes",
+        "Issues visually requiring attention: Yes (details field not completed in extractable text)",
+        "Space available for residents with disabilities and limited mobility: Yes"
+      ]
+    },
+    {
+      "title": "2.5 Laundry Area",
+      "keyPoints": [
+        "Laundry facilities available on site: Yes",
+        "Towels & bedlinen laundered by: Residents",
+        "Exchange/replacement of towels & bed linen: requested from staff as required",
+        "Washing powder/tablets: residents issued with powder/tablets on a weekly basis",
+        "Number of washers: 19 (requirement 2 per 25 residents); number of dryers: 19",
+        "Washers/dryers appear in working order: Yes"
+      ]
+    },
+    {
+      "title": "2.6 Kitchen Area",
+      "keyPoints": [
+        "Food stuffs stored off the floor and on shelving: Yes",
+        "Record of daily cleaning of kitchen, food service & dining areas: No",
+        "Record of periodic deep cleans (behind cookers/fridges etc.): No",
+        "Bins covered/lidded: Yes",
+        "Fly screens on external windows/doors: N/A"
+      ]
+    },
+    {
+      "title": "2.7 Self Catering",
+      "keyPoints": [
+        "Adequate facilities for preparation and cooking of food (1 station per 15 residents): Yes — 17 stations",
+        "Each cooking station includes: oven, hob, sink, counter area, pots, pans, utensils, crockery, cutlery, 24/7 hot & cold water, extractor fan, microwave, toaster, kettle, adequate cleaning equipment — all Yes",
+        "Each resident has access to adequate dry food, fridge & freezer storage: Yes",
+        "Dining space within reasonable proximity of cooking facilities: Yes",
+        "Approximate seating available: 50-80",
+        "Kitchen area has non-slip flooring: Yes; appropriate lighting: Yes",
+        "Kitchen has fire blanket: Yes; fire extinguisher: Yes; first aid box with burns kit: Yes"
+      ]
+    },
+    {
+      "title": "2.8 Food Hall/Shop",
+      "keyPoints": [
+        "Section not completed — no boxes ticked (centre does not appear to have a food hall/shop on site)"
+      ]
+    },
+    {
+      "title": "2.9 Fully Catered",
+      "keyPoints": [
+        "Section not completed — centre is self catering, full-catering questions left blank"
+      ]
+    },
+    {
+      "title": "2.10 Sanitary Provisions",
+      "keyPoints": [
+        "WCs (ratio 1:8 required): all rooms ensuite",
+        "Wash hand basins with 24/7 hot & cold water (ratio 1:6 required): Yes — all rooms ensuite",
+        "Showers with 24/7 hot & cold water with closable door or cubicle (ratio 1:12 required): Yes — all rooms ensuite"
+      ]
+    },
+    {
+      "title": "3. Bedrooms — inspector checklist",
+      "keyPoints": [
+        "Checklist items: fire notices on display; fire blanket in shared cooking and laundry areas; smoke alarm and hazard detection; trip hazards; no unauthorised electrical items in bedrooms; windows; doors; bathrooms (mould/damp); no obstructions to fire exits; residents have no complaints or issues; own-door accommodation provisioning (delph, cutlery, pots, pans, kettle, cooking appliances/utensils); resident numbers match bed management form; individual rooms allocated for specific requirements (health, disability, sexual orientation, gender identity); all rooms lockable; bedrooms contain beds, wardrobe/chest of drawers and lockable units; central storage area for large items; no bunk beds unless requested or persons under 15 (unless specified in contract); pillows, duvets, blankets, bed sheets and towels (minimum 2 sets); room dimensions"
+      ]
+    },
+    {
+      "title": "4. General/Personal Representations",
+      "keyPoints": [
+        "Approached by residents regarding general/personal issues: N/A",
+        "Approached by members of staff: N/A",
+        "Approached by other persons: N/A"
+      ]
+    },
+    {
+      "title": "5. Child Protection",
+      "keyPoints": [
+        "No child protection issues observed — no case-type boxes ticked (unsupervised child, inappropriate sexual behaviour, domestic abuse, emotional abuse, physical abuse, neglect all unchecked)",
+        "Tusla referral no: blank; general details of incident: blank"
+      ]
+    },
+    {
+      "title": "7. Additional Commentary",
+      "keyPoints": [
+        "No additional commentary recorded",
+        "Report completed by Paul Donoghue, signed, dated 07/04/2026"
+      ]
+    }
+  ],
+  "caveats": [
+    "Capacity columns on page 1 read 'Provider Contract Capacity: 198' and 'Confirmed Contract Capacity: 200' in extraction order; the two-row header ('Provider Contract Capacity' / 'Confirmed Contract Capacity') is split across lines in the PDF, so the two values could conceivably be swapped (i.e. contracted 200 / confirmed 198).",
+    "Contractor is recorded in the document as 'Next Week and Co. Limited'; briefing context expected 'Peppard Investments' — transcribed as printed.",
+    "Address Eircode transcribed as printed: 'F93 X859' (F93 is a Donegal routing key, unusual for a Macroom, Co. Cork address).",
+    "Bedroom inspection notice period printed as '124 hours notice' — likely a typo for 24 hours; transcribed as printed in section 1.1 key points but flagged here.",
+    "Room table: several rows omit length/width and give only total m2 (rooms 224, 222, 220, 218, and all 13.95 m2 and 18.60 m2 rooms); nulls used for missing cells.",
+    "Room table: rows with a single number after the room number (301, 303, 304, 305, 307, 308, 115, 117, 109) were interpreted as current occupancy with bed configuration missing, based on comparison with fully-populated rows (e.g. 306 '1D,3S | 5').",
+    "Rooms 209 and 212 show bed config and total dimensions (18.60) but no current occupancy or suitable occupancy value in the extractable text.",
+    "Room 302 row contains only dimensions (13.95) and suitable occupancy (3); bed config and occupancy absent.",
+    "Room 224 bed config printed as '3 S/1D' — normalised to '3S/1D'.",
+    "Room 206 issues list prints 'iron' twice ('Fridge, iron, kettle, iron in room') — transcribed as printed.",
+    "Summary Details: 'Fire Safety Issues' and 'Security & Staffing' rows have no RAG box visibly checked in the extracted text (RED/AMBER/GREEN all unchecked) — priority recorded as null.",
+    "Summary Details: 'Evidence of resolution attached' Yes/No boxes are unchecked for every finding — recorded as null.",
+    "Page 9 contains no extractable text (appears to be a blank or image-only page).",
+    "Transport timetable text printed as 'within 14 days o receipt' (sic) — transcribed with the obvious reading 'of receipt'.",
+    "Room count discrepancy: the room table lists 54 rooms (6 empty) while the master details state occupancy '177 across 50 Rooms' — both transcribed as printed."
+  ]
+}

@@ -1,0 +1,2378 @@
+{
+    "source":  "IPAS Centres 11.06.26.xlsx",
+    "extractedAt":  "2026-07-11",
+    "description":  "HIQA inspection tracker for Irish IPAS accommodation centres (Peppard Investments). Extracted verbatim from the source workbook; judgement strings normalised per legend.judgementScale.",
+    "sheets":  [
+                   "IPAS ",
+                   "Standards ",
+                   "Judgement "
+               ],
+    "legend":  {
+                   "judgementScale":  {
+                                          "compliant":  "Compliant",
+                                          "substantiallyCompliant":  "Substantially Compliant",
+                                          "partiallyCompliant":  "Partially Compliant",
+                                          "notCompliant":  "Not Compliant"
+                                      },
+                   "normalisation":  "Raw judgement cells varied only in trailing whitespace (e.g. \u0027Compliant \u0027 vs \u0027Compliant\u0027); values were trimmed and case-insensitively mapped to the camelCase keys above. Centre names and text fields were trimmed and internal line breaks collapsed to single spaces; original untrimmed matrix column headers preserved in inspections[].rawLabel.",
+                   "notes":  [
+                                 "Sheet \u0027IPAS \u0027 rows 50-61 repeat centres already listed in rows 2-49 with different resident/occupancy figures (apparently a later snapshot appended below the original list); all rows are preserved verbatim with their rowNumber.",
+                                 "The \u0027Standards \u0027 matrix has one column per inspection, not per centre: several centres appear in multiple columns (repeat inspections). Columns are keyed by their spreadsheet column letter.",
+                                 "Standard 10.5 exists as a row in both sheets but has no description, no judgements, and all-zero counts.",
+                                 "Occupancy anomalies present in source: Mosney Village residents (977) exceeds max occupancy (668); Carroll Village residents (88) exceeds max occupancy (86).",
+                                 "sectorDistribution is the workbook\u0027s own pre-computed tally (sheet \u0027Judgement \u0027) preserved verbatim. It systematically UNDERCOUNTS compliant and substantiallyCompliant relative to a direct tally of the judgement matrix: the workbook\u0027s COUNTIF-style formulas exact-match \u0027Compliant\u0027/\u0027Substantially Compliant\u0027 and miss the trailing-space variants (\u0027Compliant \u0027, \u0027Substantially Compliant \u0027) used in the later inspection columns (roughly BD onward). partiallyCompliant and notCompliant counts match the matrix exactly. Recompute distributions from inspections[].judgements if you need accurate sector benchmarks."
+                             ]
+               },
+    "centres":  [
+                    {
+                        "rowNumber":  2,
+                        "name":  "Dídean Carlow",
+                        "providerName":  "Dídean Dachas Eireann Teoranta Ltd",
+                        "location":  "Carlow",
+                        "residents":  30,
+                        "maxOccupancy":  30
+                    },
+                    {
+                        "rowNumber":  3,
+                        "name":  "Knockalisheen",
+                        "providerName":  "Aramark",
+                        "location":  "Clare",
+                        "residents":  299,
+                        "maxOccupancy":  354
+                    },
+                    {
+                        "rowNumber":  4,
+                        "name":  "The King Thomond",
+                        "providerName":  "King Thomond",
+                        "location":  "Clare",
+                        "residents":  165,
+                        "maxOccupancy":  165
+                    },
+                    {
+                        "rowNumber":  5,
+                        "name":  "Ashbourne House",
+                        "providerName":  "Barlow Properties",
+                        "location":  "Cork",
+                        "residents":  92,
+                        "maxOccupancy":  92
+                    },
+                    {
+                        "rowNumber":  6,
+                        "name":  "Kinsale Road Accommodation Centre",
+                        "providerName":  "Aramark",
+                        "location":  "Cork",
+                        "residents":  175,
+                        "maxOccupancy":  183
+                    },
+                    {
+                        "rowNumber":  7,
+                        "name":  "Davis Lane Apartments",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Cork",
+                        "residents":  57,
+                        "maxOccupancy":  57
+                    },
+                    {
+                        "rowNumber":  8,
+                        "name":  "Clonakilty Lodge",
+                        "providerName":  "D\u0026A Pizza Ltd.",
+                        "location":  "Cork",
+                        "residents":  85,
+                        "maxOccupancy":  85
+                    },
+                    {
+                        "rowNumber":  9,
+                        "name":  "Glenvera Hotel",
+                        "providerName":  "Bideau Limited",
+                        "location":  "Cork",
+                        "residents":  110,
+                        "maxOccupancy":  110
+                    },
+                    {
+                        "rowNumber":  10,
+                        "name":  "Millstreet Accommodation Centre",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Cork",
+                        "residents":  260,
+                        "maxOccupancy":  271
+                    },
+                    {
+                        "rowNumber":  11,
+                        "name":  "Finn Accommodation Centre",
+                        "providerName":  "Townbe ULC",
+                        "location":  "Donegal",
+                        "residents":  153,
+                        "maxOccupancy":  179
+                    },
+                    {
+                        "rowNumber":  12,
+                        "name":  "Port Road Apartments",
+                        "providerName":  "Bridgestock Care Ltd",
+                        "location":  "Donegal",
+                        "residents":  277,
+                        "maxOccupancy":  306
+                    },
+                    {
+                        "rowNumber":  13,
+                        "name":  "Dublin Central Inn",
+                        "providerName":  "Coziq Entreprises Limited",
+                        "location":  "Dublin",
+                        "residents":  109,
+                        "maxOccupancy":  120
+                    },
+                    {
+                        "rowNumber":  14,
+                        "name":  "The Towers",
+                        "providerName":  "Fazyard Limited",
+                        "location":  "Dublin",
+                        "residents":  180,
+                        "maxOccupancy":  250
+                    },
+                    {
+                        "rowNumber":  15,
+                        "name":  "Emmet Lodge",
+                        "providerName":  "Coolebridge Limited",
+                        "location":  "Dublin",
+                        "residents":  14,
+                        "maxOccupancy":  15
+                    },
+                    {
+                        "rowNumber":  16,
+                        "name":  "Basin Lodge",
+                        "providerName":  "Coolebridge Limited",
+                        "location":  "Dublin",
+                        "residents":  20,
+                        "maxOccupancy":  20
+                    },
+                    {
+                        "rowNumber":  17,
+                        "name":  "Great Western House",
+                        "providerName":  "Sidetracks ULC",
+                        "location":  "Galway",
+                        "residents":  148,
+                        "maxOccupancy":  156
+                    },
+                    {
+                        "rowNumber":  18,
+                        "name":  "Eglinton Centre",
+                        "providerName":  "Maplestar LTD.",
+                        "location":  "Galway",
+                        "residents":  195,
+                        "maxOccupancy":  227
+                    },
+                    {
+                        "rowNumber":  19,
+                        "name":  "Cúirt Uisce Accommodation Centre",
+                        "providerName":  "Keldesso Ltd.",
+                        "location":  "Galway",
+                        "residents":  52,
+                        "maxOccupancy":  52
+                    },
+                    {
+                        "rowNumber":  20,
+                        "name":  "Dominick Street Complex",
+                        "providerName":  "Keldesso LTD",
+                        "location":  "Galway",
+                        "residents":  124,
+                        "maxOccupancy":  124
+                    },
+                    {
+                        "rowNumber":  21,
+                        "name":  "Atlas Killarney",
+                        "providerName":  "On-Site Facilities Management Ltd",
+                        "location":  "Kerry",
+                        "residents":  73,
+                        "maxOccupancy":  90
+                    },
+                    {
+                        "rowNumber":  22,
+                        "name":  "Atlas Tralee",
+                        "providerName":  "Onsite Facilities Management",
+                        "location":  "Kerry",
+                        "residents":  94,
+                        "maxOccupancy":  100
+                    },
+                    {
+                        "rowNumber":  23,
+                        "name":  "Linden House",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Kerry",
+                        "residents":  74,
+                        "maxOccupancy":  74
+                    },
+                    {
+                        "rowNumber":  24,
+                        "name":  "Park Lodge",
+                        "providerName":  "Onsite Facilities Management Ltd.",
+                        "location":  "Kerry",
+                        "residents":  59,
+                        "maxOccupancy":  59
+                    },
+                    {
+                        "rowNumber":  25,
+                        "name":  "Atlantic Lodge",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Kerry",
+                        "residents":  59,
+                        "maxOccupancy":  108
+                    },
+                    {
+                        "rowNumber":  26,
+                        "name":  "Johnston Marina",
+                        "providerName":  "Onsite Facilities Management",
+                        "location":  "Kerry",
+                        "residents":  78,
+                        "maxOccupancy":  78
+                    },
+                    {
+                        "rowNumber":  27,
+                        "name":  "The Hazel Hotel",
+                        "providerName":  "Horizon House Group",
+                        "location":  "Kildare",
+                        "residents":  95,
+                        "maxOccupancy":  95
+                    },
+                    {
+                        "rowNumber":  28,
+                        "name":  "Dídean Portlaoise",
+                        "providerName":  "Dídean Dachas Eireann Teoranta LTD",
+                        "location":  "Laois",
+                        "residents":  34,
+                        "maxOccupancy":  42
+                    },
+                    {
+                        "rowNumber":  29,
+                        "name":  "Hibernian Hotel",
+                        "providerName":  "Flodale Ltd.",
+                        "location":  "Laois",
+                        "residents":  44,
+                        "maxOccupancy":  44
+                    },
+                    {
+                        "rowNumber":  30,
+                        "name":  "Carraig Accommodation Centre",
+                        "providerName":  "Townbe",
+                        "location":  "Leitrim",
+                        "residents":  104,
+                        "maxOccupancy":  104
+                    },
+                    {
+                        "rowNumber":  31,
+                        "name":  "Hanratty’s Hotel",
+                        "providerName":  "Birch Rentals Ltd.",
+                        "location":  "Limerick",
+                        "residents":  95,
+                        "maxOccupancy":  100
+                    },
+                    {
+                        "rowNumber":  32,
+                        "name":  "Griffin House",
+                        "providerName":  "Double Property Group",
+                        "location":  "Limerick",
+                        "residents":  73,
+                        "maxOccupancy":  73
+                    },
+                    {
+                        "rowNumber":  33,
+                        "name":  "Carroll Village",
+                        "providerName":  "ECCI Ireland",
+                        "location":  "Louth",
+                        "residents":  88,
+                        "maxOccupancy":  86
+                    },
+                    {
+                        "rowNumber":  34,
+                        "name":  "St Patrick’s Accommodation Centre",
+                        "providerName":  "Tattonward Ltd.",
+                        "location":  "Monaghan",
+                        "residents":  354,
+                        "maxOccupancy":  354
+                    },
+                    {
+                        "rowNumber":  35,
+                        "name":  "Marian Hostel",
+                        "providerName":  "Bridgestock Care Ltd",
+                        "location":  "Offaly",
+                        "residents":  162,
+                        "maxOccupancy":  162
+                    },
+                    {
+                        "rowNumber":  36,
+                        "name":  "Benbulben Court",
+                        "providerName":  "Brava Capital Limited",
+                        "location":  "Sligo",
+                        "residents":  80,
+                        "maxOccupancy":  350
+                    },
+                    {
+                        "rowNumber":  37,
+                        "name":  "Milligan Court",
+                        "providerName":  "Brava Capital Ltd.",
+                        "location":  "Sligo",
+                        "residents":  124,
+                        "maxOccupancy":  181
+                    },
+                    {
+                        "rowNumber":  38,
+                        "name":  "Globe House",
+                        "providerName":  "Bridgestock Care Ltd",
+                        "location":  "Sligo",
+                        "residents":  163,
+                        "maxOccupancy":  163
+                    },
+                    {
+                        "rowNumber":  39,
+                        "name":  "Borrisokane Accommodation Centre",
+                        "providerName":  "Double Property Services Limited",
+                        "location":  "Tipperary",
+                        "residents":  93,
+                        "maxOccupancy":  93
+                    },
+                    {
+                        "rowNumber":  40,
+                        "name":  "Bridgewater House",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Tipperary",
+                        "residents":  173,
+                        "maxOccupancy":  173
+                    },
+                    {
+                        "rowNumber":  41,
+                        "name":  "Ocean View House",
+                        "providerName":  "Ocean View Accommodation Ltd",
+                        "location":  "Waterford",
+                        "residents":  92,
+                        "maxOccupancy":  100
+                    },
+                    {
+                        "rowNumber":  42,
+                        "name":  "Birchwood House",
+                        "providerName":  "Stompool Investments Ltd",
+                        "location":  "Waterford",
+                        "residents":  142,
+                        "maxOccupancy":  145
+                    },
+                    {
+                        "rowNumber":  43,
+                        "name":  "Atlantic House",
+                        "providerName":  "Atlantic Blue Ltd",
+                        "location":  "Waterford",
+                        "residents":  78,
+                        "maxOccupancy":  82
+                    },
+                    {
+                        "rowNumber":  44,
+                        "name":  "Viking House",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Waterford",
+                        "residents":  96,
+                        "maxOccupancy":  96
+                    },
+                    {
+                        "rowNumber":  45,
+                        "name":  "Athlone Accommodation Centre",
+                        "providerName":  "Aramark",
+                        "location":  "Westmeath",
+                        "residents":  156,
+                        "maxOccupancy":  300
+                    },
+                    {
+                        "rowNumber":  46,
+                        "name":  "Temple Accommodation Centre",
+                        "providerName":  "Townbe ULC",
+                        "location":  "Westmeath",
+                        "residents":  91,
+                        "maxOccupancy":  91
+                    },
+                    {
+                        "rowNumber":  47,
+                        "name":  "Slaney Court Apartments",
+                        "providerName":  "Double Property Group",
+                        "location":  "Wicklow",
+                        "residents":  76,
+                        "maxOccupancy":  76
+                    },
+                    {
+                        "rowNumber":  48,
+                        "name":  "The Grand Hotel",
+                        "providerName":  "Vesta Hotels Limited",
+                        "location":  "Wicklow",
+                        "residents":  104,
+                        "maxOccupancy":  111
+                    },
+                    {
+                        "rowNumber":  49,
+                        "name":  "Mosney Village",
+                        "providerName":  "Mosney Unlimited Company",
+                        "location":  "Meath",
+                        "residents":  977,
+                        "maxOccupancy":  668
+                    },
+                    {
+                        "rowNumber":  50,
+                        "name":  "Benbulben Court",
+                        "providerName":  "Brava Capital Limited",
+                        "location":  "Sligo",
+                        "residents":  350,
+                        "maxOccupancy":  350
+                    },
+                    {
+                        "rowNumber":  51,
+                        "name":  "Park Lodge",
+                        "providerName":  "Onsite Facilities Management",
+                        "location":  "Kerry",
+                        "residents":  49,
+                        "maxOccupancy":  59
+                    },
+                    {
+                        "rowNumber":  52,
+                        "name":  "Knockalisheen",
+                        "providerName":  "Knockalisheen",
+                        "location":  "Clare",
+                        "residents":  208,
+                        "maxOccupancy":  354
+                    },
+                    {
+                        "rowNumber":  53,
+                        "name":  "Kinsale Road Accommodation Centre",
+                        "providerName":  "Aramark",
+                        "location":  "Cork",
+                        "residents":  183,
+                        "maxOccupancy":  183
+                    },
+                    {
+                        "rowNumber":  54,
+                        "name":  "Eglinton Centre",
+                        "providerName":  "Maplestar LTD.",
+                        "location":  "Galway",
+                        "residents":  227,
+                        "maxOccupancy":  227
+                    },
+                    {
+                        "rowNumber":  55,
+                        "name":  "Cuirt Uisce Accommodation Centre",
+                        "providerName":  "Keldesso Ltd.",
+                        "location":  "Galway",
+                        "residents":  66,
+                        "maxOccupancy":  66
+                    },
+                    {
+                        "rowNumber":  56,
+                        "name":  "Milligan Court",
+                        "providerName":  "Brava Capital Ltd",
+                        "location":  "Sligo",
+                        "residents":  181,
+                        "maxOccupancy":  181
+                    },
+                    {
+                        "rowNumber":  57,
+                        "name":  "Milstreet Accommodation Centre",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Cork",
+                        "residents":  271,
+                        "maxOccupancy":  271
+                    },
+                    {
+                        "rowNumber":  58,
+                        "name":  "Great Western House",
+                        "providerName":  "Sidetracks ULC",
+                        "location":  "Galway",
+                        "residents":  141,
+                        "maxOccupancy":  156
+                    },
+                    {
+                        "rowNumber":  59,
+                        "name":  "Dublin Central Inn",
+                        "providerName":  "Coziq Enterprises Limited",
+                        "location":  "Dublin",
+                        "residents":  119,
+                        "maxOccupancy":  120
+                    },
+                    {
+                        "rowNumber":  60,
+                        "name":  "Bridgewater House",
+                        "providerName":  "Cromey Ltd",
+                        "location":  "Tipperary",
+                        "residents":  173,
+                        "maxOccupancy":  173
+                    },
+                    {
+                        "rowNumber":  61,
+                        "name":  "Atlas House Killarney",
+                        "providerName":  "Onsite Facilities Management Ltd.",
+                        "location":  "Kerry",
+                        "residents":  72,
+                        "maxOccupancy":  90
+                    }
+                ],
+    "standards":  [
+                      {
+                          "id":  "1.1",
+                          "dimension":  null,
+                          "theme":  "Theme 1: Governance, Accountability and Leadership",
+                          "description":  "The service provider performs its functions as outlined in relevant legislation, regulations, national policies and standards to protect residents living in the accommodation centre in a manner that promotes their welfare and respects their dignity."
+                      },
+                      {
+                          "id":  "1.2",
+                          "dimension":  null,
+                          "theme":  "Theme 1: Governance, Accountability and Leadership",
+                          "description":  "The service provider has effective leadership, governance arrangements and management arrangements in place and staff are clearly accountable for areas within the service."
+                      },
+                      {
+                          "id":  "1.3",
+                          "dimension":  null,
+                          "theme":  "Theme 1: Governance, Accountability and Leadership",
+                          "description":  "There is a residents’ charter which accurately and clearly describes the services available to children and adults living in the centre, including how and where the services are provided."
+                      },
+                      {
+                          "id":  "1.4",
+                          "dimension":  null,
+                          "theme":  "Theme 1: Governance, Accountability and Leadership",
+                          "description":  "The service provider monitors and reviews the quality of care and experience of children and adults living in the centre and this is improved on an ongoing basis."
+                      },
+                      {
+                          "id":  "1.5",
+                          "dimension":  null,
+                          "theme":  "Theme 1: Governance, Accountability and Leadership",
+                          "description":  "Management regularly consult residents on their views and allow them to participate in decisions which affect them as much as possible."
+                      },
+                      {
+                          "id":  "2.1",
+                          "dimension":  null,
+                          "theme":  "Theme 2: Responsive Workforce",
+                          "description":  "There are safe and effective recruitment practices in place for staff and management."
+                      },
+                      {
+                          "id":  "2.2",
+                          "dimension":  null,
+                          "theme":  "Theme 2: Responsive Workforce",
+                          "description":  "Staff have the required competencies to manage and deliver person-centred, effective and safe services to children and adults living in the centre."
+                      },
+                      {
+                          "id":  "2.3",
+                          "dimension":  null,
+                          "theme":  "Theme 2: Responsive Workforce",
+                          "description":  "Staff are supported and supervised to carry out their duties to promote and protect the welfare of all children and adults living in the centre."
+                      },
+                      {
+                          "id":  "2.4",
+                          "dimension":  null,
+                          "theme":  "Theme 2: Responsive Workforce",
+                          "description":  "Continuous training is provided to staff to improve the service provided for all children and adults living in the centre."
+                      },
+                      {
+                          "id":  "3.1",
+                          "dimension":  null,
+                          "theme":  "Theme 3: Contingency Planning and Emergency Preparedness",
+                          "description":  "The service provider will carry out a regular risk analysis of the service and develop a risk register."
+                      },
+                      {
+                          "id":  "4.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider, in planning, designing and allocating accommodation within the centre, is informed by the identified needs and best interests of residents, and the best interests of the child."
+                      },
+                      {
+                          "id":  "4.2",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider makes available accommodation which is homely, accessible and sufficiently furnished."
+                      },
+                      {
+                          "id":  "4.3",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The privacy, dignity and safety of each resident is protected and promoted in accommodation centres. The physical environment promotes the safety, health and wellbeing of residents."
+                      },
+                      {
+                          "id":  "4.4",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The privacy and dignity of family units is protected and promoted in accommodation centres. Children and their care-givers are provided with child friendly accommodation which respects and promotes family life and is informed by the best interests of the child."
+                      },
+                      {
+                          "id":  "4.5",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The accommodation centre has adequate and accessible facilities, including dedicated child-friendly, play and recreation facilities."
+                      },
+                      {
+                          "id":  "4.6",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider makes available, in the accommodation centre, adequate and dedicated facilities and materials to support the educational development of each child and young person."
+                      },
+                      {
+                          "id":  "4.7",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider commits to providing an environment which is clean and respects, and promotes the independence of residents in relation to laundry and cleaning."
+                      },
+                      {
+                          "id":  "4.8",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider has in place security measures which are sufficient, proportionate and appropriate. The measures ensure the right to privacy and dignity of residents is protected."
+                      },
+                      {
+                          "id":  "4.9",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 4: Accommodation",
+                          "description":  "The service provider makes available sufficient and appropriate non-food items and products to ensure personal hygiene, comfort, dignity, health and wellbeing."
+                      },
+                      {
+                          "id":  "5.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 5: Food, Catering and Cooking Facilities",
+                          "description":  "Food preparation and dining facilities meet the needs of residents, support family life and are appropriately equipped and maintained."
+                      },
+                      {
+                          "id":  "5.2",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 5: Food, Catering and Cooking Facilities",
+                          "description":  "The service provider commits to meeting the catering needs and autonomy of residents which includes access to a varied diet that respects their cultural, religious, dietary, nutritional and medical requirements."
+                      },
+                      {
+                          "id":  "6.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 6: Person Centred Care and Support",
+                          "description":  "The rights and diversity of each resident are respected, safeguarded and promoted."
+                      },
+                      {
+                          "id":  "7.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 7: Individual, Family and Community Life",
+                          "description":  "The service provider supports and facilitates residents to develop and maintain personal and family relationships."
+                      },
+                      {
+                          "id":  "7.2",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 7: Individual, Family and Community Life",
+                          "description":  "The service provider ensures that public services, healthcare, education, community supports and leisure activities are accessible to residents, including children and young people, and where necessary through the provision of a dedicated and adequate transport."
+                      },
+                      {
+                          "id":  "7.3",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 7: Individual, Family and Community Life",
+                          "description":  "The service provider supports and facilitates residents, including children and young people, to integrate and engage with the wider community, including through engagement with other agencies."
+                      },
+                      {
+                          "id":  "8.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 8: Safeguarding and Protection",
+                          "description":  "The service provider protects residents from abuse and neglect and promotes their safety and welfare."
+                      },
+                      {
+                          "id":  "8.2",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 8: Safeguarding and Protection",
+                          "description":  "The service provider takes all reasonable steps to protect each child from abuse and neglect and children’s safety and welfare is promoted."
+                      },
+                      {
+                          "id":  "8.3",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 8: Safeguarding and Protection",
+                          "description":  "The service provider manages and reviews adverse events and incidents in a timely manner and outcomes inform practice at all levels."
+                      },
+                      {
+                          "id":  "9.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 9: Health, Wellbeing and Development",
+                          "description":  "The service provider promotes the health, wellbeing and development of each resident and they offer appropriate, person centred and needs-based support to meet any identified health or social care needs."
+                      },
+                      {
+                          "id":  "10.1",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 10: Identification, Assessment and Response to Special Needs",
+                          "description":  "The service provider ensures that any special reception needs notified to them by the Department of Justice and Equality are incorporated into the provision of accommodation and associated services for the resident."
+                      },
+                      {
+                          "id":  "10.2",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 10: Identification, Assessment and Response to Special Needs",
+                          "description":  "All staff are enabled to identify and respond to emerging and identified needs for residents."
+                      },
+                      {
+                          "id":  "10.3",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 10: Identification, Assessment and Response to Special Needs",
+                          "description":  "The service provider has an established policy to identify, communicate and address existing and emerging special reception needs."
+                      },
+                      {
+                          "id":  "10.4",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 10: Identification, Assessment and Response to Special Needs",
+                          "description":  "The service provider makes available a dedicated Reception Officer, who is suitably trained to support all residents’ especially those people with special reception needs both inside the accommodation centre and with outside agencies."
+                      },
+                      {
+                          "id":  "10.5",
+                          "dimension":  "Quality and Safety",
+                          "theme":  "Theme 10: Identification, Assessment and Response to Special Needs",
+                          "description":  ""
+                      }
+                  ],
+    "inspections":  [
+                        {
+                            "column":  "B",
+                            "centre":  "Great Western House",
+                            "rawLabel":  "Great Western \nHouse",
+                            "judgements":  {
+                                               "2.1":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "7.1":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "C",
+                            "centre":  "Athlone Accommodation Centre",
+                            "rawLabel":  "Athlone \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "3.1":  "partiallyCompliant",
+                                               "4.2":  "notCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.5":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "D",
+                            "centre":  "St Patrick’s Accommodation Centre",
+                            "rawLabel":  "St Patrick’s \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.9":  "notCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "E",
+                            "centre":  "Slaney Court Apartments",
+                            "rawLabel":  "Slaney Court \nApartments",
+                            "judgements":  {
+                                               "2.3":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "F",
+                            "centre":  "Atlas Killarney",
+                            "rawLabel":  "Atlas Killarney",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.2":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "G",
+                            "centre":  "Borrisokane Accommodation Centre",
+                            "rawLabel":  "Borrisokane Accommodation Centre",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.7":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "H",
+                            "centre":  "Viking House",
+                            "rawLabel":  "Viking House",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "I",
+                            "centre":  "Emmet Lodge",
+                            "rawLabel":  "Emmet Lodge",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "J",
+                            "centre":  "Dídean Carlow",
+                            "rawLabel":  "Dídean Carlow",
+                            "judgements":  {
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "K",
+                            "centre":  "Benbulben Court",
+                            "rawLabel":  "Benbulben Court",
+                            "judgements":  {
+                                               "3.1":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "L",
+                            "centre":  "Milligan Court",
+                            "rawLabel":  "Milligan Court",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "notCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "M",
+                            "centre":  "Finn Accommodation Centre",
+                            "rawLabel":  "Finn \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "7.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "N",
+                            "centre":  "Hanratty’s Hotel",
+                            "rawLabel":  "Hanratty’s Hotel",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "O",
+                            "centre":  "Kinsale Road Accommodation Centre",
+                            "rawLabel":  "Kinsale Road \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "P",
+                            "centre":  "Knockalisheen Accommodation Centre",
+                            "rawLabel":  "Knockalisheen Accommodation \nCentre",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.2":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.8":  "partiallyCompliant",
+                                               "4.9":  "notCompliant",
+                                               "6.1":  "notCompliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "notCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "Q",
+                            "centre":  "Knockalisheen",
+                            "rawLabel":  "Knockalisheen ",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "notCompliant",
+                                               "2.1":  "partiallyCompliant",
+                                               "2.2":  "notCompliant",
+                                               "2.3":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "notCompliant",
+                                               "4.3":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.5":  "notCompliant",
+                                               "4.7":  "notCompliant",
+                                               "4.8":  "notCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "notCompliant",
+                                               "8.3":  "notCompliant",
+                                               "9.1":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "R",
+                            "centre":  "Dídean Portlaoise",
+                            "rawLabel":  "Dídean Portlaoise",
+                            "judgements":  {
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "S",
+                            "centre":  "Ashbourne House",
+                            "rawLabel":  "Ashbourne House",
+                            "judgements":  {
+                                               "1.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "10.1":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "T",
+                            "centre":  "Atlas Tralee",
+                            "rawLabel":  "Atlas Tralee",
+                            "judgements":  {
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "U",
+                            "centre":  "Davis Lane Apartments",
+                            "rawLabel":  "Davis Lane \nApartments",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "V",
+                            "centre":  "Griffin House",
+                            "rawLabel":  "Griffin House",
+                            "judgements":  {
+                                               "1.3":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "10.1":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "W",
+                            "centre":  "Hibernian Hotel",
+                            "rawLabel":  "Hibernian Hotel",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "notCompliant",
+                                               "8.2":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "X",
+                            "centre":  "Marian Hostel",
+                            "rawLabel":  "Marian Hostel",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.3":  "partiallyCompliant",
+                                               "4.7":  "notCompliant",
+                                               "5.1":  "notCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "7.1":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "Y",
+                            "centre":  "Port Road Apartments",
+                            "rawLabel":  "Port Road \nApartments",
+                            "judgements":  {
+                                               "1.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "Z",
+                            "centre":  "The Towers",
+                            "rawLabel":  "The Towers",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "notCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "notCompliant",
+                                               "2.4":  "notCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.7":  "partiallyCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.2":  "notCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.3":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AA",
+                            "centre":  "Bridgewater House",
+                            "rawLabel":  "Bridgewater House",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AB",
+                            "centre":  "Carraig Accommodation Centre",
+                            "rawLabel":  "Carraig \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AC",
+                            "centre":  "Clonakilty Lodge",
+                            "rawLabel":  "Clonakilty Lodge",
+                            "judgements":  {
+                                               "10.2":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AD",
+                            "centre":  "Linden House",
+                            "rawLabel":  "Linden House",
+                            "judgements":  {
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AE",
+                            "centre":  "Ocean View House",
+                            "rawLabel":  "Ocean View House",
+                            "judgements":  {
+                                               "2.3":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AF",
+                            "centre":  "Park Lodge",
+                            "rawLabel":  "Park Lodge",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "notCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.7":  "partiallyCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AG",
+                            "centre":  "Carroll Village",
+                            "rawLabel":  "Carroll Village",
+                            "judgements":  {
+                                               "2.3":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AH",
+                            "centre":  "Dominick Street Complex",
+                            "rawLabel":  "Dominick Street \nComplex",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AI",
+                            "centre":  "Temple Accommodation Centre",
+                            "rawLabel":  "Temple \nAccommodation \nCentre",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.2":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "7.2":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AJ",
+                            "centre":  "Basin Lodge",
+                            "rawLabel":  "Basin Lodge",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "10.3":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AK",
+                            "centre":  "Atlantic Lodge",
+                            "rawLabel":  "Atlantic Lodge",
+                            "judgements":  {
+                                               "1.2":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.5":  "partiallyCompliant",
+                                               "4.6":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AL",
+                            "centre":  "Birchwood House",
+                            "rawLabel":  "Birchwood House",
+                            "judgements":  {
+                                               "2.3":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AM",
+                            "centre":  "Dublin Central Inn",
+                            "rawLabel":  "Dublin Central Inn",
+                            "judgements":  {
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AN",
+                            "centre":  "Eglinton Centre",
+                            "rawLabel":  "Eglinton Centre ",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AO",
+                            "centre":  "The Grand Hotel",
+                            "rawLabel":  "The Grand Hotel",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "notCompliant",
+                                               "1.4":  "notCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "notCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.6":  "partiallyCompliant",
+                                               "4.7":  "notCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.1":  "notCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AP",
+                            "centre":  "The King Thomond",
+                            "rawLabel":  "The King Thomond",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.8":  "partiallyCompliant",
+                                               "8.2":  "notCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AQ",
+                            "centre":  "Atlantic House",
+                            "rawLabel":  "Atlantic House",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "notCompliant",
+                                               "1.4":  "notCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "7.2":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AR",
+                            "centre":  "Glenvera Hotel",
+                            "rawLabel":  "Glenvera Hotel",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.2":  "notCompliant",
+                                               "4.8":  "partiallyCompliant",
+                                               "4.9":  "notCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "9.1":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AS",
+                            "centre":  "Globe House",
+                            "rawLabel":  "Globe House",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AT",
+                            "centre":  "Johnston Marina",
+                            "rawLabel":  "Johnston Marina",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AU",
+                            "centre":  "The Hazel Hotel",
+                            "rawLabel":  "The Hazel Hotel",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.3":  "partiallyCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AV",
+                            "centre":  "Milligan Court",
+                            "rawLabel":  "Milligan Court",
+                            "judgements":  {
+                                               "1.1":  "substantiallyCompliant",
+                                               "1.2":  "compliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "1.5":  "compliant",
+                                               "2.1":  "compliant",
+                                               "2.2":  "compliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "compliant",
+                                               "4.5":  "compliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "7.3":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "compliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "substantiallyCompliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "AW",
+                            "centre":  "Viking House",
+                            "rawLabel":  "Viking House",
+                            "judgements":  {
+                                               "1.1":  "compliant",
+                                               "1.2":  "compliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "1.5":  "substantiallyCompliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "8.1":  "substantiallyCompliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "AX",
+                            "centre":  "Knockalisheen",
+                            "rawLabel":  "Knockalisheen",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.2":  "notCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "notCompliant",
+                                               "6.1":  "notCompliant",
+                                               "8.1":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AY",
+                            "centre":  "Johnston Marina",
+                            "rawLabel":  "Johnston Marina",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.2":  "compliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.2":  "substantiallyCompliant",
+                                               "4.3":  "compliant",
+                                               "4.4":  "notCompliant",
+                                               "4.5":  "compliant",
+                                               "4.6":  "substantiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "substantiallyCompliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "substantiallyCompliant",
+                                               "6.1":  "substantiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "substantiallyCompliant",
+                                               "10.3":  "substantiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "AZ",
+                            "centre":  "Eglinton Centre",
+                            "rawLabel":  "Eglinton Centre",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.2":  "notCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "notCompliant",
+                                               "6.1":  "notCompliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BA",
+                            "centre":  "Clonakilty Lodge",
+                            "rawLabel":  "Clonakilty Lodge",
+                            "judgements":  {
+                                               "1.1":  "compliant",
+                                               "1.2":  "compliant",
+                                               "1.4":  "compliant",
+                                               "1.5":  "compliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.2":  "compliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "substantiallyCompliant",
+                                               "4.5":  "compliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "9.1":  "substantiallyCompliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BB",
+                            "centre":  "Atlas House Tralee",
+                            "rawLabel":  "Atlas House Tralee",
+                            "judgements":  {
+                                               "1.1":  "substantiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.2":  "substantiallyCompliant",
+                                               "4.3":  "partiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "substantiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "substantiallyCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BC",
+                            "centre":  "Atlas House Killarney",
+                            "rawLabel":  "Atlas House Killarney ",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.3":  "partiallyCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BD",
+                            "centre":  "Bridgewater House",
+                            "rawLabel":  "Bridgewater House ",
+                            "judgements":  {
+                                               "1.1":  "compliant",
+                                               "1.2":  "compliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "1.5":  "compliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "substantiallyCompliant",
+                                               "4.5":  "substantiallyCompliant",
+                                               "4.6":  "substantiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "7.3":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BE",
+                            "centre":  "Mosney Village",
+                            "rawLabel":  "Mosney Village ",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "notCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "2.1":  "compliant",
+                                               "2.2":  "substantiallyCompliant",
+                                               "2.3":  "substantiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "substantiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.4":  "compliant",
+                                               "4.5":  "compliant",
+                                               "4.6":  "substantiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "substantiallyCompliant",
+                                               "5.1":  "substantiallyCompliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "partiallyCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "substantiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BF",
+                            "centre":  "Dídean Portlaoise",
+                            "rawLabel":  "Dídean Portlaoise",
+                            "judgements":  {
+                                               "1.1":  "substantiallyCompliant",
+                                               "1.2":  "compliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "compliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "substantiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "compliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BG",
+                            "centre":  "Benbulben Court",
+                            "rawLabel":  "Benbulben Court",
+                            "judgements":  {
+                                               "1.1":  "substantiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "substantiallyCompliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "substantiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "substantiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BH",
+                            "centre":  "Park Lodge",
+                            "rawLabel":  "Park Lodge ",
+                            "judgements":  {
+                                               "1.1":  "compliant",
+                                               "1.2":  "compliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "substantiallyCompliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "substantiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BI",
+                            "centre":  "Knockalisheen",
+                            "rawLabel":  "Knockalisheen  ",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "notCompliant",
+                                               "2.1":  "partiallyCompliant",
+                                               "2.3":  "notCompliant",
+                                               "2.4":  "partiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "notCompliant",
+                                               "4.2":  "notCompliant",
+                                               "4.4":  "substantiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "notCompliant",
+                                               "5.2":  "substantiallyCompliant",
+                                               "6.1":  "notCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "substantiallyCompliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "partiallyCompliant",
+                                               "8.3":  "notCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BJ",
+                            "centre":  "Kinsale Road Accommodation Centre",
+                            "rawLabel":  "Kinsale Road Accommodation Centre ",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "notCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "substantiallyCompliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "substantiallyCompliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BK",
+                            "centre":  "Eglinton Centre",
+                            "rawLabel":  "Eglinton Centre",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "partiallyCompliant",
+                                               "2.2":  "partiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.2":  "substantiallyCompliant",
+                                               "4.3":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "substantiallyCompliant",
+                                               "4.8":  "substantiallyCompliant",
+                                               "4.9":  "substantiallyCompliant",
+                                               "5.1":  "substantiallyCompliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "substantiallyCompliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "substantiallyCompliant",
+                                               "8.2":  "notCompliant",
+                                               "8.3":  "partiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "partiallyCompliant",
+                                               "10.3":  "notCompliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BL",
+                            "centre":  "Cúirt Uisce Accommodation Centre",
+                            "rawLabel":  "Cúirt Uisce Accommodation Centre ",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.3":  "substantiallyCompliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "substantiallyCompliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "substantiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "substantiallyCompliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "substantiallyCompliant",
+                                               "8.3":  "compliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "substantiallyCompliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "substantiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BM",
+                            "centre":  "Milligan Court",
+                            "rawLabel":  "Milligan Court ",
+                            "judgements":  {
+                                               "1.1":  "compliant",
+                                               "1.2":  "substantiallyCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "partiallyCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BN",
+                            "centre":  "Millstreet Accommodation Centre",
+                            "rawLabel":  "Millstreet Accommodation Centre ",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "compliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "compliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "8.1":  "compliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "compliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BO",
+                            "centre":  "Great Western House",
+                            "rawLabel":  "Great Western House",
+                            "judgements":  {
+                                               "1.1":  "partiallyCompliant",
+                                               "1.2":  "partiallyCompliant",
+                                               "1.4":  "substantiallyCompliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "substantiallyCompliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "substantiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.7":  "compliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "partiallyCompliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "substantiallyCompliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.3":  "substantiallyCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BP",
+                            "centre":  "Dublin Central Inn",
+                            "rawLabel":  "Dublin Central Inn",
+                            "judgements":  {
+                                               "1.1":  "substantiallyCompliant",
+                                               "1.2":  "substantiallyCompliant",
+                                               "1.3":  "compliant",
+                                               "1.4":  "compliant",
+                                               "2.1":  "compliant",
+                                               "2.3":  "compliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "partiallyCompliant",
+                                               "4.1":  "compliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.6":  "compliant",
+                                               "4.7":  "partiallyCompliant",
+                                               "4.8":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "compliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "compliant",
+                                               "7.1":  "compliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "compliant",
+                                               "8.3":  "compliant",
+                                               "9.1":  "substantiallyCompliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "substantiallyCompliant",
+                                               "10.3":  "substantiallyCompliant",
+                                               "10.4":  "compliant"
+                                           }
+                        },
+                        {
+                            "column":  "BQ",
+                            "centre":  "Bridgwater House",
+                            "rawLabel":  "Bridgwater House ",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.3":  "partiallyCompliant",
+                                               "2.4":  "compliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.4":  "substantiallyCompliant",
+                                               "4.5":  "partiallyCompliant",
+                                               "4.6":  "partiallyCompliant",
+                                               "4.7":  "partiallyCompliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "notCompliant",
+                                               "5.2":  "compliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "7.1":  "partiallyCompliant",
+                                               "7.2":  "compliant",
+                                               "8.1":  "notCompliant",
+                                               "8.2":  "notCompliant",
+                                               "8.3":  "notCompliant",
+                                               "9.1":  "compliant",
+                                               "10.1":  "compliant",
+                                               "10.3":  "compliant",
+                                               "10.4":  "partiallyCompliant"
+                                           }
+                        },
+                        {
+                            "column":  "BR",
+                            "centre":  "Atlas House Killarney",
+                            "rawLabel":  "Atlas House Killarney ",
+                            "judgements":  {
+                                               "1.1":  "notCompliant",
+                                               "1.2":  "notCompliant",
+                                               "1.4":  "partiallyCompliant",
+                                               "1.5":  "partiallyCompliant",
+                                               "2.1":  "substantiallyCompliant",
+                                               "2.2":  "substantiallyCompliant",
+                                               "2.3":  "substantiallyCompliant",
+                                               "3.1":  "notCompliant",
+                                               "4.1":  "partiallyCompliant",
+                                               "4.2":  "partiallyCompliant",
+                                               "4.3":  "notCompliant",
+                                               "4.4":  "partiallyCompliant",
+                                               "4.5":  "substantiallyCompliant",
+                                               "4.7":  "compliant",
+                                               "4.9":  "compliant",
+                                               "5.1":  "partiallyCompliant",
+                                               "5.2":  "partiallyCompliant",
+                                               "6.1":  "partiallyCompliant",
+                                               "8.1":  "substantiallyCompliant",
+                                               "8.2":  "substantiallyCompliant",
+                                               "8.3":  "substantiallyCompliant",
+                                               "9.1":  "substantiallyCompliant",
+                                               "10.1":  "compliant",
+                                               "10.2":  "substantiallyCompliant",
+                                               "10.3":  "substantiallyCompliant",
+                                               "10.4":  "notCompliant"
+                                           }
+                        }
+                    ],
+    "sectorDistribution":  [
+                               {
+                                   "standard":  "1.1",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  22,
+                                   "notCompliant":  11
+                               },
+                               {
+                                   "standard":  "1.2",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  30,
+                                   "notCompliant":  10
+                               },
+                               {
+                                   "standard":  "1.3",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  3,
+                                   "notCompliant":  2
+                               },
+                               {
+                                   "standard":  "1.4",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  3,
+                                   "partiallyCompliant":  22,
+                                   "notCompliant":  7
+                               },
+                               {
+                                   "standard":  "1.5",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  6,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "2.1",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  6,
+                                   "notCompliant":  14
+                               },
+                               {
+                                   "standard":  "2.2",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  4,
+                                   "notCompliant":  1
+                               },
+                               {
+                                   "standard":  "2.3",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  27,
+                                   "notCompliant":  6
+                               },
+                               {
+                                   "standard":  "2.4",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  17,
+                                   "notCompliant":  1
+                               },
+                               {
+                                   "standard":  "3.1",
+                                   "compliant":  0,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  37,
+                                   "notCompliant":  15
+                               },
+                               {
+                                   "standard":  "4.1",
+                                   "compliant":  5,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  14,
+                                   "notCompliant":  2
+                               },
+                               {
+                                   "standard":  "4.2",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  9,
+                                   "notCompliant":  5
+                               },
+                               {
+                                   "standard":  "4.3",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  4,
+                                   "notCompliant":  7
+                               },
+                               {
+                                   "standard":  "4.4",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  18,
+                                   "notCompliant":  4
+                               },
+                               {
+                                   "standard":  "4.5",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  3,
+                                   "notCompliant":  1
+                               },
+                               {
+                                   "standard":  "4.6",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  4,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "4.7",
+                                   "compliant":  5,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  5,
+                                   "notCompliant":  3
+                               },
+                               {
+                                   "standard":  "4.8",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  3,
+                                   "notCompliant":  1
+                               },
+                               {
+                                   "standard":  "4.9",
+                                   "compliant":  5,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  10,
+                                   "notCompliant":  3
+                               },
+                               {
+                                   "standard":  "5.1",
+                                   "compliant":  5,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  9,
+                                   "notCompliant":  3
+                               },
+                               {
+                                   "standard":  "5.2",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  7,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "6.1",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  14,
+                                   "notCompliant":  4
+                               },
+                               {
+                                   "standard":  "7.1",
+                                   "compliant":  5,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  3,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "7.2",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  3,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "7.3",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  0,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "8.1",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  11,
+                                   "notCompliant":  8
+                               },
+                               {
+                                   "standard":  "8.2",
+                                   "compliant":  2,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  10,
+                                   "notCompliant":  5
+                               },
+                               {
+                                   "standard":  "8.3",
+                                   "compliant":  1,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  23,
+                                   "notCompliant":  4
+                               },
+                               {
+                                   "standard":  "9.1",
+                                   "compliant":  4,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  2,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "10.1",
+                                   "compliant":  4,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  2,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "10.2",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  1,
+                                   "partiallyCompliant":  14,
+                                   "notCompliant":  0
+                               },
+                               {
+                                   "standard":  "10.3",
+                                   "compliant":  3,
+                                   "substantiallyCompliant":  2,
+                                   "partiallyCompliant":  18,
+                                   "notCompliant":  13
+                               },
+                               {
+                                   "standard":  "10.4",
+                                   "compliant":  4,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  18,
+                                   "notCompliant":  16
+                               },
+                               {
+                                   "standard":  "10.5",
+                                   "compliant":  0,
+                                   "substantiallyCompliant":  0,
+                                   "partiallyCompliant":  0,
+                                   "notCompliant":  0
+                               }
+                           ]
+}

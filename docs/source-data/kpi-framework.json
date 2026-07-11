@@ -1,0 +1,694 @@
+{
+  "source": "Peppard_IPAS_Dashboard_Design_Requirements_Descriptor_v1.0.docx, Section 5.1 — KPI framework, Domains 1 to 13",
+  "coverage": "Complete. The descriptor fully enumerates the revised framework: 13 domains and 74 KPIs, each mapped to an assurance source register in Modules One and Two. Nothing here is inferred or invented; all fields transcribe the document's KPI tables. Per Section 6, every KPI computes from a register — no KPI is a manually keyed number.",
+  "conventions": {
+    "target": "Transcribed from the TARGET column. The value \"\\u2193\" (↓) denotes a reducing trend target as defined in the document.",
+    "frequency": "Transcribed from the FREQUENCY column.",
+    "sourceRegister": "Transcribed from the ASSURANCE SOURCE column; refers to Module One and Two registers."
+  },
+  "domains": [
+    {
+      "id": "domain-01",
+      "name": "Governance, Management and Oversight",
+      "description": "Objective: Demonstrate control, accountability and regulatory compliance",
+      "kpis": [
+        {
+          "id": "kpi-01-01",
+          "name": "Governance meetings held",
+          "definition": "% of scheduled meetings completed with minutes",
+          "sourceRegister": "Minutes log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-01-02",
+          "name": "Centre manager reporting",
+          "definition": "Formal written reports submitted",
+          "sourceRegister": "Report tracker",
+          "target": "100%",
+          "frequency": "Weekly"
+        },
+        {
+          "id": "kpi-01-03",
+          "name": "Action closure rate",
+          "definition": "% actions closed within timeframe",
+          "sourceRegister": "Action tracker",
+          "target": ">90%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-01-04",
+          "name": "Regulatory and contractual returns compliance",
+          "definition": "% returns/notifications to the Department and IPAS within required timeframe",
+          "sourceRegister": "Returns log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-01-05",
+          "name": "Board governance report issued",
+          "definition": "Quarterly consolidated report to the Board",
+          "sourceRegister": "Board pack",
+          "target": "100%",
+          "frequency": "Quarterly"
+        }
+      ]
+    },
+    {
+      "id": "domain-02",
+      "name": "Risk Management and Incident Control",
+      "description": "Objective: Proactive identification, escalation and mitigation of risk (Standard 3.1 — the sector's weakest standard)",
+      "kpis": [
+        {
+          "id": "kpi-02-01",
+          "name": "Risk register completeness",
+          "definition": "% risks fully defined (cause, impact, controls)",
+          "sourceRegister": "Risk register",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-02-02",
+          "name": "Risk review frequency",
+          "definition": "Weekly review completed",
+          "sourceRegister": "Risk register",
+          "target": "100%",
+          "frequency": "Weekly"
+        },
+        {
+          "id": "kpi-02-03",
+          "name": "Incident reporting compliance",
+          "definition": "% incidents recorded",
+          "sourceRegister": "Incident log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-02-04",
+          "name": "Incident escalation compliance",
+          "definition": "% escalated appropriately",
+          "sourceRegister": "Incident log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-02-05",
+          "name": "Incident trend analysis",
+          "definition": "Monthly trend report completed",
+          "sourceRegister": "Trend report",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-02-06",
+          "name": "Repeat incident rate",
+          "definition": "Reduction month-on-month",
+          "sourceRegister": "Incident log",
+          "target": "↓",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-03",
+      "name": "Safeguarding and Protection",
+      "description": "Objective: Full compliance with safeguarding legislation, Children First and HIQA expectations (Theme 8)",
+      "kpis": [
+        {
+          "id": "kpi-03-01",
+          "name": "Safeguarding incidents recorded",
+          "definition": "% documented",
+          "sourceRegister": "Safeguarding log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-03-02",
+          "name": "Tusla referrals",
+          "definition": "% made appropriately and on time",
+          "sourceRegister": "Referral log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-03-03",
+          "name": "Safeguarding plans in place",
+          "definition": "% of cases with plans",
+          "sourceRegister": "Case records",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-03-04",
+          "name": "Statutory and contractual safeguarding notifications",
+          "definition": "% compliant",
+          "sourceRegister": "Notification log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-03-05",
+          "name": "Staff safeguarding training",
+          "definition": "% completed and current",
+          "sourceRegister": "Training matrix",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-03-06",
+          "name": "DLP Children First training",
+          "definition": "% of DLPs with current Tusla-approved training",
+          "sourceRegister": "Training matrix",
+          "target": "100%",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-03-07",
+          "name": "Child Safeguarding Statement",
+          "definition": "Risk-assessed, current and publicly displayed",
+          "sourceRegister": "CSS register",
+          "target": "Yes",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-03-08",
+          "name": "Safeguarding audit score",
+          "definition": "% compliance",
+          "sourceRegister": "Audit report",
+          "target": ">95%",
+          "frequency": "Quarterly"
+        }
+      ]
+    },
+    {
+      "id": "domain-04",
+      "name": "Resident Experience and Rights",
+      "description": "Objective: Person-centred, rights-based service delivery (Themes 6 and 7)",
+      "kpis": [
+        {
+          "id": "kpi-04-01",
+          "name": "Resident satisfaction score",
+          "definition": "Survey outcome",
+          "sourceRegister": "Survey",
+          "target": ">85%",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-04-02",
+          "name": "Resident meeting attendance",
+          "definition": "% participation",
+          "sourceRegister": "Meeting records",
+          "target": "Rising",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-04-03",
+          "name": "Residents' committee",
+          "definition": "Committee constituted and active (met in period)",
+          "sourceRegister": "Committee minutes",
+          "target": "Yes",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-04-04",
+          "name": "Evidence of consultation",
+          "definition": "Engagement activities held",
+          "sourceRegister": "Engagement log",
+          "target": "Monthly",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-04-05",
+          "name": "Rights and charter information",
+          "definition": "Residents' charter and mandatory notices displayed and current",
+          "sourceRegister": "Notices checklist",
+          "target": "100%",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-05",
+      "name": "Complaints Management",
+      "description": "Objective: Transparent, effective and auditable complaints handling",
+      "kpis": [
+        {
+          "id": "kpi-05-01",
+          "name": "Complaints logged",
+          "definition": "% recorded centrally",
+          "sourceRegister": "Complaints log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-05-02",
+          "name": "Complaints categorised correctly",
+          "definition": "% accuracy",
+          "sourceRegister": "Complaints log",
+          "target": ">95%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-05-03",
+          "name": "Complaints awareness",
+          "definition": "% residents aware of process",
+          "sourceRegister": "Survey",
+          "target": ">90%",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-05-04",
+          "name": "Complaints resolution time",
+          "definition": "Average days to resolution",
+          "sourceRegister": "Complaints log",
+          "target": "<10 days",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-05-05",
+          "name": "Complaints closed",
+          "definition": "% resolved",
+          "sourceRegister": "Complaints log",
+          "target": ">95%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-05-06",
+          "name": "Satisfaction with outcome",
+          "definition": "% satisfied",
+          "sourceRegister": "Survey",
+          "target": ">85%",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-05-07",
+          "name": "Complaint trend reports",
+          "definition": "Monthly analysis completed",
+          "sourceRegister": "Trend report",
+          "target": "100%",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-06",
+      "name": "Workforce and Staffing",
+      "description": "Objective: Safe, competent and supported workforce (Theme 2)",
+      "kpis": [
+        {
+          "id": "kpi-06-01",
+          "name": "Staffing levels vs required",
+          "definition": "% compliance with agreed rosters incl. 24-hour cover",
+          "sourceRegister": "Roster records",
+          "target": "100%",
+          "frequency": "Weekly"
+        },
+        {
+          "id": "kpi-06-02",
+          "name": "Garda vetting",
+          "definition": "% staff (and security) vetted and current",
+          "sourceRegister": "Staff register",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-06-03",
+          "name": "Mandatory training completion",
+          "definition": "% staff compliant",
+          "sourceRegister": "Training matrix",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-06-04",
+          "name": "Training needs analysis",
+          "definition": "Completed",
+          "sourceRegister": "TNA report",
+          "target": "Yes",
+          "frequency": "Annual"
+        },
+        {
+          "id": "kpi-06-05",
+          "name": "Supervision completion",
+          "definition": "% completed",
+          "sourceRegister": "Supervision records",
+          "target": ">95%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-06-06",
+          "name": "Time to recruit",
+          "definition": "Days to fill",
+          "sourceRegister": "HR tracker",
+          "target": "<30 days",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-06-07",
+          "name": "Staff turnover rate",
+          "definition": "%",
+          "sourceRegister": "HR tracker",
+          "target": "↓",
+          "frequency": "Quarterly"
+        }
+      ]
+    },
+    {
+      "id": "domain-07",
+      "name": "Accommodation and Environment",
+      "description": "Objective: Safe, dignified and appropriate living conditions (Theme 4)",
+      "kpis": [
+        {
+          "id": "kpi-07-01",
+          "name": "Maintenance response time",
+          "definition": "Average hours to action (contractual threshold 48–72 hrs)",
+          "sourceRegister": "Maintenance log",
+          "target": "<48 hrs",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-02",
+          "name": "Accommodation standards compliance",
+          "definition": "% checklist items meeting standard",
+          "sourceRegister": "Self-inspection",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-03",
+          "name": "Privacy and room-entry compliance",
+          "definition": "% inspections with required notice and protocol",
+          "sourceRegister": "Inspection log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-04",
+          "name": "Storage adequacy issues",
+          "definition": "Number reported",
+          "sourceRegister": "Maintenance log",
+          "target": "↓",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-05",
+          "name": "Mould and damp cases",
+          "definition": "Open cases; closure within 14 days with evidence",
+          "sourceRegister": "Room register",
+          "target": "0 open >14 days",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-06",
+          "name": "Prohibited items in rooms",
+          "definition": "Findings per 100 rooms at self-inspection",
+          "sourceRegister": "Room register",
+          "target": "↓",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-07-07",
+          "name": "Facility accessibility",
+          "definition": "Laundry/shop hours aligned to need; disability access confirmed",
+          "sourceRegister": "Self-inspection",
+          "target": "Reviewed monthly",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-08",
+      "name": "Fire and Environmental Safety",
+      "description": "Objective: Continuous fire safety compliance evidenced by current registers (new domain relative to the April 2026 draft framework)",
+      "kpis": [
+        {
+          "id": "kpi-08-01",
+          "name": "Fire register currency",
+          "definition": "% required checks in date (lighting, panel, equipment, exits)",
+          "sourceRegister": "Fire registers",
+          "target": "100%",
+          "frequency": "Weekly"
+        },
+        {
+          "id": "kpi-08-02",
+          "name": "Fire drills",
+          "definition": "Drills at required frequency; evacuation time trend",
+          "sourceRegister": "Drill log",
+          "target": "100% / ↓",
+          "frequency": "Per schedule"
+        },
+        {
+          "id": "kpi-08-03",
+          "name": "Staff fire safety training",
+          "definition": "% staff with current instruction",
+          "sourceRegister": "Training matrix",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-08-04",
+          "name": "Exits and notices compliance",
+          "definition": "% spot checks fully compliant (clear, unlocked, posted, doors closed)",
+          "sourceRegister": "Self-inspection",
+          "target": "100%",
+          "frequency": "Weekly"
+        },
+        {
+          "id": "kpi-08-05",
+          "name": "Detection and equipment servicing",
+          "definition": "% serviced within schedule",
+          "sourceRegister": "Service records",
+          "target": "100%",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-09",
+      "name": "Food, Catering and Cooking Facilities",
+      "description": "Objective: Catering that meets residents' needs, autonomy and cultural requirements (Theme 5) (new domain relative to the April 2026 draft framework)",
+      "kpis": [
+        {
+          "id": "kpi-09-01",
+          "name": "HACCP system",
+          "definition": "Implemented with FSAI Safe Catering evidence",
+          "sourceRegister": "HACCP records",
+          "target": "Yes",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-09-02",
+          "name": "Kitchen cleaning records",
+          "definition": "% daily cleaning and periodic deep-clean records complete",
+          "sourceRegister": "Cleaning records",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-09-03",
+          "name": "Cooking station ratio",
+          "definition": "Stations per residents (min. 1:15) and per-station equipment complete",
+          "sourceRegister": "Self-inspection",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-09-04",
+          "name": "Menu and dietary consultation",
+          "definition": "Resident consultation held; cultural, religious, medical needs met",
+          "sourceRegister": "Consultation log",
+          "target": "Monthly / 100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-09-05",
+          "name": "Food provision checks",
+          "definition": "Variety, infant foods, Ramadan and special provision confirmed",
+          "sourceRegister": "Self-inspection",
+          "target": "100%",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-10",
+      "name": "Health, Wellbeing and Support Services",
+      "description": "Objective: Holistic support for residents (Themes 9 and 10)",
+      "kpis": [
+        {
+          "id": "kpi-10-01",
+          "name": "Vulnerability assessments completed",
+          "definition": "% residents assessed; special reception needs incorporated",
+          "sourceRegister": "Assessment records",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-10-02",
+          "name": "Support referrals followed up",
+          "definition": "% tracked to outcome",
+          "sourceRegister": "Referral log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-10-03",
+          "name": "Access to external services",
+          "definition": "Engagements facilitated",
+          "sourceRegister": "Engagement log",
+          "target": "Monthly",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-10-04",
+          "name": "Child development supports",
+          "definition": "% children accessing education supports",
+          "sourceRegister": "Education log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-10-05",
+          "name": "Wellbeing activities delivered",
+          "definition": "Number per month",
+          "sourceRegister": "Activity log",
+          "target": "Rising",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-11",
+      "name": "Occupancy and Inspection Performance",
+      "description": "Objective: The metrics on which the Department directly judges the operator",
+      "kpis": [
+        {
+          "id": "kpi-11-01",
+          "name": "Occupancy vs contract capacity",
+          "definition": "Daily occupancy within confirmed contract capacity",
+          "sourceRegister": "Occupancy record",
+          "target": "100%",
+          "frequency": "Daily"
+        },
+        {
+          "id": "kpi-11-02",
+          "name": "Room-level suitable occupancy",
+          "definition": "% rooms within computed suitable occupancy (≥4.65 m²/person)",
+          "sourceRegister": "Room register",
+          "target": "100%",
+          "frequency": "Daily"
+        },
+        {
+          "id": "kpi-11-03",
+          "name": "Sanitary and laundry ratios",
+          "definition": "WC 1:8, WHB 1:6, showers 1:12, washers/dryers 2:25",
+          "sourceRegister": "Self-inspection",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-11-04",
+          "name": "Inspection findings closed on time",
+          "definition": "% Department findings closed within 14 days with evidence",
+          "sourceRegister": "Findings tracker",
+          "target": "100%",
+          "frequency": "Per inspection"
+        },
+        {
+          "id": "kpi-11-05",
+          "name": "Open RED findings",
+          "definition": "Contractual breach / high-risk findings open",
+          "sourceRegister": "Findings tracker",
+          "target": "0",
+          "frequency": "Continuous"
+        }
+      ]
+    },
+    {
+      "id": "domain-12",
+      "name": "Information Governance and Data",
+      "description": "Objective: Accurate, centralised and auditable records",
+      "kpis": [
+        {
+          "id": "kpi-12-01",
+          "name": "Data completeness",
+          "definition": "% records complete",
+          "sourceRegister": "System report",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-12-02",
+          "name": "GDPR compliance",
+          "definition": "% compliance; breaches logged and addressed",
+          "sourceRegister": "Breach log",
+          "target": "100%",
+          "frequency": "Monthly"
+        },
+        {
+          "id": "kpi-12-03",
+          "name": "Single-system integration",
+          "definition": "Incidents, complaints and registers in one system",
+          "sourceRegister": "System audit",
+          "target": "Yes",
+          "frequency": "Continuous"
+        },
+        {
+          "id": "kpi-12-04",
+          "name": "Reporting accuracy",
+          "definition": "% validated",
+          "sourceRegister": "Validation report",
+          "target": ">95%",
+          "frequency": "Monthly"
+        }
+      ]
+    },
+    {
+      "id": "domain-13",
+      "name": "Quality Improvement and Audit",
+      "description": "Objective: Continuous improvement and inspection readiness",
+      "kpis": [
+        {
+          "id": "kpi-13-01",
+          "name": "Internal audit completion",
+          "definition": "% of annual audit plan delivered (incl. unannounced)",
+          "sourceRegister": "Audit plan [4]",
+          "target": "100%",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-13-02",
+          "name": "Repeat findings",
+          "definition": "% reduction in repeat audit findings",
+          "sourceRegister": "Audit reports",
+          "target": "↓",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-13-03",
+          "name": "Quality improvement plan",
+          "definition": "Active and tracked",
+          "sourceRegister": "QIP",
+          "target": "Yes",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "kpi-13-04",
+          "name": "Annual review completed",
+          "definition": "Service annual review",
+          "sourceRegister": "Annual report",
+          "target": "Yes",
+          "frequency": "Annual"
+        },
+        {
+          "id": "kpi-13-05",
+          "name": "National Standards self-assessment score",
+          "definition": "% standards Compliant or Substantially Compliant (Module Two)",
+          "sourceRegister": "Standards register",
+          "target": ">95%",
+          "frequency": "Quarterly"
+        }
+      ]
+    }
+  ]
+}
