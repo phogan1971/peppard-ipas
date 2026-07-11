@@ -14,12 +14,17 @@ import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import DescriptionIcon from "@mui/icons-material/Description";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SquareFootIcon from "@mui/icons-material/SquareFoot";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useNavigate, useParams } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import { useAppState } from "../data/store";
 import { RegisterEntry, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
-import { brand, rag, surface } from "../theme/tokens";
+import { brand, rag, surface, accent } from "../theme/tokens";
 
 const REGISTER_STATUS: Record<RegisterEntry["status"], { label: string; color: string; bg: string }> = {
   in_order: { label: "In order", color: rag.green, bg: rag.greenBg },
@@ -97,29 +102,31 @@ export default function CentreOperations() {
       </Paper>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={2.4}>
-          <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={brand.charcoal} />
+        <Grid item xs={12} sm={6} md={2.4}>
+          <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={accent.navy} icon={MeetingRoomIcon} />
         </Grid>
-        <Grid item xs={6} md={2.4}>
-          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={brand.primary} />
+        <Grid item xs={12} sm={6} md={2.4}>
+          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={accent.blue} icon={GroupsIcon} />
         </Grid>
-        <Grid item xs={6} md={2.4}>
-          <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={brand.charcoal} />
+        <Grid item xs={12} sm={6} md={2.4}>
+          <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={accent.purple} icon={SquareFootIcon} />
         </Grid>
-        <Grid item xs={6} md={2.4}>
+        <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             label="Over-occupied"
             value={overOccupied.length}
             sub="rooms above suitable occupancy"
-            accent={overOccupied.length > 0 ? rag.red : rag.green}
+            accent={overOccupied.length > 0 ? accent.red : accent.green}
+            icon={ErrorOutlineIcon}
           />
         </Grid>
-        <Grid item xs={6} md={2.4}>
+        <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
             label="Rooms with issues"
             value={withIssues.length}
             sub="flagged at inspection"
-            accent={withIssues.length > 0 ? rag.amber : rag.green}
+            accent={withIssues.length > 0 ? accent.orange : accent.green}
+            icon={WarningAmberIcon}
           />
         </Grid>
       </Grid>

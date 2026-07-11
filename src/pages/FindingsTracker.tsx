@@ -6,12 +6,15 @@ import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
-import { brand, rag, surface } from "../theme/tokens";
+import { brand, rag, surface, accent } from "../theme/tokens";
 
 const STATUS_META: Record<FindingStatus, { label: string; color: string; bg: string }> = {
   open: { label: "Open", color: rag.red, bg: rag.redBg },
@@ -62,17 +65,17 @@ export default function FindingsTracker() {
       subtitle="Inspection findings with RAG priority and the 14-day evidence clock"
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Open findings" value={open.length} sub="across all centres" accent={brand.charcoal} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Open findings" value={open.length} sub="across all centres" accent={accent.navy} icon={FactCheckIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Overdue evidence" value={overdueCount} sub="past the 14-day clock" accent={overdueCount > 0 ? rag.red : rag.green} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Overdue evidence" value={overdueCount} sub="past the 14-day clock" accent={overdueCount > 0 ? accent.red : accent.green} icon={ErrorOutlineIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Due within 7 days" value={dueThisWeek} sub="evidence deadlines approaching" accent={rag.amber} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Due within 7 days" value={dueThisWeek} sub="evidence deadlines approaching" accent={accent.orange} icon={ScheduleIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Closed" value={findings.length - open.length} sub="evidence accepted" accent={rag.green} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Closed" value={findings.length - open.length} sub="evidence accepted" accent={accent.green} icon={CheckCircleOutlineIcon} />
         </Grid>
       </Grid>
 

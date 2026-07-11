@@ -1,4 +1,3 @@
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -10,11 +9,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import InsightsIcon from "@mui/icons-material/Insights";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import BoltIcon from "@mui/icons-material/Bolt";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
+import AccordionBlock from "../components/AccordionBlock";
 import { useAppState } from "../data/store";
 import { KPI_DOMAINS, KpiStatus, domainRollup, kpiValue } from "../data/kpis";
-import { brand, rag, surface } from "../theme/tokens";
+import { brand, rag, surface, accent } from "../theme/tokens";
 
 const STATUS_META: Record<KpiStatus, { label: string; color: string; bg: string }> = {
   meets: { label: "On target", color: rag.green, bg: rag.greenBg },
@@ -38,17 +42,17 @@ export default function KpiFramework() {
       subtitle="13 domains, 74 KPIs — every KPI computes from a register, nothing manually keyed"
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid item xs={6} md={3}>
-          <StatCard label="KPIs on target" value={meets} sub={`of ${allValues.length} KPIs`} accent={rag.green} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="KPIs on target" value={meets} sub={`of ${allValues.length} KPIs`} accent={accent.green} icon={CheckCircleOutlineIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Near target" value={near} sub="watch list" accent={rag.amber} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Near target" value={near} sub="watch list" accent={accent.orange} icon={InfoOutlinedIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Off target" value={breach} sub="require action" accent={rag.red} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Off target" value={breach} sub="require action" accent={accent.red} icon={ErrorOutlineIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Computed live" value={liveCount} sub="from demo registers today" accent={brand.charcoal} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Computed live" value={liveCount} sub="from demo registers today" accent={accent.navy} icon={BoltIcon} />
         </Grid>
       </Grid>
 
@@ -64,31 +68,19 @@ export default function KpiFramework() {
         const roll = domainRollup(domain, state);
         const worst = STATUS_META[roll.worst];
         return (
-          <Paper key={domain.id} sx={{ mb: 2, overflow: "hidden" }}>
-            <Box
-              sx={{
-                px: 2,
-                py: 1.25,
-                backgroundColor: surface.pillRowBg,
-                borderBottom: `1px solid ${brand.border}`,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                flexWrap: "wrap",
-              }}
-            >
-              <Typography sx={{ fontWeight: 700, color: brand.charcoal }}>
-                Domain {idx + 1}: {domain.name}
-              </Typography>
-              <Typography sx={{ fontSize: "0.78rem", color: "text.secondary", flexGrow: 1 }}>
-                {domain.description.replace(/^Objective: /, "")}
-              </Typography>
+          <AccordionBlock
+            key={domain.id}
+            title={`Domain ${idx + 1}: ${domain.name}`}
+            subtitle={domain.description.replace(/^Objective: /, "")}
+            defaultExpanded={idx === 0}
+            headerExtra={
               <Chip
                 label={`${roll.meets} on target · ${roll.near} near · ${roll.breach} off`}
                 size="small"
                 sx={{ backgroundColor: worst.bg, color: worst.color, fontWeight: 600 }}
               />
-            </Box>
+            }
+          >
             <TableContainer sx={{ overflowX: "auto" }}>
               <Table size="small" aria-label={`KPIs for ${domain.name}`}>
                 <TableHead>
@@ -130,7 +122,7 @@ export default function KpiFramework() {
                 </TableBody>
               </Table>
             </TableContainer>
-          </Paper>
+          </AccordionBlock>
         );
       })}
     </PageShell>

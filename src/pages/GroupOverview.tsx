@@ -8,11 +8,15 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Button from "@mui/material/Button";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import GroupsIcon from "@mui/icons-material/Groups";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import { useAppState, centreCompliance } from "../data/store";
-import { brand, rag } from "../theme/tokens";
+import { brand, rag, accent } from "../theme/tokens";
 
 const WORST_ACCENT: Record<string, string> = {
   RED: rag.red,
@@ -49,31 +53,34 @@ export default function GroupOverview() {
       }
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Contracted capacity" value={totalCapacity} sub="beds across 8 centres" accent={brand.charcoal} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Contracted capacity" value={totalCapacity} sub="beds across 8 centres" accent={accent.navy} icon={ApartmentIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Current occupancy"
             value={totalOccupancy}
             sub={`${Math.round((totalOccupancy / totalCapacity) * 100)}% of contracted capacity`}
-            accent={brand.primary}
+            accent={accent.blue}
+            icon={GroupsIcon}
           />
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Open findings"
             value={open.length}
             sub={`${open.filter((f) => f.priority === "RED").length} red · ${open.filter((f) => f.priority === "AMBER").length} amber`}
-            accent={rag.amber}
+            accent={accent.orange}
+            icon={FactCheckIcon}
           />
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Overdue evidence"
             value={overdue}
             sub="past the 14-day clock"
-            accent={overdue > 0 ? rag.red : rag.green}
+            accent={overdue > 0 ? accent.red : accent.green}
+            icon={WarningAmberIcon}
           />
         </Grid>
       </Grid>

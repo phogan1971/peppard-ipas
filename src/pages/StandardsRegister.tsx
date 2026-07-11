@@ -7,12 +7,18 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Tooltip from "@mui/material/Tooltip";
 import RuleIcon from "@mui/icons-material/Rule";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import Chip from "@mui/material/Chip";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
+import AccordionBlock from "../components/AccordionBlock";
 import { setAssessment, useAppState } from "../data/store";
 import { sectorDistributionFor, STANDARDS } from "../data/seed";
 import { Judgement, JUDGEMENT_LABELS } from "../data/types";
-import { brand, compliance, surface } from "../theme/tokens";
+import { brand, compliance, surface, accent } from "../theme/tokens";
 
 const EDITABLE_JUDGEMENTS: Judgement[] = ["compliant", "substantiallyCompliant", "partiallyCompliant", "notCompliant"];
 
@@ -93,17 +99,17 @@ export default function StandardsRegister() {
       }
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Compliant" value={counts.compliant} sub={`of ${STANDARDS.length} standards`} accent={compliance.compliant} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Compliant" value={counts.compliant} sub={`of ${STANDARDS.length} standards`} accent={accent.green} icon={CheckCircleOutlineIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Substantially" value={counts.substantiallyCompliant} sub="minor gaps identified" accent={compliance.substantially} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Substantially compliant" value={counts.substantiallyCompliant} sub="minor gaps identified" accent={accent.blue} icon={TaskAltIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Partially" value={counts.partiallyCompliant} sub="improvement plans required" accent={compliance.partially} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Partially compliant" value={counts.partiallyCompliant} sub="improvement plans required" accent={accent.orange} icon={InfoOutlinedIcon} />
         </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard label="Not compliant" value={counts.notCompliant} sub="priority remediation" accent={compliance.notCompliant} />
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Not compliant" value={counts.notCompliant} sub="priority remediation" accent={accent.red} icon={ErrorOutlineIcon} />
         </Grid>
       </Grid>
 
@@ -115,13 +121,33 @@ export default function StandardsRegister() {
         </Typography>
       </Paper>
 
-      {themes.map(([themeNo, theme]) => (
-        <Paper key={themeNo} sx={{ mb: 2, overflow: "hidden" }}>
-          <Box sx={{ px: 2, py: 1.25, backgroundColor: surface.pillRowBg, borderBottom: `1px solid ${brand.border}` }}>
-            <Typography sx={{ fontWeight: 700, color: brand.charcoal }}>
-              Theme {themeNo}: {theme.name}
-            </Typography>
-          </Box>
+      {themes.map(([themeNo, theme]) => {
+        const belowSubstantial = theme.standards.filter((std) => {
+          const j = forCentre.get(std.id)?.judgement;
+          return j === "partiallyCompliant" || j === "notCompliant";
+        }).length;
+        return (
+        <AccordionBlock
+          key={themeNo}
+          title={`Theme ${themeNo}: ${theme.name}`}
+          subtitle={`${theme.standards.length} standards`}
+          defaultExpanded={themeNo === 1}
+          headerExtra={
+            belowSubstantial > 0 ? (
+              <Chip
+                label={`${belowSubstantial} below substantial`}
+                size="small"
+                sx={{ backgroundColor: compliance.partiallyBg, color: compliance.partially, fontWeight: 600 }}
+              />
+            ) : (
+              <Chip
+                label="On track"
+                size="small"
+                sx={{ backgroundColor: compliance.compliantBg, color: compliance.compliant, fontWeight: 600 }}
+              />
+            )
+          }
+        >
           {theme.standards.map((std) => {
             const assessment = forCentre.get(std.id);
             const judgement = assessment?.judgement ?? "notAssessed";
@@ -174,8 +200,9 @@ export default function StandardsRegister() {
               </Box>
             );
           })}
-        </Paper>
-      ))}
+        </AccordionBlock>
+        );
+      })}
     </PageShell>
   );
 }

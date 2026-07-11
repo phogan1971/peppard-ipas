@@ -48,9 +48,9 @@ export function OriginLogo({ height = 36, dark = false }: { height?: number; dar
   );
 }
 
-// White banner: Origin (the platform provider) top-left, Peppard (the
-// operator) centred, utilities right. Brand navy is structural; alert red
-// now only ever means a RED finding.
+// Genesis-style navy top bar (Genisis3 AppHeader: hsl(199,57%,23%)):
+// Origin lockup (white variant) top-left, Peppard identity centred in a
+// white chip so the logo's white background reads as intentional.
 export default function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   return (
@@ -59,20 +59,19 @@ export default function AppShell({ children }: { children: ReactNode }) {
         position="fixed"
         elevation={0}
         sx={{
-          backgroundColor: "#fff",
-          borderBottom: `1px solid ${brand.border}`,
-          color: brand.charcoal,
+          backgroundColor: brand.topBar,
+          color: "#fff",
           displayPrint: "none",
         }}
       >
-        <Toolbar sx={{ minHeight: 64, position: "relative" }}>
+        <Toolbar sx={{ minHeight: 64, position: "relative", backgroundColor: brand.topBar }}>
           <Box
             onClick={() => navigate("/")}
             role="link"
             aria-label="Back to platform home"
             sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
           >
-            <OriginLogo height={34} />
+            <OriginLogo height={34} dark />
           </Box>
 
           <Box
@@ -85,12 +84,23 @@ export default function AppShell({ children }: { children: ReactNode }) {
               gap: 1.25,
             }}
           >
-            <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: 46, width: "auto" }} />
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                borderRadius: "8px",
+                px: 1,
+                py: 0.4,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: 40, width: "auto" }} />
+            </Box>
             <Box sx={{ display: { xs: "none", md: "flex" }, flexDirection: "column" }}>
-              <Typography variant="h6" sx={{ fontSize: "1rem", lineHeight: 1.2, color: brand.primary }}>
+              <Typography sx={{ fontSize: "1rem", fontWeight: 600, lineHeight: 1.2, color: "#fff" }}>
                 IPAS Operator Dashboard
               </Typography>
-              <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+              <Typography sx={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.7)" }}>
                 8 accommodation centres
               </Typography>
             </Box>
@@ -104,7 +114,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               resetDemoData();
               window.location.assign("/overview");
             }}
-            sx={{ color: "text.secondary", fontSize: "0.75rem" }}
+            sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
           >
             Reset demo
           </Button>
