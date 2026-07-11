@@ -4,6 +4,7 @@ import GroupOverview from "./pages/GroupOverview";
 import CentreOperations from "./pages/CentreOperations";
 import FindingsTracker from "./pages/FindingsTracker";
 import StandardsRegister from "./pages/StandardsRegister";
+import KpiFramework from "./pages/KpiFramework";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/centres/:centreId" element={<CentreOperations />} />
         <Route path="/findings" element={<FindingsTracker />} />
         <Route path="/standards" element={<StandardsRegister />} />
+        <Route path="/kpis" element={<KpiFramework />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>
