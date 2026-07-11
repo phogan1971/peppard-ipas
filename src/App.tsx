@@ -1,0 +1,20 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import AppShell from "./components/AppShell";
+import GroupOverview from "./pages/GroupOverview";
+import CentreOperations from "./pages/CentreOperations";
+import FindingsTracker from "./pages/FindingsTracker";
+import StandardsRegister from "./pages/StandardsRegister";
+
+export default function App() {
+  return (
+    <AppShell>
+      <Routes>
+        <Route path="/" element={<GroupOverview />} />
+        <Route path="/centres/:centreId" element={<CentreOperations />} />
+        <Route path="/findings" element={<FindingsTracker />} />
+        <Route path="/standards" element={<StandardsRegister />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AppShell>
+  );
+}
