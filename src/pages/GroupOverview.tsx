@@ -57,7 +57,7 @@ export default function GroupOverview() {
             label="Current occupancy"
             value={totalOccupancy}
             sub={`${Math.round((totalOccupancy / totalCapacity) * 100)}% of contracted capacity`}
-            accent={brand.red}
+            accent={brand.primary}
           />
         </Grid>
         <Grid item xs={6} md={3}>

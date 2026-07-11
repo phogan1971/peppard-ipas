@@ -31,13 +31,13 @@ export default class ErrorBoundary extends Component<{ children: ReactNode }, St
             {this.state.error.message}
           </Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="contained" disableElevation onClick={() => window.location.assign("/")}>
+            <Button variant="contained" disableElevation onClick={() => window.location.assign("/overview")}>
               Reload dashboard
             </Button>
             <Button
               onClick={() => {
                 resetDemoData();
-                window.location.assign("/");
+                window.location.assign("/overview");
               }}
             >
               Reset demo data

@@ -4,8 +4,8 @@ import { brand, rag, surface, text, fonts } from "./tokens";
 export const peppardTheme = createTheme({
   palette: {
     primary: {
-      main: brand.red,
-      dark: brand.redDark,
+      main: brand.primary,
+      dark: brand.primaryDark,
       contrastText: "#fff",
     },
     secondary: {

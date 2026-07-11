@@ -61,7 +61,7 @@ export default function BoardPack() {
 
   return (
     <PrintDocShell
-      backTo="/"
+      backTo="/overview"
       backLabel="Back to overview"
       title="Quarterly Governance Board Pack"
       subtitle={`${quarterLabel(today)} · All centres · Generated ${today.toISOString().slice(0, 10)} · Contains demo data`}
@@ -224,7 +224,7 @@ export default function BoardPack() {
               <TableBody>
                 {thematicRisks.map(({ std, centres }) => (
                   <TableRow key={std.id}>
-                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.red }}>{std.id}</TableCell>
+                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.primary }}>{std.id}</TableCell>
                     <TableCell sx={{ fontSize: "0.8rem" }}>{std.text}</TableCell>
                     <TableCell sx={{ width: 110, color: compliance.partially, fontWeight: 600 }}>
                       {centres} centres

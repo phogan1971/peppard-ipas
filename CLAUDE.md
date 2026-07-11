@@ -132,19 +132,31 @@ gap is discovered, and fix the JSON here when you do.
 
 ---
 
-## Branding — Peppard, not Genesis
+## Branding — Origin/Genesis chrome, Peppard identity (Philip, 11 Jul 2026)
 
 All colours come from `src/theme/tokens.ts` — **never hardcode a hex in a
 component**. This one-file discipline exists because Genisis3's navy is
 unswappable (scattered across hundreds of files); we do not repeat that.
+(Proven: the original Peppard-red chrome was swapped to Origin navy by
+editing tokens.ts + one sed rename, zero component redesign.)
 
-- Peppard Red `#E01E1F` (structural accent: nav, buttons, headings icons)
-- Deep Red `#A81516` (hover), Charcoal `#26262A` (text/headings)
-- Warm Light `#F8F4F2` (page bg), Pale Red Tint `#FBEDED`, Border `#E8E0DC`
+- App chrome uses the **Genesis platform palette**: primary navy `#00465C`
+  (`brand.primary`), hover `#003D4D`, plus Origin mark tones — teal
+  `#0E7F8B`, green `#23A566`, mint `#9FCFA8`. Page bg `#F5F5F5`.
+- **Peppard red `#E01E1F` lives in `tokens.peppard`** — client identity
+  only (banner centre logo, documents), never app chrome. Philip asked
+  for the red theme to be toned down in favour of Origin colours.
+- Banner: Origin lockup top-left (`OriginLogo` in AppShell — donut mark
+  `public/origin-mark.png` + composed wordmark), Peppard logo centred,
+  Reset demo right.
 - Typography: **Cambria headings / Calibri body**
-- **Brand red ≠ status red.** RAG uses a darker crimson (`tokens.rag`)
-  and status is always colour + text label, never colour alone.
-- Logo: `public/peppard-logo.jpg` (red mountain + charcoal wordmark).
+- **Alert red is exclusively status.** RAG crimson (`tokens.rag`), always
+  colour + text label, never colour alone.
+- Logos: `public/peppard-logo.jpg`, `public/origin-mark.png`,
+  `public/connects-logo.png` (connects.health, used on the splash).
+- Splash screen at `/` (Genesis-navy hero): launcher cards for the
+  Genesis portal (https://genesishealthcarenew.netlify.app/, external)
+  and this dashboard (`/overview`).
 
 ## Design system — Genesis patterns
 
@@ -181,7 +193,8 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 │   └── source-data/         # extracted JSON from client documents
 ├── public/peppard-logo.jpg
 └── src/
-    ├── main.tsx / App.tsx   # router: / , /centres/:centreId(/readiness) , /findings , /standards , /kpis
+    ├── main.tsx / App.tsx   # router: / (splash) , /overview , /centres/:centreId(/readiness|/return) ,
+    │                        # /findings , /standards , /kpis , /board-pack
     ├── theme/tokens.ts      # ALL colours + fonts (single source of truth)
     ├── theme/index.ts       # MUI theme built from tokens
     ├── components/          # AppShell, PageShell, PortalSubNav, RagChip, StatCard, ErrorBoundary

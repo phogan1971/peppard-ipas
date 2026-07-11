@@ -101,7 +101,7 @@ export default function CentreOperations() {
           <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={brand.charcoal} />
         </Grid>
         <Grid item xs={6} md={2.4}>
-          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={brand.red} />
+          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={brand.primary} />
         </Grid>
         <Grid item xs={6} md={2.4}>
           <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={brand.charcoal} />

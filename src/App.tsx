@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AppShell from "./components/AppShell";
+import SplashScreen from "./pages/SplashScreen";
 import GroupOverview from "./pages/GroupOverview";
 import CentreOperations from "./pages/CentreOperations";
 import FindingsTracker from "./pages/FindingsTracker";
@@ -9,11 +10,20 @@ import ReadinessPack from "./pages/ReadinessPack";
 import BoardPack from "./pages/BoardPack";
 import DeptReturn from "./pages/DeptReturn";
 
-export default function App() {
+function ShellLayout() {
   return (
     <AppShell>
-      <Routes>
-        <Route path="/" element={<GroupOverview />} />
+      <Outlet />
+    </AppShell>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<SplashScreen />} />
+      <Route element={<ShellLayout />}>
+        <Route path="/overview" element={<GroupOverview />} />
         <Route path="/centres/:centreId" element={<CentreOperations />} />
         <Route path="/centres/:centreId/readiness" element={<ReadinessPack />} />
         <Route path="/centres/:centreId/return" element={<DeptReturn />} />
@@ -21,8 +31,8 @@ export default function App() {
         <Route path="/standards" element={<StandardsRegister />} />
         <Route path="/kpis" element={<KpiFramework />} />
         <Route path="/board-pack" element={<BoardPack />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </AppShell>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
