@@ -1,0 +1,249 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import PrintIcon from "@mui/icons-material/Print";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate, useParams } from "react-router-dom";
+import { RagChip } from "../components/RagChip";
+import { daysUntilDue, useAppState } from "../data/store";
+import { STANDARDS } from "../data/seed";
+import { JUDGEMENT_LABELS, Judgement, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
+import { brand, rag } from "../theme/tokens";
+
+function SectionTitle({ n, children }: { n: number; children: string }) {
+  return (
+    <Typography
+      variant="h6"
+      sx={{ color: brand.charcoal, borderBottom: `2px solid ${brand.red}`, pb: 0.5, mb: 1.5, mt: 3, fontSize: "1.05rem" }}
+    >
+      {n}. {children}
+    </Typography>
+  );
+}
+
+// The descriptor's "one-click inspection readiness pack": everything an
+// inspector asks for, assembled from the live registers, print-ready
+// (browser print → PDF). App chrome is hidden via displayPrint.
+export default function ReadinessPack() {
+  const { centreId } = useParams();
+  const navigate = useNavigate();
+  const state = useAppState();
+
+  const centre = state.centres.find((c) => c.id === centreId) ?? state.centres[0];
+  const rooms = state.roomsByCentre[centre.id] ?? [];
+  const registers = state.registersByCentre[centre.id] ?? [];
+  const findings = state.findings.filter((f) => f.centreId === centre.id);
+  const openFindings = findings.filter((f) => f.status !== "closed");
+  const assessments = new Map(
+    state.assessments.filter((a) => a.centreId === centre.id).map((a) => [a.standardId, a.judgement]),
+  );
+
+  const overOccupied = rooms.filter(
+    (r) => r.currentOccupancy !== null && r.suitableOccupancy !== null && r.currentOccupancy > r.suitableOccupancy,
+  );
+  const withIssues = rooms.filter((r) => r.issues.length > 0);
+  const judgementCounts: Record<Judgement, number> = {
+    compliant: 0,
+    substantiallyCompliant: 0,
+    partiallyCompliant: 0,
+    notCompliant: 0,
+    notAssessed: 0,
+  };
+  for (const std of STANDARDS) judgementCounts[assessments.get(std.id) ?? "notAssessed"]++;
+  const weakStandards = STANDARDS.filter((s) => {
+    const j = assessments.get(s.id);
+    return j === "partiallyCompliant" || j === "notCompliant";
+  });
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  return (
+    <Box sx={{ backgroundColor: "#fff", minHeight: "calc(100vh - 64px)" }}>
+      <Box
+        sx={{
+          displayPrint: "none",
+          px: 3,
+          py: 1.5,
+          borderBottom: `1px solid ${brand.border}`,
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+        }}
+      >
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(`/centres/${centre.id}`)} sx={{ color: brand.charcoal }}>
+          Back to centre
+        </Button>
+        <Box sx={{ flexGrow: 1 }} />
+        <Button variant="contained" disableElevation startIcon={<PrintIcon />} onClick={() => window.print()}>
+          Print / save as PDF
+        </Button>
+      </Box>
+
+      <Box sx={{ maxWidth: 900, mx: "auto", px: 4, py: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
+          <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: 56 }} />
+          <Box>
+            <Typography variant="h5" sx={{ color: brand.charcoal, fontSize: "1.5rem" }}>
+              IPPS Inspection Readiness Pack
+            </Typography>
+            <Typography sx={{ fontSize: "0.9rem", color: "text.secondary" }}>
+              {centre.name} · Generated {today}
+              {centre.isDemoData ? " · DEMO DATA" : ""}
+            </Typography>
+          </Box>
+        </Box>
+
+        <SectionTitle n={1}>Centre master record</SectionTitle>
+        <Table size="small">
+          <TableBody>
+            {[
+              ["Accommodation ID", centre.accommodationId],
+              ["Centre", centre.name],
+              ["Location", `${centre.location}, Co. ${centre.county}`],
+              ["Centre profile", centre.profile],
+              ["General Manager", centre.manager],
+              ["Contract capacity", String(centre.contractCapacity)],
+              ["Occupancy today", String(centre.occupancy)],
+              ["Rooms", String(rooms.length)],
+              ["Last IPPS inspection", centre.lastIppsInspection ?? "—"],
+            ].map(([k, v]) => (
+              <TableRow key={k}>
+                <TableCell sx={{ fontWeight: 600, width: 220 }}>{k}</TableCell>
+                <TableCell>{v}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <SectionTitle n={2}>Occupancy & space standard</SectionTitle>
+        <Typography sx={{ fontSize: "0.87rem", mb: 1 }}>
+          Suitable occupancy is derived at {SPACE_STANDARD_M2_PER_PERSON} m² per person.{" "}
+          {overOccupied.length === 0
+            ? "All rooms are within their computed suitable occupancy."
+            : `${overOccupied.length} room(s) currently exceed suitable occupancy and are listed below.`}{" "}
+          {withIssues.length} room(s) carry open issues from the last inspection or self-audit.
+        </Typography>
+        {overOccupied.length > 0 && (
+          <Table size="small" sx={{ mb: 1 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Room</TableCell>
+                <TableCell>Beds</TableCell>
+                <TableCell align="right">Area m²</TableCell>
+                <TableCell align="right">Suitable</TableCell>
+                <TableCell align="right">Current</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {overOccupied.map((r) => (
+                <TableRow key={r.room}>
+                  <TableCell>{r.room}</TableCell>
+                  <TableCell>{r.bedConfig ?? "—"}</TableCell>
+                  <TableCell align="right">{r.dimensionsM2 ?? "—"}</TableCell>
+                  <TableCell align="right">{r.suitableOccupancy}</TableCell>
+                  <TableCell align="right" sx={{ color: rag.red, fontWeight: 700 }}>
+                    {r.currentOccupancy}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+
+        <SectionTitle n={3}>Administration registers</SectionTitle>
+        <Table size="small">
+          <TableBody>
+            {registers.map((reg) => (
+              <TableRow key={reg.name}>
+                <TableCell>{reg.name}</TableCell>
+                <TableCell sx={{ width: 140 }}>{reg.lastReviewed}</TableCell>
+                <TableCell sx={{ width: 150 }}>
+                  {reg.status === "in_order" ? "In order" : reg.status === "attention" ? "Needs attention" : "Not reviewed"}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <SectionTitle n={4}>Findings & corrective actions</SectionTitle>
+        {findings.length === 0 ? (
+          <Typography sx={{ fontSize: "0.87rem" }}>No findings recorded.</Typography>
+        ) : (
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Priority</TableCell>
+                <TableCell>Finding</TableCell>
+                <TableCell>Raised</TableCell>
+                <TableCell>Evidence due</TableCell>
+                <TableCell>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {findings.map((f) => {
+                const d = daysUntilDue(f);
+                return (
+                  <TableRow key={f.id}>
+                    <TableCell>
+                      <RagChip priority={f.priority} />
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{f.finding}</TableCell>
+                    <TableCell>{f.raisedOn}</TableCell>
+                    <TableCell>
+                      {f.dueOn ?? "—"}
+                      {f.status === "open" && d !== null && d < 0 ? ` (${-d}d overdue)` : ""}
+                    </TableCell>
+                    <TableCell>
+                      {f.status === "open" ? "Open" : f.status === "evidence_submitted" ? "Evidence submitted" : "Closed"}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+        <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mt: 0.5 }}>
+          {openFindings.length} finding(s) open. Evidence of resolution is required within 14 days of report receipt.
+        </Typography>
+
+        <SectionTitle n={5}>HIQA National Standards self-assessment</SectionTitle>
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
+          {(Object.keys(judgementCounts) as Judgement[])
+            .filter((j) => judgementCounts[j] > 0)
+            .map((j) => (
+              <Chip key={j} label={`${JUDGEMENT_LABELS[j]}: ${judgementCounts[j]}`} size="small" />
+            ))}
+        </Box>
+        {weakStandards.length > 0 && (
+          <>
+            <Typography sx={{ fontSize: "0.87rem", fontWeight: 600, mb: 0.5 }}>
+              Standards with improvement plans in place:
+            </Typography>
+            <Table size="small">
+              <TableBody>
+                {weakStandards.map((s) => (
+                  <TableRow key={s.id}>
+                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.red }}>{s.id}</TableCell>
+                    <TableCell sx={{ fontSize: "0.8rem" }}>{s.text}</TableCell>
+                    <TableCell sx={{ width: 170 }}>{JUDGEMENT_LABELS[assessments.get(s.id) ?? "notAssessed"]}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </>
+        )}
+
+        <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mt: 4, borderTop: `1px solid ${brand.border}`, pt: 1 }}>
+          Generated by the Peppard IPAS Operator Dashboard from live registers — centre master record, room register,
+          administration registers, findings register and standards register. Nothing in this pack is manually keyed.
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
