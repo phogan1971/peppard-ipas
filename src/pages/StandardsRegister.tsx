@@ -139,7 +139,7 @@ export default function StandardsRegister() {
                   flexWrap: { xs: "wrap", md: "nowrap" },
                 }}
               >
-                <Typography sx={{ fontWeight: 700, color: brand.red, width: 40, flexShrink: 0 }}>{std.id}</Typography>
+                <Typography sx={{ fontWeight: 700, color: brand.primary, width: 40, flexShrink: 0 }}>{std.id}</Typography>
                 <Typography sx={{ fontSize: "0.85rem", flexGrow: 1, minWidth: 240 }}>{std.text}</Typography>
                 <Box sx={{ width: 150, flexShrink: 0 }}>
                   <Typography sx={{ fontSize: "0.68rem", color: "text.secondary", mb: 0.25 }}>Sector benchmark</Typography>

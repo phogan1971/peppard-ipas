@@ -11,7 +11,7 @@ interface StatCardProps {
   accent?: string; // left border accent — defaults to brand red
 }
 
-export default function StatCard({ label, value, sub, accent = brand.red }: StatCardProps) {
+export default function StatCard({ label, value, sub, accent = brand.primary }: StatCardProps) {
   return (
     <Paper sx={{ p: 2, borderLeft: `4px solid ${accent}`, height: "100%" }}>
       <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "text.secondary", textTransform: "uppercase", letterSpacing: 0.5 }}>

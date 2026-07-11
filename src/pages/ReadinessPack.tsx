@@ -187,7 +187,7 @@ export default function ReadinessPack() {
               <TableBody>
                 {weakStandards.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.red }}>{s.id}</TableCell>
+                    <TableCell sx={{ width: 50, fontWeight: 700, color: brand.primary }}>{s.id}</TableCell>
                     <TableCell sx={{ fontSize: "0.8rem" }}>{s.text}</TableCell>
                     <TableCell sx={{ width: 170 }}>{JUDGEMENT_LABELS[assessments.get(s.id) ?? "notAssessed"]}</TableCell>
                   </TableRow>

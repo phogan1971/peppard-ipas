@@ -39,7 +39,7 @@ export default function PageShell({ icon: Icon, title, subtitle, actions, childr
       <Box sx={{ mb: 2, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Icon sx={{ color: brand.red, fontSize: 28 }} />
+            <Icon sx={{ color: brand.primary, fontSize: 28 }} />
             <Typography variant="h5" sx={{ fontWeight: 700, color: brand.charcoal, fontSize: "1.75rem" }}>
               {title}
             </Typography>

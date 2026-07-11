@@ -10,7 +10,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Group Overview", path: "/", isActive: (p) => p === "/" },
+  { label: "Group Overview", path: "/overview", isActive: (p) => p === "/overview" },
   {
     label: "Centre Operations",
     path: "/centres/riverside",
@@ -57,13 +57,13 @@ export default function PortalSubNav() {
               textTransform: "none",
               transition: "all 0.2s ease",
               border: "1px solid",
-              borderColor: selected ? brand.red : brand.border,
-              backgroundColor: selected ? brand.red : "#fff",
+              borderColor: selected ? brand.primary : brand.border,
+              backgroundColor: selected ? brand.primary : "#fff",
               color: selected ? "#fff" : "#666",
               "&:hover": {
-                backgroundColor: selected ? brand.redDark : surface.hoverBg,
-                borderColor: brand.red,
-                color: selected ? "#fff" : brand.red,
+                backgroundColor: selected ? brand.primaryDark : surface.hoverBg,
+                borderColor: brand.primary,
+                color: selected ? "#fff" : brand.primary,
               },
             }}
           >

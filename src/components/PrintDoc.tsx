@@ -11,7 +11,7 @@ export function SectionTitle({ n, children }: { n: number | string; children: st
   return (
     <Typography
       variant="h6"
-      sx={{ color: brand.charcoal, borderBottom: `2px solid ${brand.red}`, pb: 0.5, mb: 1.5, mt: 3, fontSize: "1.05rem" }}
+      sx={{ color: brand.charcoal, borderBottom: `2px solid ${brand.primary}`, pb: 0.5, mb: 1.5, mt: 3, fontSize: "1.05rem" }}
     >
       {n}. {children}
     </Typography>

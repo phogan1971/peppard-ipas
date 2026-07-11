@@ -90,10 +90,10 @@ export default function FindingsTracker() {
                 py: 0.5,
                 fontSize: "0.8rem",
                 border: "1px solid",
-                borderColor: selected ? brand.red : brand.border,
-                backgroundColor: selected ? brand.red : "#fff",
+                borderColor: selected ? brand.primary : brand.border,
+                backgroundColor: selected ? brand.primary : "#fff",
                 color: selected ? "#fff" : "#666",
-                "&:hover": { backgroundColor: selected ? brand.redDark : surface.hoverBg },
+                "&:hover": { backgroundColor: selected ? brand.primaryDark : surface.hoverBg },
               }}
             >
               {opt.label}
