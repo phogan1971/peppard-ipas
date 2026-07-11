@@ -97,7 +97,6 @@ export default function CentreOperations() {
               {centre.manager} · Last IPPS inspection: {centre.lastIppsInspection ?? "—"}
             </Typography>
           </Box>
-          {centre.isDemoData && <Chip label="Demo data — real registers land per centre in Phase 1" size="small" />}
         </Box>
       </Paper>
 

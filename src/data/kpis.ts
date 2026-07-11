@@ -1,5 +1,6 @@
 import kpiJson from "../../docs/source-data/kpi-framework.json";
 import { AppState, daysUntilDue } from "./store";
+import { getProfile } from "./profile";
 
 export interface KpiDef {
   id: string;
@@ -92,31 +93,39 @@ function demoRand(seedStr: string): () => number {
 }
 
 function demoValue(kpi: KpiDef): KpiValue {
-  const rand = demoRand(`kpi-${kpi.id}`);
+  const k = getProfile().kpi / 100;
+  const rand = demoRand(`kpi-${kpi.id}-${Math.round(k * 100)}`);
   const roll = rand();
   const t = kpi.target;
 
+  // Scenario band: how the KPI performs relative to target, driven by the
+  // profile's KPI slider. "good" hits target, "near" is close, "bad" misses.
+  const meetsCut = 0.3 + 0.62 * k;
+  const band: KpiStatus = roll < meetsCut ? "meets" : roll < meetsCut + (1 - meetsCut) * 0.65 ? "near" : "breach";
+
   if (t.includes("%")) {
-    const pct = roll < 0.62 ? 100 : roll < 0.88 ? 90 + Math.round(rand() * 9) : 78 + Math.round(rand() * 10);
-    const status: KpiStatus = pct === 100 ? "meets" : pct >= 90 ? "near" : "breach";
-    return { display: `${pct}%`, status, live: false };
+    const pct = band === "meets" ? 100 : band === "near" ? 90 + Math.round(rand() * 9) : 76 + Math.round(rand() * 12);
+    return { display: `${pct}%`, status: band, live: false };
   }
   if (t.trim() === "0" || t.startsWith("0 ")) {
-    const n = roll < 0.75 ? 0 : 1 + Math.round(rand() * 2);
+    const n = band === "meets" ? 0 : band === "near" ? 1 : 1 + Math.round(rand() * 2);
     return { display: `${n}`, status: n === 0 ? "meets" : "breach", live: false };
   }
   if (t.includes("hrs")) {
-    const hrs = 24 + Math.round(rand() * 40);
-    const status: KpiStatus = hrs < 48 ? "meets" : hrs <= 72 ? "near" : "breach";
-    return { display: `${hrs} hrs avg`, status, live: false };
+    const hrs = band === "meets" ? 24 + Math.round(rand() * 22) : band === "near" ? 49 + Math.round(rand() * 22) : 74 + Math.round(rand() * 20);
+    return { display: `${hrs} hrs avg`, status: band, live: false };
   }
   if (t === "↓" || t.toLowerCase().includes("rising") || t.toLowerCase().includes("reduction")) {
     const n = Math.round(rand() * 14);
-    const delta = Math.round(rand() * 4);
-    const down = roll < 0.7;
-    return { display: `${n} (${down ? "↓" : "↑"}${delta} on last month)`, status: down ? "meets" : "near", live: false };
+    const delta = 1 + Math.round(rand() * 3);
+    const down = band !== "breach";
+    return {
+      display: `${n} (${down ? "↓" : "↑"}${delta} on last month)`,
+      status: down ? "meets" : "near",
+      live: false,
+    };
   }
-  return { display: "Completed", status: roll < 0.85 ? "meets" : "near", live: false };
+  return { display: band === "breach" ? "Outstanding" : "Completed", status: band === "breach" ? "near" : band, live: false };
 }
 
 export function kpiValue(kpi: KpiDef, state: AppState): KpiValue {
