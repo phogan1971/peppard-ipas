@@ -14,7 +14,8 @@ import StatCard from "../components/StatCard";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
-import { brand, rag, surface, accent } from "../theme/tokens";
+import { brand, rag, accent } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 const STATUS_META: Record<FindingStatus, { label: string; color: string; bg: string }> = {
   open: { label: "Open", color: rag.red, bg: rag.redBg },
@@ -34,6 +35,7 @@ function DueClock({ finding }: { finding: Finding }) {
 
 export default function FindingsTracker() {
   const { centres, findings } = useAppState();
+  const s = useSurfaces();
   const [centreFilter, setCentreFilter] = useState<string>("all");
   const [showClosed, setShowClosed] = useState(false);
 
@@ -93,10 +95,10 @@ export default function FindingsTracker() {
                 py: 0.5,
                 fontSize: "0.8rem",
                 border: "1px solid",
-                borderColor: selected ? brand.primary : brand.border,
-                backgroundColor: selected ? brand.primary : "#fff",
-                color: selected ? "#fff" : "#666",
-                "&:hover": { backgroundColor: selected ? brand.primaryDark : surface.hoverBg },
+                borderColor: selected ? brand.primary : s.border,
+                backgroundColor: selected ? brand.primary : s.pillIdleBg,
+                color: selected ? "#fff" : s.pillIdleColor,
+                "&:hover": { backgroundColor: selected ? brand.primaryDark : s.hoverBg },
               }}
             >
               {opt.label}
@@ -104,7 +106,7 @@ export default function FindingsTracker() {
           );
         })}
         <Box sx={{ flexGrow: 1 }} />
-        <Button size="small" onClick={() => setShowClosed((v) => !v)} sx={{ color: brand.charcoal, textDecoration: "underline" }}>
+        <Button size="small" onClick={() => setShowClosed((v) => !v)} sx={{ color: "text.primary", textDecoration: "underline" }}>
           {showClosed ? "Hide closed" : "Show closed"}
         </Button>
       </Box>
@@ -116,8 +118,8 @@ export default function FindingsTracker() {
             <Paper key={f.id} sx={{ p: 2 }}>
               <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center", mb: 0.75 }}>
                 <RagChip priority={f.priority} />
-                <Typography sx={{ fontWeight: 700, color: brand.charcoal }}>{f.finding}</Typography>
-                <Chip label={centreName(f.centreId)} size="small" sx={{ backgroundColor: surface.pillRowBg }} />
+                <Typography sx={{ fontWeight: 700, color: "text.primary" }}>{f.finding}</Typography>
+                <Chip label={centreName(f.centreId)} size="small" sx={{ backgroundColor: s.pillRowBg }} />
                 <DueClock finding={f} />
                 <Box sx={{ flexGrow: 1 }} />
                 <Chip label={sm.label} size="small" sx={{ backgroundColor: sm.bg, color: sm.color, fontWeight: 600 }} />

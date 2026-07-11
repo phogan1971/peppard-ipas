@@ -76,14 +76,49 @@ export const compliance = {
 } as const;
 
 // ── Surfaces (Genesis page-shell conventions) ───────────────────────────
-export const surface = {
+export interface SurfaceSet {
+  pageBg: string;
+  cardBg: string;
+  subNavBg: string;
+  pillRowBg: string;
+  subtleBg: string;
+  hoverBg: string;
+  border: string;
+  heading: string; // page/section heading colour (navy on light, sky on dark)
+  pillIdleBg: string; // unselected sub-nav pill
+  pillIdleColor: string;
+  tableHeadBg: string;
+}
+
+export const surface: SurfaceSet = {
   pageBg: "#F5F5F5", // page body (Genesis standard)
   cardBg: "#FFFFFF", // Paper, cards, inputs
   subNavBg: "#FFFFFF", // sticky sub-nav bar
   pillRowBg: "#F0F2F5", // pill-row container / inactive toggle
   subtleBg: "#FAFAFA", // info boxes nested inside cards
   hoverBg: "#F0F2F5",
-} as const;
+  border: "#e0e0e0",
+  heading: "#00465c",
+  pillIdleBg: "#FFFFFF",
+  pillIdleColor: "#00465c",
+  tableHeadBg: "#fafafa",
+};
+
+// Dark-mode counterparts (Genisis3 dark idiom: #1e2635 pill container,
+// rgba-white idle pills, slate text)
+export const darkSurface: SurfaceSet = {
+  pageBg: "#0F1722",
+  cardBg: "#1A2434",
+  subNavBg: "#141D2B",
+  pillRowBg: "#1E2635",
+  subtleBg: "#141D2B",
+  hoverBg: "#243044",
+  border: "#2C3A4F",
+  heading: "#7CC0D8",
+  pillIdleBg: "rgba(255,255,255,0.08)",
+  pillIdleColor: "#E2E8F0",
+  tableHeadBg: "#141D2B",
+};
 
 export const text = {
   primary: "#424242", // Genesis body text

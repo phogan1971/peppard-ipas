@@ -8,7 +8,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import { useNavigate } from "react-router-dom";
-import { brand, rag, surface } from "../theme/tokens";
+import { rag } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 import { DataProfile, DEFAULT_PROFILE, getProfile, matchingPreset, PROFILE_PRESETS, PresetKey } from "../data/profile";
 import { regenerateData } from "../data/store";
 
@@ -46,6 +47,7 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
   const navigate = useNavigate();
   const [draft, setDraft] = useState<DataProfile>(getProfile());
   const activePreset = matchingPreset(draft);
+  const s = useSurfaces();
 
   const apply = (profile: DataProfile) => {
     regenerateData(profile);
@@ -55,7 +57,7 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle sx={{ color: brand.primary }}>Data settings</DialogTitle>
+      <DialogTitle sx={{ color: s.heading }}>Data settings</DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
           Choose how the sample dataset presents. Presets set the overall tone; the sliders fine-tune it.
@@ -75,15 +77,15 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
                   flexDirection: "column",
                   alignItems: "flex-start",
                   textAlign: "left",
-                  border: `2px solid ${selected ? PRESET_ACCENTS[key] : brand.border}`,
-                  backgroundColor: selected ? surface.subtleBg : "#fff",
+                  border: `2px solid ${selected ? PRESET_ACCENTS[key] : s.border}`,
+                  backgroundColor: selected ? s.subtleBg : "background.paper",
                   borderRadius: "10px",
                   p: 1.5,
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5 }}>
                   <Box sx={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: PRESET_ACCENTS[key] }} />
-                  <Typography sx={{ fontWeight: 700, fontSize: "0.85rem", color: brand.primary }}>
+                  <Typography sx={{ fontWeight: 700, fontSize: "0.85rem", color: s.heading }}>
                     {preset.label}
                   </Typography>
                 </Box>
@@ -95,21 +97,21 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
           })}
         </Box>
 
-        {SLIDERS.map((s) => (
-          <Box key={s.key} sx={{ mb: 2 }}>
+        {SLIDERS.map((spec) => (
+          <Box key={spec.key} sx={{ mb: 2 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <Typography sx={{ fontWeight: 600, fontSize: "0.85rem", color: brand.primary }}>{s.label}</Typography>
-              <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>{draft[s.key]}%</Typography>
+              <Typography sx={{ fontWeight: 600, fontSize: "0.85rem", color: s.heading }}>{spec.label}</Typography>
+              <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>{draft[spec.key]}%</Typography>
             </Box>
             <Slider
-              value={draft[s.key]}
-              onChange={(_, v) => setDraft({ ...draft, [s.key]: v as number })}
+              value={draft[spec.key]}
+              onChange={(_, v) => setDraft({ ...draft, [spec.key]: v as number })}
               min={0}
               max={100}
-              aria-label={s.label}
-              sx={{ color: brand.primary }}
+              aria-label={spec.label}
+              sx={{ color: "primary.main" }}
             />
-            <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mt: -0.5 }}>{s.help}</Typography>
+            <Typography sx={{ fontSize: "0.72rem", color: "text.secondary", mt: -0.5 }}>{spec.help}</Typography>
           </Box>
         ))}
       </DialogContent>

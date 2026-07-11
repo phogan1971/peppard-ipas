@@ -4,11 +4,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import SettingsIcon from "@mui/icons-material/Settings";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import { useNavigate } from "react-router-dom";
-import { brand, surface, fonts } from "../theme/tokens";
+import { brand, fonts } from "../theme/tokens";
+import { useSurfaces } from "../theme";
+import { useColorMode } from "../theme/ColorModeContext";
 import ErrorBoundary from "./ErrorBoundary";
 import SettingsDialog from "./SettingsDialog";
+import HelpDialog from "./HelpDialog";
 
 // Origin Care Group lockup: donut mark + wordmark, composed in code so it
 // scales and recolours cleanly (the site only serves the mark as an image).
@@ -53,9 +60,12 @@ export function OriginLogo({ height = 36, dark = false }: { height?: number; dar
 // white chip so the logo's white background reads as intentional.
 export default function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const s = useSurfaces();
+  const { mode, toggleMode } = useColorMode();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: surface.pageBg }}>
+    <Box sx={{ minHeight: "100vh", backgroundColor: s.pageBg }}>
       <AppBar
         position="fixed"
         elevation={0}
@@ -114,16 +124,37 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            aria-label="Settings"
-            onClick={() => setSettingsOpen(true)}
-            sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
-          >
-            <SettingsIcon />
-          </IconButton>
+          <Tooltip title="Help">
+            <IconButton
+              aria-label="Help"
+              onClick={() => setHelpOpen(true)}
+              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+            >
+              <HelpOutlineIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={mode === "light" ? "Dark mode" : "Light mode"}>
+            <IconButton
+              aria-label={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              onClick={toggleMode}
+              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+            >
+              {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Settings">
+            <IconButton
+              aria-label="Settings"
+              onClick={() => setSettingsOpen(true)}
+              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+            >
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </AppBar>
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
       {/* offset for the fixed 64px AppBar */}
       <Box sx={{ pt: "64px", "@media print": { pt: 0 } }}>
         <ErrorBoundary>{children}</ErrorBoundary>

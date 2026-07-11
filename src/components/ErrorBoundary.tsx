@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { brand } from "../theme/tokens";
+
 import { regenerateData } from "../data/store";
 
 interface State {
@@ -24,7 +24,7 @@ export default class ErrorBoundary extends Component<{ children: ReactNode }, St
     return (
       <Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
         <Paper sx={{ p: 3, maxWidth: 480 }}>
-          <Typography variant="h6" sx={{ color: brand.charcoal, mb: 1 }}>
+          <Typography variant="h6" sx={{ color: "text.primary", mb: 1 }}>
             Something went wrong
           </Typography>
           <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 2 }}>

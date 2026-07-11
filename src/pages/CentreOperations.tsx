@@ -24,7 +24,8 @@ import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import { useAppState } from "../data/store";
 import { RegisterEntry, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
-import { brand, rag, surface, accent } from "../theme/tokens";
+import { rag, accent } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 const REGISTER_STATUS: Record<RegisterEntry["status"], { label: string; color: string; bg: string }> = {
   in_order: { label: "In order", color: rag.green, bg: rag.greenBg },
@@ -36,6 +37,7 @@ export default function CentreOperations() {
   const { centreId } = useParams();
   const navigate = useNavigate();
   const { centres, roomsByCentre, registersByCentre } = useAppState();
+  const surf = useSurfaces();
 
   const centre = centres.find((c) => c.id === centreId) ?? centres[0];
   const rooms = roomsByCentre[centre.id] ?? [];
@@ -60,7 +62,7 @@ export default function CentreOperations() {
             value={centre.id}
             onChange={(e) => navigate(`/centres/${e.target.value}`)}
             aria-label="Select centre"
-            sx={{ minWidth: 220, backgroundColor: "#fff" }}
+            sx={{ minWidth: 220, backgroundColor: "background.paper" }}
           >
             {centres.map((c) => (
               <MenuItem key={c.id} value={c.id}>
@@ -89,7 +91,7 @@ export default function CentreOperations() {
       <Paper sx={{ p: 2, mb: 3 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 1 }}>
           <Box>
-            <Typography variant="h6" sx={{ color: brand.charcoal }}>
+            <Typography variant="h6" sx={{ color: "text.primary" }}>
               {centre.name}
             </Typography>
             <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
@@ -134,7 +136,7 @@ export default function CentreOperations() {
         <Grid item xs={12} lg={8}>
           <Paper sx={{ overflow: "hidden" }}>
             <Box sx={{ p: 2, pb: 1 }}>
-              <Typography variant="h6" sx={{ fontSize: "1.05rem", color: brand.charcoal }}>
+              <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
                 Room register
               </Typography>
               <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
@@ -191,7 +193,7 @@ export default function CentreOperations() {
 
         <Grid item xs={12} lg={4}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ fontSize: "1.05rem", color: brand.charcoal, mb: 1 }}>
+            <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary", mb: 1 }}>
               Administration registers
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -207,7 +209,7 @@ export default function CentreOperations() {
                       gap: 1,
                       p: 1,
                       borderRadius: 1,
-                      backgroundColor: surface.subtleBg,
+                      backgroundColor: surf.subtleBg,
                     }}
                   >
                     <Box>
