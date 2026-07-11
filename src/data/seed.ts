@@ -37,6 +37,9 @@ interface RiversideJson {
     actionRequired: string;
     evidenceDueDays: number | null;
   }[];
+  areasInspectedChecklist: string[];
+  sections: { title: string }[];
+  ragLegend: Record<string, string>;
 }
 
 interface StandardsJson {
@@ -98,6 +101,16 @@ const CENTRE_SPECS: CentreSpec[] = [
   { id: "old-hse", name: "OLD HSE Accommodation Centre", shortName: "OLD HSE Buncrana", location: "Buncrana", county: "Donegal", capacity: 75, profile: "Single Males", manager: "James Doherty" },
   { id: "mulroy", name: "Mulroy Accommodation Centre", shortName: "Mulroy", location: "Milford", county: "Donegal", capacity: 85, profile: "Families and Single Females", manager: "Claire Gallagher" },
 ];
+
+// ── Department return reference structures (from the IPPS report) ───────
+export const AREAS_INSPECTED_CHECKLIST: string[] = riverside.areasInspectedChecklist;
+export const INSPECTION_SECTIONS: string[] = riverside.sections.map((s) => s.title);
+export const RAG_LEGEND: Record<string, string> = riverside.ragLegend;
+
+export function sectionStatus(centreId: string, sectionTitle: string): "in_order" | "see_findings" {
+  const rand = mulberry(`section-${centreId}-${sectionTitle}`);
+  return rand() < 0.85 ? "in_order" : "see_findings";
+}
 
 // ── Standards (real, from national-standards.pdf) ───────────────────────
 export const STANDARDS: HiqaStandard[] = standardsSrc.themes.flatMap((t) =>
