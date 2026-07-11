@@ -64,6 +64,13 @@ export default function CentreOperations() {
             ))}
           </Select>
           <Button
+            variant="outlined"
+            startIcon={<DescriptionIcon />}
+            onClick={() => navigate(`/centres/${centre.id}/return`)}
+          >
+            Department return
+          </Button>
+          <Button
             variant="contained"
             disableElevation
             startIcon={<DescriptionIcon />}
