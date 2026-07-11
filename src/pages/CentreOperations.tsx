@@ -11,7 +11,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { useNavigate, useParams } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
@@ -47,19 +49,29 @@ export default function CentreOperations() {
       title="Centre Operations"
       subtitle={`Room register, occupancy and administration registers — space standard ${SPACE_STANDARD_M2_PER_PERSON} m² per person`}
       actions={
-        <Select
-          size="small"
-          value={centre.id}
-          onChange={(e) => navigate(`/centres/${e.target.value}`)}
-          aria-label="Select centre"
-          sx={{ minWidth: 240, backgroundColor: "#fff" }}
-        >
-          {centres.map((c) => (
-            <MenuItem key={c.id} value={c.id}>
-              {c.shortName}
-            </MenuItem>
-          ))}
-        </Select>
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          <Select
+            size="small"
+            value={centre.id}
+            onChange={(e) => navigate(`/centres/${e.target.value}`)}
+            aria-label="Select centre"
+            sx={{ minWidth: 220, backgroundColor: "#fff" }}
+          >
+            {centres.map((c) => (
+              <MenuItem key={c.id} value={c.id}>
+                {c.shortName}
+              </MenuItem>
+            ))}
+          </Select>
+          <Button
+            variant="contained"
+            disableElevation
+            startIcon={<DescriptionIcon />}
+            onClick={() => navigate(`/centres/${centre.id}/readiness`)}
+          >
+            Readiness pack
+          </Button>
+        </Box>
       }
     >
       <Paper sx={{ p: 2, mb: 3 }}>

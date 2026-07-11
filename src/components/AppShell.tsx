@@ -17,6 +17,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           backgroundColor: "#fff",
           borderBottom: `1px solid ${brand.border}`,
           color: brand.charcoal,
+          displayPrint: "none",
         }}
       >
         <Toolbar sx={{ minHeight: 64, gap: 1.5 }}>
@@ -40,7 +41,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </Toolbar>
       </AppBar>
       {/* offset for the fixed 64px AppBar */}
-      <Box sx={{ pt: "64px" }}>{children}</Box>
+      <Box sx={{ pt: "64px", "@media print": { pt: 0 } }}>{children}</Box>
     </Box>
   );
 }
