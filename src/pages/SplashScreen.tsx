@@ -7,7 +7,6 @@ import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useNavigate } from "react-router-dom";
-import { OriginLogo } from "../components/AppShell";
 import { brand, surface } from "../theme/tokens";
 
 const GENESIS_URL = "https://genesishealthcarenew.netlify.app/";
@@ -24,8 +23,8 @@ interface PlatformCard {
 
 const PLATFORMS: PlatformCard[] = [
   {
-    logo: "/connects-logo.png",
-    logoHeight: 64,
+    logo: "/genesis-logo.png",
+    logoHeight: 72,
     name: "Genesis Healthcare",
     descr: "Clinical governance portal — KPIs, compliance, audits, incidents and board reporting for hospital operations.",
     cta: "Open connects.health",
@@ -108,9 +107,13 @@ function renderChooser(navigate: ReturnType<typeof useNavigate>) {
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: brand.primary, display: "flex", flexDirection: "column" }}>
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", px: 2, py: 6 }}>
-        <Box sx={{ backgroundColor: "#fff", borderRadius: 3, px: 4, py: 2.5, mb: 3 }}>
-          <OriginLogo height={52} />
-        </Box>
+        {/* Official white lockup — supplied asset, used verbatim */}
+        <Box
+          component="img"
+          src="/origin-logo-white.png"
+          alt="Origin Care Group"
+          sx={{ height: 78, width: "auto", mb: 4 }}
+        />
         <Typography
           variant="h4"
           sx={{ color: "#fff", fontWeight: 700, textAlign: "center", mb: 1 }}
