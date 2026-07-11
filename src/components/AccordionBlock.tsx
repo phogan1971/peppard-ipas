@@ -5,7 +5,17 @@ import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { accordion, brand } from "../theme/tokens";
+import { useTheme } from "@mui/material/styles";
+import { accordion } from "../theme/tokens";
+import { useSurfaces } from "../theme";
+
+const DARK_ACCORDION = {
+  wrapperBg: "#14211C",
+  headerBg: "#253141",
+  headerHover: "#2D3A4C",
+  hoverRing: "0 0 0 2px rgba(124, 192, 216, 0.15)",
+  hoverBorder: "#7CC0D860",
+};
 
 interface AccordionBlockProps {
   title: string;
@@ -26,20 +36,23 @@ export default function AccordionBlock({
   children,
 }: AccordionBlockProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const s = useSurfaces();
+  const dark = useTheme().palette.mode === "dark";
+  const a = dark ? DARK_ACCORDION : accordion;
 
   return (
     <Box
       sx={{
         position: "relative",
-        backgroundColor: accordion.wrapperBg,
-        border: `1px solid ${brand.border}`,
+        backgroundColor: a.wrapperBg,
+        border: `1px solid ${s.border}`,
         borderRadius: "10px",
         overflow: "hidden",
         transition: "all 0.2s ease",
         mb: 1,
         "&:hover": {
-          borderColor: accordion.hoverBorder,
-          boxShadow: accordion.hoverRing,
+          borderColor: a.hoverBorder,
+          boxShadow: a.hoverRing,
         },
       }}
     >
@@ -51,17 +64,17 @@ export default function AccordionBlock({
           padding: { xs: "8px 12px", sm: "10px 16px" },
           gap: { xs: 1, sm: 1.5 },
           flexWrap: "wrap",
-          backgroundColor: accordion.headerBg,
+          backgroundColor: a.headerBg,
           cursor: "pointer",
-          "&:hover": { backgroundColor: accordion.headerHover },
+          "&:hover": { backgroundColor: a.headerHover },
         }}
       >
         <Box sx={{ flex: "1 1 auto", minWidth: 200 }}>
-          <Typography variant="body1" sx={{ fontWeight: 700, color: brand.primary, mb: 0.25, fontSize: "0.875rem" }}>
+          <Typography variant="body1" sx={{ fontWeight: 700, color: s.heading, mb: 0.25, fontSize: "0.875rem" }}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="caption" sx={{ color: "#333" }}>
+            <Typography variant="caption" sx={{ color: dark ? "#94A3B8" : "#333" }}>
               {subtitle}
             </Typography>
           )}
@@ -75,9 +88,9 @@ export default function AccordionBlock({
             setExpanded((v) => !v);
           }}
           sx={{
-            backgroundColor: brand.primary,
+            backgroundColor: "primary.main",
             color: "#fff",
-            "&:hover": { backgroundColor: brand.primaryDark },
+            "&:hover": { backgroundColor: "primary.dark" },
             width: 28,
             height: 28,
           }}
@@ -86,7 +99,7 @@ export default function AccordionBlock({
         </IconButton>
       </Box>
       <Collapse in={expanded}>
-        <Box sx={{ backgroundColor: "#fff" }}>{children}</Box>
+        <Box sx={{ backgroundColor: s.cardBg }}>{children}</Box>
       </Collapse>
     </Box>
   );

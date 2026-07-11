@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { SvgIconComponent } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 import { accent } from "../theme/tokens";
 
 interface StatCardProps {
@@ -16,12 +17,14 @@ interface StatCardProps {
 
 // Genisis3 "Alert Summary" statistic card: large coloured value top-left,
 // label below, tinted icon chip top-right, lift on hover.
-export default function StatCard({ label, value, sub, accent: accentColor = accent.navy, icon: Icon }: StatCardProps) {
+export default function StatCard({ label, value, sub, accent: accentProp = accent.navy, icon: Icon }: StatCardProps) {
+  const dark = useTheme().palette.mode === "dark";
+  // navy is too dim on dark surfaces — swap for the dark-mode primary
+  const accentColor = dark && accentProp === accent.navy ? "#4FA3BD" : accentProp;
   return (
     <Card
       sx={{
         height: "100%",
-        backgroundColor: "#fff",
         transition: "all 0.2s ease",
         "&:hover": { transform: "translateY(-2px)", boxShadow: 6 },
       }}

@@ -4,8 +4,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import PrintIcon from "@mui/icons-material/Print";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { brand } from "../theme/tokens";
+import { printTheme } from "../theme";
 
 export function SectionTitle({ n, children }: { n: number | string; children: string }) {
   return (
@@ -33,7 +35,11 @@ interface PrintDocShellProps {
 export default function PrintDocShell({ backTo, backLabel, title, subtitle, footer, children }: PrintDocShellProps) {
   const navigate = useNavigate();
   return (
-    <Box sx={{ backgroundColor: "#fff", minHeight: "calc(100vh - 64px)" }}>
+    // Documents are paper: always light regardless of app colour mode,
+    // so they read on screen and print to PDF correctly.
+    <ThemeProvider theme={printTheme}>
+    {/* color anchors inheritance — body colour otherwise leaks in from the app's dark CssBaseline */}
+    <Box sx={{ backgroundColor: "#fff", color: "#424242", minHeight: "calc(100vh - 64px)" }}>
       <Box
         sx={{
           displayPrint: "none",
@@ -74,5 +80,6 @@ export default function PrintDocShell({ backTo, backLabel, title, subtitle, foot
         </Typography>
       </Box>
     </Box>
+    </ThemeProvider>
   );
 }

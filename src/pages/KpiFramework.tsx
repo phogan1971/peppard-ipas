@@ -18,7 +18,8 @@ import StatCard from "../components/StatCard";
 import AccordionBlock from "../components/AccordionBlock";
 import { useAppState } from "../data/store";
 import { KPI_DOMAINS, KpiStatus, domainRollup, kpiValue } from "../data/kpis";
-import { brand, rag, surface, accent } from "../theme/tokens";
+import { rag, accent } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 const STATUS_META: Record<KpiStatus, { label: string; color: string; bg: string }> = {
   meets: { label: "On target", color: rag.green, bg: rag.greenBg },
@@ -28,6 +29,7 @@ const STATUS_META: Record<KpiStatus, { label: string; color: string; bg: string 
 
 export default function KpiFramework() {
   const state = useAppState();
+  const s = useSurfaces();
 
   const allValues = KPI_DOMAINS.flatMap((d) => d.kpis.map((k) => kpiValue(k, state)));
   const meets = allValues.filter((v) => v.status === "meets").length;
@@ -56,9 +58,9 @@ export default function KpiFramework() {
         </Grid>
       </Grid>
 
-      <Paper sx={{ p: 2, mb: 3, backgroundColor: surface.subtleBg }}>
+      <Paper sx={{ p: 2, mb: 3, backgroundColor: s.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
-          KPIs marked <Chip label="LIVE" size="small" sx={{ height: 18, fontSize: "0.62rem", fontWeight: 700, backgroundColor: brand.charcoal, color: "#fff", mx: 0.5 }} component="span" />
+          KPIs marked <Chip label="LIVE" size="small" sx={{ height: 18, fontSize: "0.62rem", fontWeight: 700, backgroundColor: "primary.main", color: "#fff", mx: 0.5 }} component="span" />
           are computed in real time from the underlying registers (room register, findings register, occupancy).
           The remainder carry indicative values pending their assurance registers coming online in Phase 2.
         </Typography>
@@ -105,7 +107,7 @@ export default function KpiFramework() {
                             <Chip
                               label="LIVE"
                               size="small"
-                              sx={{ ml: 0.75, height: 16, fontSize: "0.6rem", fontWeight: 700, backgroundColor: brand.charcoal, color: "#fff" }}
+                              sx={{ ml: 0.75, height: 16, fontSize: "0.6rem", fontWeight: 700, backgroundColor: "primary.main", color: "#fff" }}
                             />
                           )}
                         </TableCell>

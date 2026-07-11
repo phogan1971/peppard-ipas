@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { SvgIconComponent } from "@mui/icons-material";
 import PortalSubNav from "./PortalSubNav";
-import { brand, surface } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 interface PageShellProps {
   icon: SvgIconComponent;
@@ -15,22 +15,23 @@ interface PageShellProps {
 }
 
 // Genesis standard page shell: sticky sub-nav under the 64px AppBar,
-// icon + title block, divider, then content.
+// icon + h5 title block, divider, then content.
 export default function PageShell({ icon: Icon, title, subtitle, actions, children }: PageShellProps) {
+  const s = useSurfaces();
   return (
-    <Box sx={{ px: 2, pb: 2, backgroundColor: surface.pageBg, minHeight: "calc(100vh - 64px)" }}>
+    <Box sx={{ px: 2, pb: 2, backgroundColor: s.pageBg, minHeight: "calc(100vh - 64px)" }}>
       <Box
         sx={{
           position: "sticky",
           top: 64,
           zIndex: 100,
-          backgroundColor: surface.subNavBg,
+          backgroundColor: s.subNavBg,
           mx: -2,
           px: 2,
           py: 1,
           mb: 2,
           boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-          borderBottom: `1px solid ${brand.border}`,
+          borderBottom: `1px solid ${s.border}`,
         }}
       >
         <PortalSubNav />
@@ -39,8 +40,8 @@ export default function PageShell({ icon: Icon, title, subtitle, actions, childr
       <Box sx={{ mb: 2, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Icon sx={{ color: brand.primary, fontSize: 28 }} />
-            <Typography variant="h5" sx={{ fontWeight: 700, color: brand.charcoal, fontSize: "1.75rem" }}>
+            <Icon sx={{ color: s.heading, fontSize: 28 }} />
+            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: "1.75rem" }}>
               {title}
             </Typography>
           </Box>

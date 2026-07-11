@@ -7,7 +7,8 @@ import RuleIcon from "@mui/icons-material/Rule";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { SvgIconComponent } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { brand, surface } from "../theme/tokens";
+import { brand } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 interface NavItem {
   label: string;
@@ -49,13 +50,14 @@ const NAV_ITEMS: NavItem[] = [
 export default function PortalSubNav() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const s = useSurfaces();
 
   return (
     <Box
       component="nav"
       aria-label="Dashboard sections"
       sx={{
-        backgroundColor: surface.pillRowBg,
+        backgroundColor: s.pillRowBg,
         borderRadius: "8px",
         padding: "4px",
         display: "inline-flex",
@@ -87,8 +89,8 @@ export default function PortalSubNav() {
               border: "none",
               flex: { xs: 1, sm: "0 0 auto" },
               alignSelf: "center",
-              backgroundColor: selected ? brand.primary : "#fff",
-              color: selected ? "#fff" : brand.primary,
+              backgroundColor: selected ? brand.primary : s.pillIdleBg,
+              color: selected ? "#fff" : s.pillIdleColor,
               boxShadow: selected ? "0 2px 4px rgba(0,0,0,0.1)" : "none",
               "&:hover": {
                 backgroundColor: selected ? brand.primaryDark : brand.primaryHover,

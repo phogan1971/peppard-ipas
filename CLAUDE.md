@@ -239,6 +239,14 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   no reset-demo button; copy says "sample data" / "regenerate".
 - localStorage persistence + ErrorBoundary so a render error never
   blanks a live walkthrough.
+- **Help** (`HelpDialog`, ? icon in top bar): table-of-contents help
+  covering every section; opens on the topic matching the current route.
+- **Dark mode** (moon/sun icon): `ColorModeProvider` +
+  `buildPeppardTheme(mode)`; components take surfaces from the
+  `useSurfaces()` hook (`tokens.surface` / `tokens.darkSurface`) —
+  **never import the light `surface` set directly in a component**.
+  Generated documents are wrapped in the always-light `printTheme`
+  (they are paper) with an explicit root text colour.
 - Riverside finding lifecycle dates are scenario-anchored to "today" so
   evidence clocks read live; content is the real 24.03.2026 findings
   (statuses/dates driven by the findings-pressure slider; one worked

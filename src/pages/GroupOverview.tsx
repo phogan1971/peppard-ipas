@@ -85,7 +85,7 @@ export default function GroupOverview() {
         </Grid>
       </Grid>
 
-      <Typography variant="h6" sx={{ mb: 1.5, color: brand.charcoal }}>
+      <Typography variant="h6" sx={{ mb: 1.5, color: "text.primary" }}>
         Centres
       </Typography>
       <Grid container spacing={2}>
@@ -110,7 +110,7 @@ export default function GroupOverview() {
                 >
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
                     <Box>
-                      <Typography sx={{ fontWeight: 700, color: brand.charcoal, lineHeight: 1.25 }}>
+                      <Typography sx={{ fontWeight: 700, color: "text.primary", lineHeight: 1.25 }}>
                         {centre.shortName}
                       </Typography>
                       <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
@@ -133,7 +133,7 @@ export default function GroupOverview() {
                       height: 6,
                       borderRadius: 3,
                       backgroundColor: brand.border,
-                      "& .MuiLinearProgress-bar": { backgroundColor: brand.charcoal },
+                      "& .MuiLinearProgress-bar": { backgroundColor: "primary.main" },
                     }}
                   />
 

@@ -18,7 +18,8 @@ import AccordionBlock from "../components/AccordionBlock";
 import { setAssessment, useAppState } from "../data/store";
 import { sectorDistributionFor, STANDARDS } from "../data/seed";
 import { Judgement, JUDGEMENT_LABELS } from "../data/types";
-import { brand, compliance, surface, accent } from "../theme/tokens";
+import { brand, compliance, accent } from "../theme/tokens";
+import { useSurfaces } from "../theme";
 
 const EDITABLE_JUDGEMENTS: Judgement[] = ["compliant", "substantiallyCompliant", "partiallyCompliant", "notCompliant"];
 
@@ -55,6 +56,7 @@ function BenchmarkBar({ standardId }: { standardId: string }) {
 
 export default function StandardsRegister() {
   const { centres, assessments } = useAppState();
+  const s = useSurfaces();
   const [centreId, setCentreId] = useState(centres[0].id);
 
   const centre = centres.find((c) => c.id === centreId) ?? centres[0];
@@ -88,7 +90,7 @@ export default function StandardsRegister() {
           value={centreId}
           onChange={(e) => setCentreId(e.target.value)}
           aria-label="Select centre"
-          sx={{ minWidth: 240, backgroundColor: "#fff" }}
+          sx={{ minWidth: 240, backgroundColor: "background.paper" }}
         >
           {centres.map((c) => (
             <MenuItem key={c.id} value={c.id}>
@@ -113,7 +115,7 @@ export default function StandardsRegister() {
         </Grid>
       </Grid>
 
-      <Paper sx={{ p: 2, mb: 2, backgroundColor: surface.subtleBg }}>
+      <Paper sx={{ p: 2, mb: 2, backgroundColor: s.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
           {centre.shortName} has not yet been inspected by HIQA — judgements below are internal self-assessments.
           The sector bar shows how the 69 published HIQA IPAS inspections judged each standard, recomputed from the
@@ -165,7 +167,7 @@ export default function StandardsRegister() {
                   flexWrap: { xs: "wrap", md: "nowrap" },
                 }}
               >
-                <Typography sx={{ fontWeight: 700, color: brand.primary, width: 40, flexShrink: 0 }}>{std.id}</Typography>
+                <Typography sx={{ fontWeight: 700, color: s.heading, width: 40, flexShrink: 0 }}>{std.id}</Typography>
                 <Typography sx={{ fontSize: "0.85rem", flexGrow: 1, minWidth: 240 }}>{std.text}</Typography>
                 <Box sx={{ width: 150, flexShrink: 0 }}>
                   <Typography sx={{ fontSize: "0.68rem", color: "text.secondary", mb: 0.25 }}>Sector benchmark</Typography>
@@ -180,6 +182,7 @@ export default function StandardsRegister() {
                     minWidth: 200,
                     flexShrink: 0,
                     fontSize: "0.82rem",
+                    "& .MuiSelect-select": { color: "#333" },
                     backgroundColor: {
                       compliant: compliance.compliantBg,
                       substantiallyCompliant: compliance.substantiallyBg,
