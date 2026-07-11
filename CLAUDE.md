@@ -181,18 +181,38 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 │   └── source-data/         # extracted JSON from client documents
 ├── public/peppard-logo.jpg
 └── src/
-    ├── main.tsx / App.tsx   # router: / , /centres/:centreId , /findings , /standards
+    ├── main.tsx / App.tsx   # router: / , /centres/:centreId(/readiness) , /findings , /standards , /kpis
     ├── theme/tokens.ts      # ALL colours + fonts (single source of truth)
     ├── theme/index.ts       # MUI theme built from tokens
-    ├── components/          # AppShell, PageShell, PortalSubNav, RagChip
-    ├── pages/               # GroupOverview, CentreOperations, FindingsTracker, StandardsRegister
-    └── data/                # seed data + localStorage demo store (build step 2)
+    ├── components/          # AppShell, PageShell, PortalSubNav, RagChip, StatCard, ErrorBoundary
+    ├── pages/               # GroupOverview, CentreOperations, FindingsTracker, StandardsRegister,
+    │                        # KpiFramework, ReadinessPack (print view)
+    └── data/                # types, seed (real Riverside + demo siblings), store (localStorage),
+                             # kpis (74-KPI framework, 6 computed live)
 ```
+
+## What IS built (as of 11 Jul 2026)
+
+- All five screens: Group Overview, Centre Operations (live room
+  register @4.65 m²), Findings & Actions (14-day evidence clock +
+  workflow), HIQA Standards (self-assessment + sector benchmark bars),
+  KPI Framework (13 domains / 74 KPIs, 6 computed live from registers).
+- Inspection readiness pack: `/centres/:id/readiness`, print → PDF.
+- Demo store: localStorage persistence, Reset-demo button in top bar,
+  ErrorBoundary so a render error never blanks a live demo.
+- Riverside finding lifecycle dates are demo-anchored to "today" so
+  evidence clocks read live; content is the real 24.03.2026 findings.
 
 ## What is NOT done yet
 
-- Step 2: seed data layer (`src/data/`) — typed models + localStorage
-  store hydrated from `docs/source-data/*.json`.
-- Step 3: the four Phase-0 screens with real data.
-- Later: six output views, KPI engine, return generator, Mackin tracker
-  ingestion, backend, auth, PPT export.
+- Remaining output views: daily ops digest, quarterly board pack,
+  Department return generator (descriptor says price the return
+  generator + room register as discrete work packages).
+- Wire remaining 68 KPIs to real registers (Phase 2); incident /
+  complaints / fire registers themselves.
+- Mackin EHS tracker ingestion (rollout ~Sep 2026, Maeve overseeing).
+- Backend + auth (AWS/Cognito vs Supabase — open commercial question),
+  multi-user, audit trail.
+- PPT export fallback for the Department meeting (screens exist; a
+  deck can be assembled from screenshots if needed).
+- GitHub remote + CI (repo is local-only so far).
