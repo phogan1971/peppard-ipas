@@ -117,9 +117,6 @@ export default function GroupOverview() {
                         {centre.location}, Co. {centre.county}
                       </Typography>
                     </Box>
-                    {centre.isDemoData && (
-                      <Chip label="Demo data" size="small" sx={{ fontSize: "0.65rem", height: 20 }} />
-                    )}
                   </Box>
 
                   <Box sx={{ mt: 1.5, mb: 0.5, display: "flex", justifyContent: "space-between" }}>

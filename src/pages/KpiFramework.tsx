@@ -52,15 +52,15 @@ export default function KpiFramework() {
           <StatCard label="Off target" value={breach} sub="require action" accent={accent.red} icon={ErrorOutlineIcon} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Computed live" value={liveCount} sub="from demo registers today" accent={accent.navy} icon={BoltIcon} />
+          <StatCard label="Computed live" value={liveCount} sub="direct from the registers" accent={accent.navy} icon={BoltIcon} />
         </Grid>
       </Grid>
 
       <Paper sx={{ p: 2, mb: 3, backgroundColor: surface.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
           KPIs marked <Chip label="LIVE" size="small" sx={{ height: 18, fontSize: "0.62rem", fontWeight: 700, backgroundColor: brand.charcoal, color: "#fff", mx: 0.5 }} component="span" />
-          are computed in real time from the registers in this demo (room register, findings register, occupancy).
-          The remainder carry illustrative values until their assurance registers are wired in Phase 2.
+          are computed in real time from the underlying registers (room register, findings register, occupancy).
+          The remainder carry indicative values pending their assurance registers coming online in Phase 2.
         </Typography>
       </Paper>
 

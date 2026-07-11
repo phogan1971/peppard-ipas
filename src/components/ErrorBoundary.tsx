@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { brand } from "../theme/tokens";
-import { resetDemoData } from "../data/store";
+import { regenerateData } from "../data/store";
 
 interface State {
   error: Error | null;
@@ -36,11 +36,11 @@ export default class ErrorBoundary extends Component<{ children: ReactNode }, St
             </Button>
             <Button
               onClick={() => {
-                resetDemoData();
+                regenerateData();
                 window.location.assign("/overview");
               }}
             >
-              Reset demo data
+              Regenerate data
             </Button>
           </Box>
         </Paper>

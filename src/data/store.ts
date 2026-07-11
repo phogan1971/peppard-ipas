@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { buildAssessments, buildCentres, buildFindings, buildRegisters, buildRooms } from "./seed";
+import { DataProfile, saveProfile } from "./profile";
 import { Centre, Finding, FindingStatus, Judgement, RegisterEntry, Room, StandardAssessment } from "./types";
 
 // Genisis3 demo-mode pattern: no backend, seed once into localStorage,
@@ -92,7 +93,9 @@ export function setAssessment(centreId: string, standardId: string, judgement: J
   emit();
 }
 
-export function resetDemoData() {
+// Regenerate the sample dataset, optionally under a new scenario profile.
+export function regenerateData(profile?: DataProfile) {
+  if (profile) saveProfile(profile);
   localStorage.removeItem(STORAGE_KEY);
   state = buildState();
   listeners.forEach((l) => l());

@@ -228,10 +228,21 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (11 slides,
   real app screenshots in `docs/screens/`; regenerate screenshots with
   Playwright channel:"chrome" against the dev server).
-- Demo store: localStorage persistence, Reset-demo button in top bar,
-  ErrorBoundary so a render error never blanks a live demo.
-- Riverside finding lifecycle dates are demo-anchored to "today" so
-  evidence clocks read live; content is the real 24.03.2026 findings.
+- **Data scenario system** (`data/profile.ts` + `SettingsDialog`): the
+  generated dataset is driven by a profile (compliance / findings
+  pressure / KPI performance, each 0–100) persisted in localStorage.
+  Default is **broadly positive** (green-dominant with a small amber
+  tail) because the system is shown to the Department and HIQA. The
+  Settings cog (top bar) offers Strong / Mixed / Under-pressure presets
+  plus sliders, and "Apply & regenerate" reseeds everything.
+  **The UI never says "demo"** (Philip, 12 Jul 2026) — no demo chips,
+  no reset-demo button; copy says "sample data" / "regenerate".
+- localStorage persistence + ErrorBoundary so a render error never
+  blanks a live walkthrough.
+- Riverside finding lifecycle dates are scenario-anchored to "today" so
+  evidence clocks read live; content is the real 24.03.2026 findings
+  (statuses/dates driven by the findings-pressure slider; one worked
+  example always stays visibly in flight).
 
 ## What is NOT done yet
 

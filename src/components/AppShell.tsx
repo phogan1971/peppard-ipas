@@ -1,14 +1,14 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import IconButton from "@mui/material/IconButton";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { useNavigate } from "react-router-dom";
 import { brand, surface, fonts } from "../theme/tokens";
-import { resetDemoData } from "../data/store";
 import ErrorBoundary from "./ErrorBoundary";
+import SettingsDialog from "./SettingsDialog";
 
 // Origin Care Group lockup: donut mark + wordmark, composed in code so it
 // scales and recolours cleanly (the site only serves the mark as an image).
@@ -53,6 +53,7 @@ export function OriginLogo({ height = 36, dark = false }: { height?: number; dar
 // white chip so the logo's white background reads as intentional.
 export default function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: surface.pageBg }}>
       <AppBar
@@ -107,19 +108,16 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
-          <Button
-            size="small"
-            startIcon={<RestartAltIcon />}
-            onClick={() => {
-              resetDemoData();
-              window.location.assign("/overview");
-            }}
-            sx={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+          <IconButton
+            aria-label="Settings"
+            onClick={() => setSettingsOpen(true)}
+            sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
           >
-            Reset demo
-          </Button>
+            <SettingsIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       {/* offset for the fixed 64px AppBar */}
       <Box sx={{ pt: "64px", "@media print": { pt: 0 } }}>
         <ErrorBoundary>{children}</ErrorBoundary>
