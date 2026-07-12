@@ -271,3 +271,8 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   https://github.com/phogan1971/peppard-ipas (private), push after
   merging to main; `.github/workflows/build.yml` runs `npm run build`
   on pushes to main and on PRs.
+- Deployed (12 Jul 2026): https://peppard-ipas.netlify.app — Netlify
+  site `peppard-ipas` (team Workout), linked to this folder. Deploys
+  are MANUAL: `netlify deploy --prod --dir dist` after merging to main
+  (no Netlify↔GitHub auto-deploy hook yet). SPA routing via
+  `public/_redirects`; build config in `netlify.toml`.
