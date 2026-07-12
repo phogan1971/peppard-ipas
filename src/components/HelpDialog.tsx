@@ -16,11 +16,12 @@ import RuleIcon from "@mui/icons-material/Rule";
 import InsightsIcon from "@mui/icons-material/Insights";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import { SvgIconComponent } from "@mui/icons-material";
 import { useLocation } from "react-router-dom";
 import { useSurfaces } from "../theme";
 
-type TopicKey = "overview" | "centres" | "findings" | "standards" | "kpis" | "documents" | "settings";
+type TopicKey = "overview" | "exec" | "centres" | "findings" | "standards" | "kpis" | "documents" | "settings";
 
 interface HelpBlock {
   heading?: string;
@@ -54,6 +55,26 @@ const TOPICS: Topic[] = [
           "“No open findings” / “GREEN items only” means nothing needs escalation; an overdue chip means an evidence deadline has been missed.",
           "Click any centre card to open its Centre Operations view.",
           "The Board pack button generates the quarterly governance pack from this same data.",
+        ],
+      },
+    ],
+  },
+  {
+    key: "exec",
+    label: "Executive view",
+    Icon: PhoneIphoneIcon,
+    title: "Executive view",
+    blocks: [
+      {
+        body: "A phone-friendly digest of the group governance position, designed for directors between meetings. Reach it from the platform home screen (Executive view under the Peppard card) or directly at /exec.",
+      },
+      {
+        heading: "Reading the page",
+        bullets: [
+          "The group status banner rolls the whole estate up to one position: ACTION REQUIRED (a RED finding is open or evidence is past the 14-day clock), MONITOR (AMBER items in the loop), or ON TRACK.",
+          "The six tiles cover occupancy, findings, overdue evidence, KPIs on target, the HIQA self-assessment position and rooms within the 4.65 m² space standard — all computed from the same registers as the full dashboard.",
+          "Needs attention lists the most urgent open items (RED or overdue) with their evidence clocks; tap one to open the Findings tracker.",
+          "Tap any centre row to open its full Operations view. The dashboard icon in the header returns to the desktop dashboard.",
         ],
       },
     ],
@@ -205,6 +226,7 @@ const TOPICS: Topic[] = [
 
 function topicForPath(pathname: string): TopicKey {
   if (pathname.startsWith("/overview")) return "overview";
+  if (pathname.startsWith("/exec")) return "exec";
   if (/^\/centres\/[^/]+\/(readiness|return)/.test(pathname)) return "documents";
   if (pathname.startsWith("/centres")) return "centres";
   if (pathname.startsWith("/findings")) return "findings";

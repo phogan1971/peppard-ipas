@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AppShell from "./components/AppShell";
 import SplashScreen from "./pages/SplashScreen";
+import ExecView from "./pages/ExecView";
 import GroupOverview from "./pages/GroupOverview";
 import CentreOperations from "./pages/CentreOperations";
 import FindingsTracker from "./pages/FindingsTracker";
@@ -22,6 +23,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<SplashScreen />} />
+      <Route path="/exec" element={<ExecView />} />
       <Route element={<ShellLayout />}>
         <Route path="/overview" element={<GroupOverview />} />
         <Route path="/centres/:centreId" element={<CentreOperations />} />
