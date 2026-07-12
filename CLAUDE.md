@@ -237,6 +237,10 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   plus sliders, and "Apply & regenerate" reseeds everything.
   **The UI never says "demo"** (Philip, 12 Jul 2026) — no demo chips,
   no reset-demo button; copy says "sample data" / "regenerate".
+- **Executive view** (`/exec`, linked from the splash's Peppard card):
+  phone-first standalone digest — group status banner (worst RAG +
+  overdue roll-up), six stat tiles, needs-attention findings list,
+  tappable centre list. Same store/selectors as the desktop screens.
 - localStorage persistence + ErrorBoundary so a render error never
   blanks a live walkthrough.
 - **Help** (`HelpDialog`, ? icon in top bar): table-of-contents help

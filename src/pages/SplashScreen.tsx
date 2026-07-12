@@ -19,6 +19,7 @@ interface PlatformCard {
   cta: string;
   external: boolean;
   target: string;
+  secondary?: { label: string; target: string };
 }
 
 const PLATFORMS: PlatformCard[] = [
@@ -39,6 +40,7 @@ const PLATFORMS: PlatformCard[] = [
     cta: "Open dashboard",
     external: false,
     target: "/overview",
+    secondary: { label: "Executive view", target: "/exec" },
   },
 ];
 
@@ -149,18 +151,24 @@ function renderChooser(navigate: ReturnType<typeof useNavigate>) {
               <Typography sx={{ fontSize: "0.9rem", color: "text.secondary", flexGrow: 1 }}>
                 {p.descr}
               </Typography>
-              <Button
-                variant="contained"
-                disableElevation
-                endIcon={p.external ? <OpenInNewIcon /> : <ArrowForwardIcon />}
-                onClick={() => {
-                  if (p.external) window.open(p.target, "_blank", "noopener");
-                  else navigate(p.target);
-                }}
-                sx={{ alignSelf: "flex-start", mt: 1 }}
-              >
-                {p.cta}
-              </Button>
+              <Box sx={{ display: "flex", gap: 1.5, alignItems: "center", mt: 1 }}>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  endIcon={p.external ? <OpenInNewIcon /> : <ArrowForwardIcon />}
+                  onClick={() => {
+                    if (p.external) window.open(p.target, "_blank", "noopener");
+                    else navigate(p.target);
+                  }}
+                >
+                  {p.cta}
+                </Button>
+                {p.secondary && (
+                  <Button variant="text" onClick={() => navigate(p.secondary!.target)}>
+                    {p.secondary.label}
+                  </Button>
+                )}
+              </Box>
             </Paper>
           ))}
         </Box>
