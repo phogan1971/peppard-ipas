@@ -1,3 +1,5 @@
+import { useState } from "react";
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -16,8 +18,9 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import AccordionBlock from "../components/AccordionBlock";
+import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import { useAppState } from "../data/store";
-import { KPI_DOMAINS, KpiStatus, domainRollup, kpiValue } from "../data/kpis";
+import { KPI_DOMAINS, KpiStatus, KpiValue, KpiDef, domainRollup, kpiValue } from "../data/kpis";
 import { rag, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
@@ -37,6 +40,44 @@ export default function KpiFramework() {
   const breach = allValues.filter((v) => v.status === "breach").length;
   const liveCount = allValues.filter((v) => v.live).length;
 
+  const allKpis: { kpi: KpiDef; domain: string; v: KpiValue }[] = KPI_DOMAINS.flatMap((d) =>
+    d.kpis.map((k) => ({ kpi: k, domain: d.name, v: kpiValue(k, state) })),
+  );
+
+  const [detail, setDetail] = useState<DetailContent | null>(null);
+
+  const kpiRows = (list: typeof allKpis) =>
+    list.map(({ kpi, domain, v }) => {
+      const sm = STATUS_META[v.status];
+      return {
+        id: kpi.id,
+        leading: <Box sx={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: sm.color, flexShrink: 0 }} />,
+        primary: (
+          <>
+            {kpi.name}
+            {v.live && (
+              <Chip label="LIVE" size="small" sx={{ ml: 0.75, height: 15, fontSize: "0.58rem", fontWeight: 700, backgroundColor: "primary.main", color: "#fff" }} />
+            )}
+          </>
+        ),
+        secondary: `${domain} · target ${kpi.target}`,
+        trailing: <Chip label={v.display} size="small" sx={{ backgroundColor: sm.bg, color: sm.color, fontWeight: 700, height: 22, fontSize: "0.68rem" }} />,
+      };
+    });
+
+  const statusDetail = (status: KpiStatus, title: string, subtitle: string): DetailContent => ({
+    title,
+    subtitle,
+    rows: kpiRows(allKpis.filter((x) => x.v.status === status)),
+  });
+
+  const liveDetail = (): DetailContent => ({
+    title: "Computed live",
+    subtitle: "Calculated in real time direct from the registers",
+    rows: kpiRows(allKpis.filter((x) => x.v.live)),
+    emptyText: "No live KPIs.",
+  });
+
   return (
     <PageShell
       icon={InsightsIcon}
@@ -45,18 +86,20 @@ export default function KpiFramework() {
     >
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="KPIs on target" value={meets} sub={`of ${allValues.length} KPIs`} accent={accent.green} icon={CheckCircleOutlineIcon} />
+          <StatCard label="KPIs on target" value={meets} sub={`of ${allValues.length} KPIs`} accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(statusDetail("meets", "KPIs on target", `${meets} of ${allValues.length} KPIs meeting target`))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Near target" value={near} sub="watch list" accent={accent.orange} icon={InfoOutlinedIcon} />
+          <StatCard label="Near target" value={near} sub="watch list" accent={accent.orange} icon={InfoOutlinedIcon} onClick={() => setDetail(statusDetail("near", "Near target", "On the watch list — close to target"))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Off target" value={breach} sub="require action" accent={accent.red} icon={ErrorOutlineIcon} />
+          <StatCard label="Off target" value={breach} sub="require action" accent={accent.red} icon={ErrorOutlineIcon} onClick={() => setDetail(statusDetail("breach", "Off target", "Require action"))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Computed live" value={liveCount} sub="direct from the registers" accent={accent.navy} icon={BoltIcon} />
+          <StatCard label="Computed live" value={liveCount} sub="direct from the registers" accent={accent.navy} icon={BoltIcon} onClick={() => setDetail(liveDetail())} />
         </Grid>
       </Grid>
+
+      <DetailDialog content={detail} onClose={() => setDetail(null)} />
 
       <Paper sx={{ p: 2, mb: 3, backgroundColor: s.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
