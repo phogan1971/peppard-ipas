@@ -5,10 +5,12 @@ import { getProfile } from "./profile";
 import {
   BenchmarkInspection,
   Centre,
+  FireRegister,
   Finding,
   FindingPriority,
   HiqaStandard,
   Judgement,
+  NoticeItem,
   RegisterEntry,
   Room,
   SectorDistribution,
@@ -217,19 +219,113 @@ export function buildRooms(centreId: string): Room[] {
 }
 
 // ── Administration registers ────────────────────────────────────────────
+// Dual regulatory axis: each register row maps to the IPPS report section it
+// evidences and to a HIQA National Standard, so one entry serves both regimes.
+const REGISTER_TAGS: Record<string, { ipps: string; hiqa: string }> = {
+  "Latest Resident Register": { ipps: "1.1", hiqa: "6.1" },
+  "Full List of Staff Employed including roles & duties": { ipps: "1.2", hiqa: "2.1" },
+  "Separate list of designated liaison persons for child protection": { ipps: "1.3", hiqa: "8.1" },
+  "Appendix 2 visitor child-protection declaration record": { ipps: "1.3", hiqa: "8.2" },
+  "Visitor sign-in book": { ipps: "1.4", hiqa: "8.3" },
+  "Maintenance issues log": { ipps: "1.7", hiqa: "4.1" },
+  "Security roster": { ipps: "1.4", hiqa: "1.4" },
+  "Kitchen daily cleaning record": { ipps: "1.7", hiqa: "5.1" },
+  "Kitchen periodic deep-clean record": { ipps: "1.7", hiqa: "5.2" },
+  // Transport and resident comfort — the two admin areas the IPPS report
+  // covers but the earlier register set omitted.
+  "Transport service & timetable": { ipps: "1.6", hiqa: "7.3" },
+  "Resident comfort & wellbeing provision": { ipps: "1.5", hiqa: "6.2" },
+};
+
+// Extra admin registers added to every centre (not present in the raw
+// Riverside register list, which folds these into inspection sections).
+const EXTRA_REGISTER_NAMES = ["Transport service & timetable", "Resident comfort & wellbeing provision"];
+
 export function buildRegisters(centreId: string): RegisterEntry[] {
   const c = getProfile().compliance / 100;
   const rand = mulberry(`registers-${centreId}-${Math.round(c * 100)}`);
   const inOrder = 0.55 + 0.44 * c;
-  return riverside.registers.map((r) => {
+  const names = [
+    ...riverside.registers.map((r) => r.name).filter((n) => !FIRE_REGISTER_NAMES.has(n)),
+    ...EXTRA_REGISTER_NAMES,
+  ];
+  return names.map((name) => {
     const roll = rand();
     const status: RegisterEntry["status"] =
       centreId === "riverside" || roll < inOrder ? "in_order" : roll < inOrder + (1 - inOrder) * 0.75 ? "attention" : "not_reviewed";
+    const tag = REGISTER_TAGS[name] ?? null;
     return {
-      name: r.name,
+      name,
       lastReviewed: isoDaysFromToday(-Math.round(rand() * 45)),
       status,
       note: status === "attention" ? "Gaps identified at last internal audit — update in progress" : null,
+      ippsSection: tag?.ipps ?? null,
+      hiqaStandard: tag?.hiqa ?? null,
+    };
+  });
+}
+
+// ── Fire safety registers (first-class, with currency) ──────────────────
+interface FireSpec {
+  name: string;
+  shortName: string;
+  frequencyDays: number;
+}
+const FIRE_SPECS: FireSpec[] = [
+  { name: "Emergency Lighting Service Records", shortName: "Emergency lighting", frequencyDays: 30 },
+  { name: "Fire Alarm (Panel) / Carbon Monoxide & Detection System Service Records", shortName: "Fire alarm & detection", frequencyDays: 7 },
+  { name: "Firefighting Equipment Service Records (Extinguishers/Hose Reels/Blankets)", shortName: "Firefighting equipment", frequencyDays: 30 },
+  { name: "Fire Exit Doors/Means of Escape Inspections", shortName: "Fire exits & escape routes", frequencyDays: 7 },
+  { name: "Fire Drill Schedule", shortName: "Fire drills", frequencyDays: 90 },
+  { name: "Staff Fire Safety Instruction & Training", shortName: "Staff fire training", frequencyDays: 365 },
+];
+export const FIRE_REGISTER_NAMES = new Set(FIRE_SPECS.map((s) => s.name));
+
+// ── Mandatory public notices (IPPS report §2 visual inspection) ─────────
+export const MANDATORY_NOTICES: string[] = [
+  "Designated Liaison Person (DLP) details",
+  "Parental supervision notice",
+  "HSE breastfeeding notice",
+  "House rules",
+  "IPAS house rules",
+  "Complaint forms & procedure",
+  "Incident reporting procedure",
+  "IOM voluntary return information",
+  "Anti-trafficking notice",
+  "Violence and harassment notice",
+  "Emergency numbers (Garda, hospital, fire, duty social work, out-of-hours GP)",
+  "IPAS contact email address",
+];
+
+export function buildNotices(centreId: string): NoticeItem[] {
+  const c = getProfile().compliance / 100;
+  const rand = mulberry(`notices-${centreId}-${Math.round(c * 100)}`);
+  const compliantRate = 0.7 + 0.28 * c;
+  return MANDATORY_NOTICES.map((name) => {
+    const compliant = centreId === "riverside" ? rand() < 0.85 : rand() < compliantRate;
+    return {
+      name,
+      compliant,
+      verifiedOn: compliant ? isoDaysFromToday(-Math.round(rand() * 30)) : null,
+      verifiedBy: null,
+    };
+  });
+}
+
+export function buildFireRegisters(centreId: string): FireRegister[] {
+  const c = getProfile().compliance / 100;
+  const rand = mulberry(`fire-${centreId}-${Math.round(c * 100)}`);
+  return FIRE_SPECS.map((spec) => {
+    // Anchor the last check to today, scaled by compliance: a well-run
+    // centre sits comfortably inside its required interval, a pressured one
+    // drifts towards (and sometimes past) the frequency threshold.
+    const factor = 0.15 + (1 - c) * 0.85 + (rand() - 0.5) * 0.3;
+    const offset = Math.max(0, Math.round(spec.frequencyDays * factor));
+    return {
+      name: spec.name,
+      shortName: spec.shortName,
+      frequencyDays: spec.frequencyDays,
+      lastEntry: isoDaysFromToday(-offset),
     };
   });
 }

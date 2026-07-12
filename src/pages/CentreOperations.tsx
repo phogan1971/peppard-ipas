@@ -12,6 +12,9 @@ import TableRow from "@mui/material/TableRow";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import DescriptionIcon from "@mui/icons-material/Description";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
@@ -19,13 +22,18 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import AddIcon from "@mui/icons-material/Add";
+import DoneIcon from "@mui/icons-material/Done";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import ChartDialog, { ChartContent } from "../components/ChartDialog";
-import { useAppState } from "../data/store";
-import { RegisterEntry, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
+import RoomFormDialog from "../components/RoomFormDialog";
+import FireRegisterPanel from "../components/FireRegisterPanel";
+import NoticesPanel from "../components/NoticesPanel";
+import { markRegisterReviewed, logFireCheck, setNoticeVerified, useAppState } from "../data/store";
+import { RegisterEntry, Room, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { rag, ragAccent, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
@@ -38,12 +46,17 @@ const REGISTER_STATUS: Record<RegisterEntry["status"], { label: string; color: s
 export default function CentreOperations() {
   const { centreId } = useParams();
   const navigate = useNavigate();
-  const { centres, roomsByCentre, registersByCentre } = useAppState();
+  const { centres, roomsByCentre, registersByCentre, fireByCentre, noticesByCentre } = useAppState();
   const surf = useSurfaces();
 
   const centre = centres.find((c) => c.id === centreId) ?? centres[0];
   const rooms = roomsByCentre[centre.id] ?? [];
   const registers = registersByCentre[centre.id] ?? [];
+  const fireRegisters = fireByCentre[centre.id] ?? [];
+  const notices = noticesByCentre[centre.id] ?? [];
+
+  const [roomDialog, setRoomDialog] = useState<{ open: boolean; existing: Room | null }>({ open: false, existing: null });
+  const [toast, setToast] = useState<string | null>(null);
 
   const occupied = rooms.filter((r) => (r.currentOccupancy ?? 0) > 0);
   const overOccupied = rooms.filter(
@@ -207,13 +220,25 @@ export default function CentreOperations() {
       <Grid container spacing={2}>
         <Grid item xs={12} lg={8}>
           <Paper sx={{ overflow: "hidden" }}>
-            <Box sx={{ p: 2, pb: 1 }}>
-              <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
-                Room register
-              </Typography>
-              <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
-                Suitable occupancy is derived automatically: room area ÷ {SPACE_STANDARD_M2_PER_PERSON} m²
-              </Typography>
+            <Box sx={{ p: 2, pb: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
+              <Box>
+                <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
+                  Room register
+                </Typography>
+                <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+                  Suitable occupancy is derived automatically: room area ÷ {SPACE_STANDARD_M2_PER_PERSON} m² · click a row to
+                  edit
+                </Typography>
+              </Box>
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={() => setRoomDialog({ open: true, existing: null })}
+                sx={{ flexShrink: 0 }}
+              >
+                Add room
+              </Button>
             </Box>
             <TableContainer sx={{ maxHeight: 520 }}>
               <Table stickyHeader size="small" aria-label="Room register">
@@ -236,8 +261,22 @@ export default function CentreOperations() {
                       room.currentOccupancy > room.suitableOccupancy;
                     const empty = room.currentOccupancy === 0;
                     return (
-                      <TableRow key={room.room} hover sx={over ? { backgroundColor: rag.redBg } : undefined}>
-                        <TableCell sx={{ fontWeight: 600 }}>{room.room}</TableCell>
+                      <TableRow
+                        key={room.room}
+                        hover
+                        onClick={() => setRoomDialog({ open: true, existing: room })}
+                        sx={{ cursor: "pointer", ...(over ? { backgroundColor: rag.redBg } : {}) }}
+                      >
+                        <TableCell sx={{ fontWeight: 600 }}>
+                          {room.room}
+                          {room.enteredBy && (
+                            <Tooltip title={`Entered by ${room.enteredBy}`}>
+                              <Box component="span" sx={{ ml: 0.5, color: accent.blue, fontSize: "0.7rem" }}>
+                                ●
+                              </Box>
+                            </Tooltip>
+                          )}
+                        </TableCell>
                         <TableCell>{room.bedConfig ?? "—"}</TableCell>
                         <TableCell align="right">{room.dimensionsM2 ?? "—"}</TableCell>
                         <TableCell align="right">{room.suitableOccupancy ?? "—"}</TableCell>
@@ -264,41 +303,124 @@ export default function CentreOperations() {
         </Grid>
 
         <Grid item xs={12} lg={4}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary", mb: 1 }}>
-              Administration registers
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              {registers.map((reg) => {
-                const s = REGISTER_STATUS[reg.status];
-                return (
-                  <Box
-                    key={reg.name}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 1,
-                      p: 1,
-                      borderRadius: 1,
-                      backgroundColor: surf.subtleBg,
-                    }}
-                  >
-                    <Box>
-                      <Typography sx={{ fontSize: "0.83rem", fontWeight: 600, lineHeight: 1.3 }}>{reg.name}</Typography>
-                      <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
-                        Last reviewed {reg.lastReviewed}
-                        {reg.note ? ` — ${reg.note}` : ""}
-                      </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary", mb: 0.5 }}>
+                Administration registers
+              </Typography>
+              <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mb: 1 }}>
+                Each register is tagged to the IPPS report section and the HIQA standard it evidences — one entry serves
+                both regimes.
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {registers.map((reg) => {
+                  const s = REGISTER_STATUS[reg.status];
+                  return (
+                    <Box
+                      key={reg.name}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 1,
+                        p: 1,
+                        borderRadius: 1,
+                        backgroundColor: surf.subtleBg,
+                      }}
+                    >
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography sx={{ fontSize: "0.83rem", fontWeight: 600, lineHeight: 1.3 }}>{reg.name}</Typography>
+                        <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", mt: 0.25, mb: 0.25 }}>
+                          {reg.ippsSection && (
+                            <Chip
+                              label={`IPPS §${reg.ippsSection}`}
+                              size="small"
+                              sx={{ height: 17, fontSize: "0.62rem", fontWeight: 700, backgroundColor: surf.pillRowBg, color: accent.navy }}
+                            />
+                          )}
+                          {reg.hiqaStandard && (
+                            <Chip
+                              label={`HIQA ${reg.hiqaStandard}`}
+                              size="small"
+                              sx={{ height: 17, fontSize: "0.62rem", fontWeight: 700, backgroundColor: rag.greenBg, color: rag.green }}
+                            />
+                          )}
+                        </Box>
+                        <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
+                          Last reviewed {reg.lastReviewed}
+                          {reg.enteredBy ? ` · by ${reg.enteredBy}` : ""}
+                          {reg.note ? ` — ${reg.note}` : ""}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 0.5, flexShrink: 0 }}>
+                        <Chip label={s.label} size="small" sx={{ backgroundColor: s.bg, color: s.color, fontWeight: 600 }} />
+                        {reg.status !== "in_order" && (
+                          <Tooltip title="Record a review today">
+                            <Button
+                              size="small"
+                              startIcon={<DoneIcon sx={{ fontSize: 14 }} />}
+                              onClick={() => {
+                                markRegisterReviewed(centre.id, reg.name, centre.manager);
+                                setToast(`${reg.name} marked reviewed — status and KPIs updated.`);
+                              }}
+                              sx={{ minWidth: 0, px: 0.75, fontSize: "0.68rem" }}
+                            >
+                              Review
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </Box>
                     </Box>
-                    <Chip label={s.label} size="small" sx={{ backgroundColor: s.bg, color: s.color, fontWeight: 600, flexShrink: 0 }} />
-                  </Box>
+                  );
+                })}
+              </Box>
+            </Paper>
+
+            <FireRegisterPanel
+              registers={fireRegisters}
+              onLog={(name) => {
+                logFireCheck(centre.id, name, centre.manager);
+                setToast(`Fire check logged for ${centre.shortName} — register currency refreshed.`);
+              }}
+            />
+
+            <NoticesPanel
+              notices={notices}
+              onVerify={(name, compliant) => {
+                setNoticeVerified(centre.id, name, compliant, centre.manager);
+                setToast(
+                  compliant
+                    ? `${name} verified as displayed — readiness pack updated.`
+                    : `${name} flagged as missing — needs attention.`,
                 );
-              })}
-            </Box>
-          </Paper>
+              }}
+            />
+          </Box>
         </Grid>
       </Grid>
+
+      <RoomFormDialog
+        open={roomDialog.open}
+        centreId={centre.id}
+        enteredBy={centre.manager}
+        existing={roomDialog.existing}
+        onClose={() => setRoomDialog({ open: false, existing: null })}
+        onSaved={(roomName) => {
+          setRoomDialog({ open: false, existing: null });
+          setToast(`Room ${roomName} saved — suitable-occupancy KPI, space-standard tiles and the Department return updated.`);
+        }}
+      />
+
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={4500}
+        onClose={() => setToast(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={() => setToast(null)} severity="success" variant="filled" sx={{ width: "100%" }}>
+          {toast}
+        </Alert>
+      </Snackbar>
     </PageShell>
   );
 }

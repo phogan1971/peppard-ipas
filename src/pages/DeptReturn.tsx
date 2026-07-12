@@ -11,7 +11,7 @@ import PrintDocShell, { SectionTitle } from "../components/PrintDoc";
 import { RagChip } from "../components/RagChip";
 import { useAppState } from "../data/store";
 import { AREAS_INSPECTED_CHECKLIST, INSPECTION_SECTIONS, RAG_LEGEND, sectionStatus } from "../data/seed";
-import { SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
+import { fireCurrencyFor, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { brand, rag } from "../theme/tokens";
 
 // The descriptor's "Department return generator": the IPPS inspection
@@ -25,6 +25,7 @@ export default function DeptReturn() {
   const centre = state.centres.find((c) => c.id === centreId) ?? state.centres[0];
   const rooms = state.roomsByCentre[centre.id] ?? [];
   const registers = state.registersByCentre[centre.id] ?? [];
+  const fireRegisters = state.fireByCentre[centre.id] ?? [];
   const findings = state.findings.filter((f) => f.centreId === centre.id);
 
   return (
@@ -48,6 +49,7 @@ export default function DeptReturn() {
             ["Occupancy on day", String(centre.occupancy)],
             ["Number of rooms", String(rooms.length)],
             ["Last Department inspection", centre.lastIppsInspection ?? "—"],
+            ["Fire risk assessment", "Mackin EHS — 2026 H&S audit & FRA programme"],
           ].map(([k, v]) => (
             <TableRow key={k}>
               <TableCell sx={{ fontWeight: 600, width: 260 }}>{k}</TableCell>
@@ -89,12 +91,25 @@ export default function DeptReturn() {
 
       <SectionTitle n={4}>Administration registers</SectionTitle>
       <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Register</TableCell>
+            <TableCell sx={{ width: 150 }}>Regulatory mapping</TableCell>
+            <TableCell sx={{ width: 120 }}>Last reviewed</TableCell>
+            <TableCell sx={{ width: 130 }}>Status</TableCell>
+          </TableRow>
+        </TableHead>
         <TableBody>
           {registers.map((reg) => (
             <TableRow key={reg.name}>
               <TableCell>{reg.name}</TableCell>
-              <TableCell sx={{ width: 130 }}>{reg.lastReviewed}</TableCell>
-              <TableCell sx={{ width: 150 }}>
+              <TableCell sx={{ fontSize: "0.75rem", color: "text.secondary" }}>
+                {reg.ippsSection ? `IPPS §${reg.ippsSection}` : ""}
+                {reg.ippsSection && reg.hiqaStandard ? " · " : ""}
+                {reg.hiqaStandard ? `HIQA ${reg.hiqaStandard}` : ""}
+              </TableCell>
+              <TableCell>{reg.lastReviewed}</TableCell>
+              <TableCell>
                 {reg.status === "in_order" ? "In order" : reg.status === "attention" ? "Needs attention" : "Not reviewed"}
               </TableCell>
             </TableRow>
@@ -102,7 +117,34 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={5}>Room-by-room register</SectionTitle>
+      <SectionTitle n={5}>Fire safety register currency</SectionTitle>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Register</TableCell>
+            <TableCell align="right">Days since last check</TableCell>
+            <TableCell align="right">Required every</TableCell>
+            <TableCell sx={{ width: 110 }}>Currency</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {fireRegisters.map((reg) => {
+            const cur = fireCurrencyFor(reg);
+            const label = cur.state === "in_date" ? "In date" : cur.state === "due_soon" ? "Due soon" : "Overdue";
+            const color = cur.state === "overdue" ? rag.red : cur.state === "due_soon" ? rag.amber : rag.green;
+            return (
+              <TableRow key={reg.name}>
+                <TableCell>{reg.shortName}</TableCell>
+                <TableCell align="right">{cur.daysSince ?? "—"}</TableCell>
+                <TableCell align="right">{reg.frequencyDays}d</TableCell>
+                <TableCell sx={{ color, fontWeight: 700 }}>{label}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+      <SectionTitle n={6}>Room-by-room register</SectionTitle>
       <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1 }}>
         Suitable occupancy derived at {SPACE_STANDARD_M2_PER_PERSON} m² per person (rooms with varying ceiling height:
         only areas at 2.4 m or higher count).
@@ -137,7 +179,7 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={6}>Summary details — findings & corrective actions</SectionTitle>
+      <SectionTitle n={7}>Summary details — findings & corrective actions</SectionTitle>
       {findings.length === 0 ? (
         <Typography sx={{ fontSize: "0.87rem" }}>No findings recorded.</Typography>
       ) : (
@@ -169,7 +211,7 @@ export default function DeptReturn() {
         </Table>
       )}
 
-      <SectionTitle n={7}>RAG legend</SectionTitle>
+      <SectionTitle n={8}>RAG legend</SectionTitle>
       <Table size="small">
         <TableBody>
           {Object.entries(RAG_LEGEND).map(([key, desc]) => (

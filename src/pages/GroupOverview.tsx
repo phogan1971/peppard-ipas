@@ -163,6 +163,19 @@ export default function GroupOverview() {
         </Button>
       }
     >
+      <Paper sx={{ p: 2, mb: 3, borderLeft: `4px solid ${accent.navy}` }}>
+        <Typography sx={{ fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: 0.7, color: "text.secondary", mb: 0.5 }}>
+          Group profile
+        </Typography>
+        <Typography sx={{ fontSize: "0.9rem", color: "text.primary", lineHeight: 1.5 }}>
+          Over 15 years operating IPAS accommodation. Each centre is led by a dedicated on-site General Manager, supported
+          from head offices in Cork and Dublin, applying one uniform policy suite across all locations. Compliance is
+          monitored through internal audits and centre inspections by senior management, with corrective actions tracked
+          centrally to completion. Fire risk assessments and safety audits are delivered by <strong>Mackin EHS</strong>{" "}
+          under the 2026 Health &amp; Safety audit programme.
+        </Typography>
+      </Paper>
+
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard label="Contracted capacity" value={totalCapacity} sub="beds across 8 centres" accent={accent.navy} icon={ApartmentIcon} onClick={() => setDetail(capacityDetail())} />

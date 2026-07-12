@@ -11,7 +11,7 @@ import PrintDocShell, { SectionTitle } from "../components/PrintDoc";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, useAppState } from "../data/store";
 import { STANDARDS } from "../data/seed";
-import { JUDGEMENT_LABELS, Judgement, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
+import { fireCurrencyFor, JUDGEMENT_LABELS, Judgement, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { brand, rag } from "../theme/tokens";
 
 // The descriptor's "one-click inspection readiness pack": everything an
@@ -24,6 +24,10 @@ export default function ReadinessPack() {
   const centre = state.centres.find((c) => c.id === centreId) ?? state.centres[0];
   const rooms = state.roomsByCentre[centre.id] ?? [];
   const registers = state.registersByCentre[centre.id] ?? [];
+  const fireRegisters = state.fireByCentre[centre.id] ?? [];
+  const fireOverdue = fireRegisters.filter((r) => fireCurrencyFor(r).state === "overdue").length;
+  const notices = state.noticesByCentre[centre.id] ?? [];
+  const noticesMissing = notices.filter((n) => !n.compliant);
   const findings = state.findings.filter((f) => f.centreId === centre.id);
   const openFindings = findings.filter((f) => f.status !== "closed");
   const assessments = new Map(
@@ -70,6 +74,7 @@ export default function ReadinessPack() {
               ["Occupancy today", String(centre.occupancy)],
               ["Rooms", String(rooms.length)],
               ["Last IPPS inspection", centre.lastIppsInspection ?? "—"],
+              ["Fire risk assessment", "Mackin EHS — 2026 H&S audit & FRA programme"],
             ].map(([k, v]) => (
               <TableRow key={k}>
                 <TableCell sx={{ fontWeight: 600, width: 220 }}>{k}</TableCell>
@@ -129,7 +134,39 @@ export default function ReadinessPack() {
           </TableBody>
         </Table>
 
-        <SectionTitle n={4}>Findings & corrective actions</SectionTitle>
+        <SectionTitle n={4}>Fire safety register currency</SectionTitle>
+        <Typography sx={{ fontSize: "0.87rem", mb: 1 }}>
+          {fireOverdue === 0
+            ? "All fire safety registers are within their required check frequency."
+            : `${fireOverdue} fire safety register(s) are overdue against their required frequency and require immediate attention.`}
+        </Typography>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Register</TableCell>
+              <TableCell align="right">Days since last check</TableCell>
+              <TableCell align="right">Required every</TableCell>
+              <TableCell sx={{ width: 120 }}>Currency</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {fireRegisters.map((reg) => {
+              const cur = fireCurrencyFor(reg);
+              const label = cur.state === "in_date" ? "In date" : cur.state === "due_soon" ? "Due soon" : "Overdue";
+              const color = cur.state === "overdue" ? rag.red : cur.state === "due_soon" ? rag.amber : rag.green;
+              return (
+                <TableRow key={reg.name}>
+                  <TableCell>{reg.shortName}</TableCell>
+                  <TableCell align="right">{cur.daysSince ?? "—"}</TableCell>
+                  <TableCell align="right">{reg.frequencyDays}d</TableCell>
+                  <TableCell sx={{ color, fontWeight: 700 }}>{label}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+
+        <SectionTitle n={5}>Findings & corrective actions</SectionTitle>
         {findings.length === 0 ? (
           <Typography sx={{ fontSize: "0.87rem" }}>No findings recorded.</Typography>
         ) : (
@@ -170,7 +207,7 @@ export default function ReadinessPack() {
           {openFindings.length} finding(s) open. Evidence of resolution is required within 14 days of report receipt.
         </Typography>
 
-        <SectionTitle n={5}>HIQA National Standards self-assessment</SectionTitle>
+        <SectionTitle n={6}>HIQA National Standards self-assessment</SectionTitle>
         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1.5 }}>
           {(Object.keys(judgementCounts) as Judgement[])
             .filter((j) => judgementCounts[j] > 0)
@@ -195,6 +232,26 @@ export default function ReadinessPack() {
               </TableBody>
             </Table>
           </>
+        )}
+
+        <SectionTitle n={7}>Mandatory public notices</SectionTitle>
+        <Typography sx={{ fontSize: "0.87rem", mb: 1 }}>
+          {notices.length - noticesMissing.length} of {notices.length} mandatory notices verified as displayed.{" "}
+          {noticesMissing.length === 0
+            ? "All required notices are in place."
+            : `${noticesMissing.length} notice(s) require attention before inspection.`}
+        </Typography>
+        {noticesMissing.length > 0 && (
+          <Table size="small">
+            <TableBody>
+              {noticesMissing.map((n) => (
+                <TableRow key={n.name}>
+                  <TableCell sx={{ fontSize: "0.8rem" }}>{n.name}</TableCell>
+                  <TableCell sx={{ width: 130, color: rag.red, fontWeight: 700 }}>Not displayed</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
 
     </PrintDocShell>

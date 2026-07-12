@@ -1,6 +1,7 @@
 import kpiJson from "../../docs/source-data/kpi-framework.json";
 import { AppState, daysUntilDue } from "./store";
 import { getProfile } from "./profile";
+import { fireCurrencyFor } from "./types";
 
 export interface KpiDef {
   id: string;
@@ -71,6 +72,13 @@ function liveValue(kpiId: string, state: AppState): KpiValue | null {
       const flagged = allRooms.filter((r) => r.issues.length > 0).length;
       const per100 = Math.round((flagged / allRooms.length) * 100);
       return { display: `${per100} per 100 rooms`, status: per100 <= 10 ? "meets" : per100 <= 25 ? "near" : "breach", live: true };
+    }
+    case "kpi-08-01": {
+      const fire = Object.values(state.fireByCentre).flat();
+      if (fire.length === 0) return null;
+      const inDate = fire.filter((r) => fireCurrencyFor(r).state === "in_date").length;
+      const pct = Math.round((inDate / fire.length) * 100);
+      return { display: `${pct}% in date`, status: pct === 100 ? "meets" : pct >= 90 ? "near" : "breach", live: true };
     }
     default:
       return null;

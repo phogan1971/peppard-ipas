@@ -1,7 +1,27 @@
 import { useSyncExternalStore } from "react";
-import { buildAssessments, buildCentres, buildFindings, buildRegisters, buildRooms } from "./seed";
+import {
+  buildAssessments,
+  buildCentres,
+  buildFindings,
+  buildFireRegisters,
+  buildNotices,
+  buildRegisters,
+  buildRooms,
+} from "./seed";
 import { DataProfile, saveProfile } from "./profile";
-import { Centre, Finding, FindingStatus, Judgement, RegisterEntry, Room, StandardAssessment } from "./types";
+import {
+  Centre,
+  FireRegister,
+  Finding,
+  FindingPriority,
+  FindingStatus,
+  Judgement,
+  NoticeItem,
+  RegisterEntry,
+  Room,
+  StandardAssessment,
+  suitableOccupancyFor,
+} from "./types";
 
 // Genisis3 demo-mode pattern: no backend, seed once into localStorage,
 // mutations persist there. Only user-mutable state is persisted —
@@ -9,39 +29,85 @@ import { Centre, Finding, FindingStatus, Judgement, RegisterEntry, Room, Standar
 // schema changes never strand stale copies.
 const STORAGE_KEY = "peppard-ipas:v1";
 
+// Operator-entered edits persist as override layers on top of the reseeded
+// reference data, so a centre manager's entries survive reloads while schema
+// changes to the seed never strand stale copies.
+type RegisterOverride = Pick<RegisterEntry, "lastReviewed" | "status" | "note" | "enteredBy" | "enteredAt">;
+type FireOverride = Pick<FireRegister, "lastEntry" | "enteredBy" | "enteredAt">;
+
 interface PersistedState {
   findings: Finding[];
   assessments: StandardAssessment[];
+  roomOverrides: Record<string, Room[]>; // centreId -> full edited room list
+  registerOverrides: Record<string, RegisterOverride>; // `${centreId}::${name}`
+  fireOverrides: Record<string, FireOverride>; // `${centreId}::${name}`
+  noticeOverrides: Record<string, NoticeItem[]>; // centreId -> full notice list
 }
 
 export interface AppState {
   centres: Centre[];
   roomsByCentre: Record<string, Room[]>;
   registersByCentre: Record<string, RegisterEntry[]>;
+  fireByCentre: Record<string, FireRegister[]>;
+  noticesByCentre: Record<string, NoticeItem[]>;
   findings: Finding[];
   assessments: StandardAssessment[];
 }
+
+const emptyOverrides = () => ({ roomOverrides: {}, registerOverrides: {}, fireOverrides: {}, noticeOverrides: {} });
 
 function loadPersisted(): PersistedState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as PersistedState;
-      if (Array.isArray(parsed.findings) && Array.isArray(parsed.assessments)) return parsed;
+      if (Array.isArray(parsed.findings) && Array.isArray(parsed.assessments)) {
+        return {
+          findings: parsed.findings,
+          assessments: parsed.assessments,
+          roomOverrides: parsed.roomOverrides ?? {},
+          registerOverrides: parsed.registerOverrides ?? {},
+          fireOverrides: parsed.fireOverrides ?? {},
+          noticeOverrides: parsed.noticeOverrides ?? {},
+        };
+      }
     }
   } catch {
     // corrupt storage — fall through to reseed
   }
-  return { findings: buildFindings(), assessments: buildAssessments() };
+  return { findings: buildFindings(), assessments: buildAssessments(), ...emptyOverrides() };
 }
+
+let persisted: PersistedState = loadPersisted();
 
 function buildState(): AppState {
   const centres = buildCentres();
-  const persisted = loadPersisted();
   return {
     centres,
-    roomsByCentre: Object.fromEntries(centres.map((c) => [c.id, buildRooms(c.id)])),
-    registersByCentre: Object.fromEntries(centres.map((c) => [c.id, buildRegisters(c.id)])),
+    roomsByCentre: Object.fromEntries(
+      centres.map((c) => [c.id, persisted.roomOverrides[c.id] ?? buildRooms(c.id)]),
+    ),
+    registersByCentre: Object.fromEntries(
+      centres.map((c) => [
+        c.id,
+        buildRegisters(c.id).map((r) => {
+          const ov = persisted.registerOverrides[`${c.id}::${r.name}`];
+          return ov ? { ...r, ...ov } : r;
+        }),
+      ]),
+    ),
+    fireByCentre: Object.fromEntries(
+      centres.map((c) => [
+        c.id,
+        buildFireRegisters(c.id).map((r) => {
+          const ov = persisted.fireOverrides[`${c.id}::${r.name}`];
+          return ov ? { ...r, ...ov } : r;
+        }),
+      ]),
+    ),
+    noticesByCentre: Object.fromEntries(
+      centres.map((c) => [c.id, persisted.noticeOverrides[c.id] ?? buildNotices(c.id)]),
+    ),
     findings: persisted.findings,
     assessments: persisted.assessments,
   };
@@ -51,11 +117,12 @@ let state: AppState = buildState();
 const listeners = new Set<() => void>();
 
 function persist() {
-  const toSave: PersistedState = { findings: state.findings, assessments: state.assessments };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
 }
 
-function emit() {
+// Recompute derived state from the persisted layer and notify subscribers.
+function commit() {
+  state = buildState();
   persist();
   listeners.forEach((l) => l());
 }
@@ -71,32 +138,131 @@ export function useAppState(): AppState {
 
 // ── Mutations ───────────────────────────────────────────────────────────
 
+function nowIso(): string {
+  return new Date().toISOString();
+}
+
 export function setFindingStatus(findingId: string, status: FindingStatus, evidenceNote?: string) {
-  state = {
-    ...state,
-    findings: state.findings.map((f) =>
-      f.id === findingId ? { ...f, status, evidenceNote: evidenceNote ?? f.evidenceNote } : f,
-    ),
-  };
-  emit();
+  persisted.findings = persisted.findings.map((f) =>
+    f.id === findingId ? { ...f, status, evidenceNote: evidenceNote ?? f.evidenceNote } : f,
+  );
+  commit();
 }
 
 export function setAssessment(centreId: string, standardId: string, judgement: Judgement, note?: string) {
-  state = {
-    ...state,
-    assessments: state.assessments.map((a) =>
-      a.centreId === centreId && a.standardId === standardId
-        ? { ...a, judgement, note: note ?? a.note, assessedOn: new Date().toISOString().slice(0, 10) }
-        : a,
-    ),
+  persisted.assessments = persisted.assessments.map((a) =>
+    a.centreId === centreId && a.standardId === standardId
+      ? { ...a, judgement, note: note ?? a.note, assessedOn: new Date().toISOString().slice(0, 10) }
+      : a,
+  );
+  commit();
+}
+
+export interface RoomInput {
+  room: string;
+  bedConfig: string;
+  currentOccupancy: number;
+  lengthM: number;
+  widthM: number;
+  issues: string[];
+}
+
+// Add or update a room. Suitable occupancy is derived here from the entered
+// dimensions at the 4.65 m² space standard — the operator never keys it.
+export function upsertRoom(centreId: string, input: RoomInput, enteredBy: string) {
+  const dimensionsM2 = Math.round(input.lengthM * input.widthM * 100) / 100;
+  const next: Room = {
+    room: input.room.trim(),
+    bedConfig: input.bedConfig.trim() || null,
+    currentOccupancy: input.currentOccupancy,
+    dimensionsM2,
+    suitableOccupancy: suitableOccupancyFor(dimensionsM2),
+    issues: input.issues,
+    enteredBy,
+    enteredAt: nowIso(),
   };
-  emit();
+  const current = state.roomsByCentre[centreId] ?? [];
+  const idx = current.findIndex((r) => r.room === next.room);
+  const updated = idx >= 0 ? current.map((r, i) => (i === idx ? next : r)) : [...current, next];
+  persisted.roomOverrides = { ...persisted.roomOverrides, [centreId]: updated };
+  commit();
+}
+
+export function markRegisterReviewed(centreId: string, name: string, enteredBy: string) {
+  persisted.registerOverrides = {
+    ...persisted.registerOverrides,
+    [`${centreId}::${name}`]: {
+      lastReviewed: new Date().toISOString().slice(0, 10),
+      status: "in_order",
+      note: null,
+      enteredBy,
+      enteredAt: nowIso(),
+    },
+  };
+  commit();
+}
+
+export function setNoticeVerified(centreId: string, name: string, compliant: boolean, enteredBy: string) {
+  const current = state.noticesByCentre[centreId] ?? [];
+  const updated = current.map((n) =>
+    n.name === name
+      ? { ...n, compliant, verifiedOn: new Date().toISOString().slice(0, 10), verifiedBy: enteredBy }
+      : n,
+  );
+  persisted.noticeOverrides = { ...persisted.noticeOverrides, [centreId]: updated };
+  commit();
+}
+
+export function logFireCheck(centreId: string, name: string, enteredBy: string) {
+  persisted.fireOverrides = {
+    ...persisted.fireOverrides,
+    [`${centreId}::${name}`]: {
+      lastEntry: new Date().toISOString().slice(0, 10),
+      enteredBy,
+      enteredAt: nowIso(),
+    },
+  };
+  commit();
+}
+
+export function addFinding(input: {
+  centreId: string;
+  finding: string;
+  priority: FindingPriority;
+  actionRequired: string;
+  section?: string;
+}) {
+  const today = new Date().toISOString().slice(0, 10);
+  const evidenceDueDays = input.priority === "GREEN" ? null : 14;
+  const dueOn = evidenceDueDays
+    ? (() => {
+        const d = new Date();
+        d.setDate(d.getDate() + evidenceDueDays);
+        return d.toISOString().slice(0, 10);
+      })()
+    : null;
+  const finding: Finding = {
+    id: `${input.centreId}-manual-${Date.now()}`,
+    centreId: input.centreId,
+    section: input.section ?? "6. Summary Details",
+    finding: input.finding.trim(),
+    priority: input.priority,
+    actionRequired: input.actionRequired.trim(),
+    evidenceDueDays,
+    raisedOn: today,
+    dueOn,
+    status: "open",
+    evidenceNote: null,
+  };
+  persisted.findings = [finding, ...persisted.findings];
+  commit();
 }
 
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);
   localStorage.removeItem(STORAGE_KEY);
+  persisted = { findings: buildFindings(), assessments: buildAssessments(), ...emptyOverrides() } as PersistedState;
   state = buildState();
   listeners.forEach((l) => l());
 }
