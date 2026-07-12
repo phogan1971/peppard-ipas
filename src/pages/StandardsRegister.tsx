@@ -15,6 +15,7 @@ import Chip from "@mui/material/Chip";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import AccordionBlock from "../components/AccordionBlock";
+import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import { setAssessment, useAppState } from "../data/store";
 import { sectorDistributionFor, STANDARDS } from "../data/seed";
 import { Judgement, JUDGEMENT_LABELS } from "../data/types";
@@ -29,6 +30,14 @@ const SEGMENTS: { key: Exclude<Judgement, "notAssessed">; color: string }[] = [
   { key: "partiallyCompliant", color: compliance.partially },
   { key: "notCompliant", color: compliance.notCompliant },
 ];
+
+// Judgement → chip colours (the token keys don't mirror the Judgement names)
+const JUDGEMENT_COLORS: Record<Exclude<Judgement, "notAssessed">, { color: string; bg: string }> = {
+  compliant: { color: compliance.compliant, bg: compliance.compliantBg },
+  substantiallyCompliant: { color: compliance.substantially, bg: compliance.substantiallyBg },
+  partiallyCompliant: { color: compliance.partially, bg: compliance.partiallyBg },
+  notCompliant: { color: compliance.notCompliant, bg: compliance.notCompliantBg },
+};
 
 // Stacked distribution of published HIQA judgements for this standard
 // across the sector (69 inspections) — colour + tooltip text, and an
@@ -70,6 +79,33 @@ export default function StandardsRegister() {
     counts[j] += 1;
   }
 
+  const [detail, setDetail] = useState<DetailContent | null>(null);
+
+  const judgementDetail = (judgement: Exclude<Judgement, "notAssessed">, sub: string): DetailContent => ({
+    title: `${JUDGEMENT_LABELS[judgement]} — ${centre.shortName}`,
+    subtitle: sub,
+    rows: STANDARDS.filter((std) => (forCentre.get(std.id)?.judgement ?? "notAssessed") === judgement).map((std) => ({
+      id: std.id,
+      leading: (
+        <Chip
+          label={std.id}
+          size="small"
+          sx={{
+            height: 22,
+            minWidth: 44,
+            fontWeight: 700,
+            fontSize: "0.72rem",
+            color: JUDGEMENT_COLORS[judgement].color,
+            backgroundColor: JUDGEMENT_COLORS[judgement].bg,
+          }}
+        />
+      ),
+      primary: std.text,
+      secondary: `Theme ${std.themeNumber}: ${std.themeName}`,
+    })),
+    emptyText: `No standards judged ${JUDGEMENT_LABELS[judgement].toLowerCase()} at ${centre.shortName}.`,
+  });
+
   const themes = useMemo(() => {
     const byTheme = new Map<number, { name: string; standards: typeof STANDARDS }>();
     for (const std of STANDARDS) {
@@ -102,18 +138,20 @@ export default function StandardsRegister() {
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Compliant" value={counts.compliant} sub={`of ${STANDARDS.length} standards`} accent={accent.green} icon={CheckCircleOutlineIcon} />
+          <StatCard label="Compliant" value={counts.compliant} sub={`of ${STANDARDS.length} standards`} accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(judgementDetail("compliant", `${counts.compliant} of ${STANDARDS.length} standards fully compliant`))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Substantially compliant" value={counts.substantiallyCompliant} sub="minor gaps identified" accent={accent.blue} icon={TaskAltIcon} />
+          <StatCard label="Substantially compliant" value={counts.substantiallyCompliant} sub="minor gaps identified" accent={accent.blue} icon={TaskAltIcon} onClick={() => setDetail(judgementDetail("substantiallyCompliant", "Minor gaps identified"))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Partially compliant" value={counts.partiallyCompliant} sub="improvement plans required" accent={accent.orange} icon={InfoOutlinedIcon} />
+          <StatCard label="Partially compliant" value={counts.partiallyCompliant} sub="improvement plans required" accent={accent.orange} icon={InfoOutlinedIcon} onClick={() => setDetail(judgementDetail("partiallyCompliant", "Improvement plans required"))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Not compliant" value={counts.notCompliant} sub="priority remediation" accent={accent.red} icon={ErrorOutlineIcon} />
+          <StatCard label="Not compliant" value={counts.notCompliant} sub="priority remediation" accent={accent.red} icon={ErrorOutlineIcon} onClick={() => setDetail(judgementDetail("notCompliant", "Priority remediation"))} />
         </Grid>
       </Grid>
+
+      <DetailDialog content={detail} onClose={() => setDetail(null)} />
 
       <Paper sx={{ p: 2, mb: 2, backgroundColor: s.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>

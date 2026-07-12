@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { SvgIconComponent } from "@mui/icons-material";
@@ -13,14 +14,57 @@ interface StatCardProps {
   sub?: ReactNode;
   accent?: string; // Genesis accent palette (tokens.accent)
   icon?: SvgIconComponent;
+  onClick?: () => void; // when set, the whole card is a button opening a detail view
 }
 
 // Genisis3 "Alert Summary" statistic card: large coloured value top-left,
 // label below, tinted icon chip top-right, lift on hover.
-export default function StatCard({ label, value, sub, accent: accentProp = accent.navy, icon: Icon }: StatCardProps) {
+export default function StatCard({ label, value, sub, accent: accentProp = accent.navy, icon: Icon, onClick }: StatCardProps) {
   const dark = useTheme().palette.mode === "dark";
   // navy is too dim on dark surfaces — swap for the dark-mode primary
   const accentColor = dark && accentProp === accent.navy ? "#4FA3BD" : accentProp;
+
+  const body = (
+    <CardContent
+      sx={{
+        position: "relative",
+        padding: "14px",
+        minHeight: "100px",
+        "&:last-child": { paddingBottom: "14px" },
+      }}
+    >
+      {Icon && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            backgroundColor: accentColor + "15",
+            borderRadius: 2,
+            width: 48,
+            height: 48,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Icon sx={{ fontSize: 26, color: accentColor }} />
+        </Box>
+      )}
+      <Typography sx={{ fontSize: "1.9rem", fontWeight: 700, color: accentColor, lineHeight: 1.2, pr: 6 }}>
+        {value}
+      </Typography>
+      <Typography sx={{ fontSize: "0.95rem", fontWeight: 500, color: "text.secondary", mt: 0.5, pr: 4 }}>
+        {label}
+      </Typography>
+      {sub && (
+        <Typography component="div" sx={{ fontSize: "0.75rem", color: "text.secondary", mt: 0.25 }}>
+          {sub}
+        </Typography>
+      )}
+    </CardContent>
+  );
+
   return (
     <Card
       sx={{
@@ -29,44 +73,13 @@ export default function StatCard({ label, value, sub, accent: accentProp = accen
         "&:hover": { transform: "translateY(-2px)", boxShadow: 6 },
       }}
     >
-      <CardContent
-        sx={{
-          position: "relative",
-          padding: "14px",
-          minHeight: "100px",
-          "&:last-child": { paddingBottom: "14px" },
-        }}
-      >
-        {Icon && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-              backgroundColor: accentColor + "15",
-              borderRadius: 2,
-              width: 48,
-              height: 48,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Icon sx={{ fontSize: 26, color: accentColor }} />
-          </Box>
-        )}
-        <Typography sx={{ fontSize: "1.9rem", fontWeight: 700, color: accentColor, lineHeight: 1.2, pr: 6 }}>
-          {value}
-        </Typography>
-        <Typography sx={{ fontSize: "0.95rem", fontWeight: 500, color: "text.secondary", mt: 0.5, pr: 4 }}>
-          {label}
-        </Typography>
-        {sub && (
-          <Typography component="div" sx={{ fontSize: "0.75rem", color: "text.secondary", mt: 0.25 }}>
-            {sub}
-          </Typography>
-        )}
-      </CardContent>
+      {onClick ? (
+        <CardActionArea onClick={onClick} aria-label={`${label} — show details`} sx={{ height: "100%" }}>
+          {body}
+        </CardActionArea>
+      ) : (
+        body
+      )}
     </Card>
   );
 }

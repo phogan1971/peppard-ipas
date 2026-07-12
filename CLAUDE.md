@@ -245,6 +245,15 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   blanks a live walkthrough.
 - **Help** (`HelpDialog`, ? icon in top bar): table-of-contents help
   covering every section; opens on the topic matching the current route.
+- **Stat-card drill-down** (`StatCard onClick` + shared `DetailDialog`):
+  the summary cards on Group Overview (capacity / occupancy / open
+  findings / overdue) and HIQA Standards (the four judgement counts)
+  open a dialog listing the individual records behind the figure.
+- **Occupancy colour is commercial, not a space-standard risk**
+  (`tokens.occupancyColor`): low occupancy = red (empty beds = lost
+  contract revenue), greening as it climbs toward 100% full. Do NOT
+  invert this — high occupancy is healthy at the centre level; the
+  4.65 m² space-standard breach is a separate *room-level* signal.
 - **Dark mode** (moon/sun icon): `ColorModeProvider` +
   `buildPeppardTheme(mode)`; components take surfaces from the
   `useSurfaces()` hook (`tokens.surface` / `tokens.darkSurface`) —

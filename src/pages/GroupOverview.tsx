@@ -12,11 +12,14 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import GroupsIcon from "@mui/icons-material/Groups";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
-import { useAppState, centreCompliance } from "../data/store";
-import { brand, rag, ragAccent, accent } from "../theme/tokens";
+import DetailDialog, { DetailContent } from "../components/DetailDialog";
+import { RagChip } from "../components/RagChip";
+import { useAppState, centreCompliance, daysUntilDue } from "../data/store";
+import { rag, ragAccent, accent, occupancyColor } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
 const WORST_ACCENT: Record<string, string> = {
@@ -33,12 +36,13 @@ const WORST_TEXT: Record<string, { color: string; bg: string }> = {
   NONE: { color: rag.green, bg: rag.greenBg },
 };
 
-// Occupancy bar: tapered brand gradient while within contract, warming
-// to amber near the ceiling and RAG red once over it.
+// Occupancy bar: colour reflects how full the centre is — red when beds
+// sit empty (lost contract revenue), greening as it climbs toward 100%.
+// Same occupancyColor scale used everywhere occupancy is shown. Subtle
+// left-to-right taper keeps the polished look.
 function occupancyGradient(occPct: number): string {
-  if (occPct > 100) return `linear-gradient(90deg, ${ragAccent.amber}, ${ragAccent.red})`;
-  if (occPct >= 95) return `linear-gradient(90deg, ${brand.teal}, ${ragAccent.amber})`;
-  return `linear-gradient(90deg, ${brand.teal}, ${ragAccent.green})`;
+  const c = occupancyColor(occPct);
+  return `linear-gradient(90deg, ${c}66, ${c})`;
 }
 
 const WORST_LABEL: Record<string, string> = {
@@ -53,10 +57,100 @@ export default function GroupOverview() {
   const navigate = useNavigate();
   const s = useSurfaces();
 
-  const totalCapacity = centres.reduce((s, c) => s + c.contractCapacity, 0);
-  const totalOccupancy = centres.reduce((s, c) => s + c.occupancy, 0);
+  const totalCapacity = centres.reduce((sum, c) => sum + c.contractCapacity, 0);
+  const totalOccupancy = centres.reduce((sum, c) => sum + c.occupancy, 0);
+  const overallPct = Math.round((totalOccupancy / totalCapacity) * 100);
   const open = findings.filter((f) => f.status !== "closed");
-  const overdue = centres.reduce((s, c) => s + centreCompliance(c.id, findings).overdue, 0);
+  const openRed = open.filter((f) => f.priority === "RED").length;
+  const openAmber = open.filter((f) => f.priority === "AMBER").length;
+  const overdue = centres.reduce((sum, c) => sum + centreCompliance(c.id, findings).overdue, 0);
+
+  const [detail, setDetail] = useState<DetailContent | null>(null);
+  const centreName = (centreId: string) => centres.find((c) => c.id === centreId)?.shortName ?? centreId;
+
+  const dueChip = (f: (typeof open)[number]) => {
+    const d = daysUntilDue(f);
+    if (d === null) return null;
+    const late = d < 0;
+    return (
+      <Chip
+        label={late ? `${-d}d overdue` : `due in ${d}d`}
+        size="small"
+        sx={{
+          height: 20,
+          fontSize: "0.68rem",
+          fontWeight: 700,
+          color: late ? rag.red : rag.amber,
+          backgroundColor: late ? rag.redBg : rag.amberBg,
+        }}
+      />
+    );
+  };
+
+  const capacityDetail = (): DetailContent => ({
+    title: "Contracted capacity",
+    subtitle: `${totalCapacity} beds contracted across ${centres.length} centres`,
+    rows: centres.map((c) => ({
+      id: c.id,
+      primary: c.shortName,
+      secondary: `${c.location}, Co. ${c.county}`,
+      trailing: <Typography sx={{ fontSize: "0.85rem", fontWeight: 700 }}>{c.contractCapacity} beds</Typography>,
+    })),
+  });
+
+  const occupancyDetail = (): DetailContent => ({
+    title: "Current occupancy",
+    subtitle: `${totalOccupancy} of ${totalCapacity} beds filled — ${overallPct}% of contracted capacity`,
+    rows: [...centres]
+      .map((c) => ({ c, pct: Math.round((c.occupancy / c.contractCapacity) * 100) }))
+      .sort((a, b) => a.pct - b.pct)
+      .map(({ c, pct }) => ({
+        id: c.id,
+        leading: <Box sx={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: occupancyColor(pct) }} />,
+        primary: c.shortName,
+        secondary: `${c.occupancy} / ${c.contractCapacity} beds`,
+        trailing: <Typography sx={{ fontSize: "0.9rem", fontWeight: 700, color: occupancyColor(pct) }}>{pct}%</Typography>,
+      })),
+  });
+
+  const findingRows = (list: typeof open) =>
+    [...list]
+      .sort((a, b) => (daysUntilDue(a) ?? 9999) - (daysUntilDue(b) ?? 9999))
+      .map((f) => ({
+        id: f.id,
+        leading: <RagChip priority={f.priority} />,
+        primary: `${centreName(f.centreId)} · ${f.section}`,
+        secondary: f.finding,
+        trailing: dueChip(f),
+      }));
+
+  const openFindingsDetail = (): DetailContent => ({
+    title: "Open findings",
+    subtitle: `${open.length} open · ${openRed} red · ${openAmber} amber`,
+    rows: findingRows(open),
+    emptyText: "No open findings across the group.",
+  });
+
+  const overdueDetail = (): DetailContent => {
+    const list = open.filter((f) => {
+      const d = daysUntilDue(f);
+      return d !== null && d < 0 && f.status === "open";
+    });
+    return {
+      title: "Overdue evidence",
+      subtitle: `${list.length} finding${list.length === 1 ? "" : "s"} past the 14-day evidence clock`,
+      rows: list
+        .sort((a, b) => (daysUntilDue(a) ?? 0) - (daysUntilDue(b) ?? 0))
+        .map((f) => ({
+          id: f.id,
+          leading: <RagChip priority={f.priority} />,
+          primary: `${centreName(f.centreId)} · ${f.section}`,
+          secondary: f.finding,
+          trailing: dueChip(f),
+        })),
+      emptyText: "Nothing is past the 14-day evidence clock.",
+    };
+  };
 
   return (
     <PageShell
@@ -71,24 +165,26 @@ export default function GroupOverview() {
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Contracted capacity" value={totalCapacity} sub="beds across 8 centres" accent={accent.navy} icon={ApartmentIcon} />
+          <StatCard label="Contracted capacity" value={totalCapacity} sub="beds across 8 centres" accent={accent.navy} icon={ApartmentIcon} onClick={() => setDetail(capacityDetail())} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Current occupancy"
             value={totalOccupancy}
-            sub={`${Math.round((totalOccupancy / totalCapacity) * 100)}% of contracted capacity`}
+            sub={`${overallPct}% of contracted capacity`}
             accent={accent.blue}
             icon={GroupsIcon}
+            onClick={() => setDetail(occupancyDetail())}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             label="Open findings"
             value={open.length}
-            sub={`${open.filter((f) => f.priority === "RED").length} red · ${open.filter((f) => f.priority === "AMBER").length} amber`}
+            sub={`${openRed} red · ${openAmber} amber`}
             accent={accent.orange}
             icon={FactCheckIcon}
+            onClick={() => setDetail(openFindingsDetail())}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -98,9 +194,12 @@ export default function GroupOverview() {
             sub="past the 14-day clock"
             accent={overdue > 0 ? accent.red : accent.green}
             icon={WarningAmberIcon}
+            onClick={() => setDetail(overdueDetail())}
           />
         </Grid>
       </Grid>
+
+      <DetailDialog content={detail} onClose={() => setDetail(null)} />
 
       <Typography variant="h6" sx={{ mb: 1.5, color: "text.primary" }}>
         Centres
