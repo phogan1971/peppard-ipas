@@ -73,23 +73,22 @@ export const ragAccent = {
 // ── Occupancy → commercial RAG ──────────────────────────────────────────
 // Occupancy is read commercially, not as a space-standard risk: empty
 // beds are the exposure (lost contract revenue), a full centre is
-// healthy. So low occupancy is red and the colour greens as it climbs
-// toward 100%. Continuous interpolation between the ragAccent stops so
-// the signal reads consistently everywhere occupancy is shown.
-function mixHex(a: string, b: string, t: number): string {
-  const toRgb = (h: string) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
-  const [ar, ag, ab] = toRgb(a);
-  const [br, bg, bb] = toRgb(b);
-  const ch = (x: number, y: number) => Math.round(x + (y - x) * t).toString(16).padStart(2, "0");
-  return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`;
+// healthy. So low occupancy grades RED and a near-full centre GREEN.
+// Discrete RAG bands (not a continuous blend) so every bar is cleanly
+// one of red / amber / green — no muddy in-between shades — and two
+// centres at the same band read identically. Thresholds are the single
+// place to tune the occupancy grading.
+export const OCCUPANCY_GREEN_MIN = 90; // near-full — healthy utilisation
+export const OCCUPANCY_AMBER_MIN = 80; // some empty beds — watch
+
+export function occupancyBand(pct: number): "green" | "amber" | "red" {
+  if (pct >= OCCUPANCY_GREEN_MIN) return "green";
+  if (pct >= OCCUPANCY_AMBER_MIN) return "amber";
+  return "red";
 }
 
 export function occupancyColor(pct: number): string {
-  const p = Math.max(0, Math.min(100, pct));
-  if (p <= 70) return ragAccent.red;
-  if (p < 85) return mixHex(ragAccent.red, ragAccent.amber, (p - 70) / 15);
-  if (p >= 100) return ragAccent.green;
-  return mixHex(ragAccent.amber, ragAccent.green, (p - 85) / 15);
+  return ragAccent[occupancyBand(pct)];
 }
 
 // ── HIQA 4-point compliance scale ───────────────────────────────────────
