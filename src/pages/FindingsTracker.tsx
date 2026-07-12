@@ -12,6 +12,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import DetailDialog, { DetailContent } from "../components/DetailDialog";
@@ -66,7 +67,7 @@ export default function FindingsTracker() {
   const centreName = (id: string) => centres.find((c) => c.id === id)?.shortName ?? id;
 
   const [detail, setDetail] = useState<DetailContent | null>(null);
-  const [formOpen, setFormOpen] = useState(false);
+  const [dialog, setDialog] = useState<{ open: boolean; existing: Finding | null }>({ open: false, existing: null });
   const [toast, setToast] = useState<string | null>(null);
 
   const statusChip = (f: Finding) => {
@@ -119,7 +120,7 @@ export default function FindingsTracker() {
       title="Findings & Actions"
       subtitle="Inspection findings with RAG priority and the 14-day evidence clock"
       actions={
-        <Button variant="contained" disableElevation startIcon={<AddIcon />} onClick={() => setFormOpen(true)}>
+        <Button variant="contained" disableElevation startIcon={<AddIcon />} onClick={() => setDialog({ open: true, existing: null })}>
           Raise finding
         </Button>
       }
@@ -180,6 +181,9 @@ export default function FindingsTracker() {
                 <RagChip priority={f.priority} />
                 <Typography sx={{ fontWeight: 700, color: "text.primary" }}>{f.finding}</Typography>
                 <Chip label={centreName(f.centreId)} size="small" sx={{ backgroundColor: s.pillRowBg }} />
+                {f.hiqaStandard && (
+                  <Chip label={`HIQA ${f.hiqaStandard}`} size="small" sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700, backgroundColor: rag.greenBg, color: rag.green }} />
+                )}
                 <DueClock finding={f} />
                 <Box sx={{ flexGrow: 1 }} />
                 <Chip label={sm.label} size="small" sx={{ backgroundColor: sm.bg, color: sm.color, fontWeight: 600 }} />
@@ -187,11 +191,16 @@ export default function FindingsTracker() {
               <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 1 }}>{f.actionRequired}</Typography>
               <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
                 <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>
-                  Raised {f.raisedOn}
+                  {f.source ? `${f.source} · ` : ""}
+                  {f.section}
+                  {" · "}Raised {f.raisedOn}
                   {f.dueOn ? ` · evidence due ${f.dueOn}` : ""}
                   {f.evidenceNote ? ` · ${f.evidenceNote}` : ""}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }} />
+                <Button size="small" startIcon={<EditIcon sx={{ fontSize: 16 }} />} onClick={() => setDialog({ open: true, existing: f })}>
+                  Edit
+                </Button>
                 {f.status === "open" && (
                   <Button
                     size="small"
@@ -228,12 +237,13 @@ export default function FindingsTracker() {
       </Box>
 
       <FindingFormDialog
-        open={formOpen}
+        open={dialog.open}
         centres={centres}
+        existing={dialog.existing}
         defaultCentreId={centreFilter === "all" ? undefined : centreFilter}
-        onClose={() => setFormOpen(false)}
+        onClose={() => setDialog({ open: false, existing: null })}
         onSaved={(summary) => {
-          setFormOpen(false);
+          setDialog({ open: false, existing: null });
           setToast(summary);
         }}
       />

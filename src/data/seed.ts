@@ -334,14 +334,25 @@ export function buildFireRegisters(centreId: string): FireRegister[] {
 // Riverside findings are the real 24.03.2026 inspection content, but the
 // lifecycle dates are DEMO dates anchored to today so the 14-day evidence
 // clock reads live in a demonstration (see CLAUDE.md).
-const DEMO_FINDING_POOL: { section: string; finding: string; priority: FindingPriority; actionRequired: string }[] = [
-  { section: "6. Summary Details", finding: "Fire Safety Issues", priority: "RED", actionRequired: "Fire drill records incomplete for the previous quarter. Full drill to be carried out and register updated; confirmation within 14 days." },
-  { section: "6. Summary Details", finding: "Electrical Equipment in Room", priority: "AMBER", actionRequired: "Prohibited electrical items found during spot checks. Management to inspect all rooms and remove; confirmation within 14 days." },
-  { section: "6. Summary Details", finding: "Mould/Damp", priority: "AMBER", actionRequired: "Mould identified in bathroom areas. Deep clean and remediation required; photographic evidence within 14 days." },
-  { section: "6. Summary Details", finding: "Food Safety Issues", priority: "AMBER", actionRequired: "Kitchen deep-clean record gaps. Deep clean to be completed and register brought up to date; confirmation within 14 days." },
-  { section: "6. Summary Details", finding: "Overcrowding", priority: "GREEN", actionRequired: "Room occupancies verified against the 4.65 m² space standard. No action required." },
-  { section: "6. Summary Details", finding: "Fixtures & Fittings", priority: "GREEN", actionRequired: "Minor wear noted in communal areas. Monitor at next internal audit." },
+const DEMO_FINDING_POOL: { section: string; finding: string; priority: FindingPriority; actionRequired: string; hiqaStandard: string }[] = [
+  { section: "6. Summary Details", finding: "Fire Safety Issues", priority: "RED", actionRequired: "Fire drill records incomplete for the previous quarter. Full drill to be carried out and register updated; confirmation within 14 days.", hiqaStandard: "3.1" },
+  { section: "6. Summary Details", finding: "Electrical Equipment in Room", priority: "AMBER", actionRequired: "Prohibited electrical items found during spot checks. Management to inspect all rooms and remove; confirmation within 14 days.", hiqaStandard: "4.2" },
+  { section: "6. Summary Details", finding: "Mould/Damp", priority: "AMBER", actionRequired: "Mould identified in bathroom areas. Deep clean and remediation required; photographic evidence within 14 days.", hiqaStandard: "4.1" },
+  { section: "6. Summary Details", finding: "Food Safety Issues", priority: "AMBER", actionRequired: "Kitchen deep-clean record gaps. Deep clean to be completed and register brought up to date; confirmation within 14 days.", hiqaStandard: "5.1" },
+  { section: "6. Summary Details", finding: "Overcrowding", priority: "GREEN", actionRequired: "Room occupancies verified against the 4.65 m² space standard. No action required.", hiqaStandard: "4.1" },
+  { section: "6. Summary Details", finding: "Fixtures & Fittings", priority: "GREEN", actionRequired: "Minor wear noted in communal areas. Monitor at next internal audit.", hiqaStandard: "4.3" },
 ];
+
+// HIQA standard a Riverside inspection finding maps to (dual-axis), keyed by
+// the finding title from the real report.
+const RIVERSIDE_FINDING_HIQA: Record<string, string> = {
+  "Fire Safety Issues": "3.1",
+  "Electrical Equipment in Room": "4.2",
+  "Mould/Damp": "4.1",
+  "Food Safety Issues": "5.1",
+  "Overcrowding": "4.1",
+  "Fixtures & Fittings": "4.3",
+};
 
 // Source PDF contains "N/A" and unchecked priority boxes — anything
 // outside the RAG scale becomes null (rendered as UNMARKED).
@@ -376,7 +387,9 @@ export function buildFindings(): Finding[] {
     findings.push({
       id: `riverside-f${f.ref}`,
       centreId: "riverside",
+      source: "IPPS inspection",
       section: f.section,
+      hiqaStandard: RIVERSIDE_FINDING_HIQA[f.finding] ?? null,
       finding: f.finding,
       priority: normalisePriority(f.priority),
       actionRequired: f.actionRequired,
@@ -414,7 +427,9 @@ export function buildFindings(): Finding[] {
       findings.push({
         id: `${spec.id}-f${i + 1}`,
         centreId: spec.id,
+        source: "Internal audit",
         section: tpl.section,
+        hiqaStandard: tpl.hiqaStandard,
         finding: tpl.finding,
         priority: tpl.priority,
         actionRequired: tpl.actionRequired,

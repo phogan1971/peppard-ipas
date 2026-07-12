@@ -14,6 +14,7 @@ import {
   FireRegister,
   Finding,
   FindingPriority,
+  FindingSource,
   FindingStatus,
   Judgement,
   NoticeItem,
@@ -225,36 +226,73 @@ export function logFireCheck(centreId: string, name: string, enteredBy: string) 
   commit();
 }
 
-export function addFinding(input: {
+export interface FindingInput {
   centreId: string;
+  source: FindingSource;
+  section: string;
+  hiqaStandard: string | null;
   finding: string;
   priority: FindingPriority;
   actionRequired: string;
-  section?: string;
-}) {
-  const today = new Date().toISOString().slice(0, 10);
-  const evidenceDueDays = input.priority === "GREEN" ? null : 14;
-  const dueOn = evidenceDueDays
-    ? (() => {
-        const d = new Date();
-        d.setDate(d.getDate() + evidenceDueDays);
-        return d.toISOString().slice(0, 10);
-      })()
-    : null;
+  raisedOn: string; // ISO date
+  evidenceDueDays: number | null;
+}
+
+// The 14-day clock and RAG rules applied in one place: GREEN carries no
+// evidence deadline; everything else dues at raisedOn + evidenceDueDays.
+// Date arithmetic stays in local components (no toISOString/UTC round-trip)
+// so the deadline never drifts a day in a positive-offset timezone.
+function computeDueOn(raisedOn: string, priority: FindingPriority, evidenceDueDays: number | null): string | null {
+  if (priority === "GREEN" || evidenceDueDays === null) return null;
+  const [y, m, d] = raisedOn.split("-").map(Number);
+  const dt = new Date(y, m - 1, d + evidenceDueDays);
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const dd = String(dt.getDate()).padStart(2, "0");
+  return `${dt.getFullYear()}-${mm}-${dd}`;
+}
+
+export function addFinding(input: FindingInput) {
+  const evidenceDueDays = input.priority === "GREEN" ? null : input.evidenceDueDays;
   const finding: Finding = {
     id: `${input.centreId}-manual-${Date.now()}`,
     centreId: input.centreId,
-    section: input.section ?? "6. Summary Details",
+    source: input.source,
+    section: input.section.trim() || "6. Summary Details",
+    hiqaStandard: input.hiqaStandard,
     finding: input.finding.trim(),
     priority: input.priority,
     actionRequired: input.actionRequired.trim(),
     evidenceDueDays,
-    raisedOn: today,
-    dueOn,
+    raisedOn: input.raisedOn,
+    dueOn: computeDueOn(input.raisedOn, input.priority, evidenceDueDays),
     status: "open",
     evidenceNote: null,
   };
   persisted.findings = [finding, ...persisted.findings];
+  commit();
+}
+
+// Re-edit any finding (seeded or operator-created). Priority/date changes
+// re-run the 14-day clock so the evidence deadline stays consistent.
+export function updateFinding(id: string, input: FindingInput) {
+  const evidenceDueDays = input.priority === "GREEN" ? null : input.evidenceDueDays;
+  persisted.findings = persisted.findings.map((f) =>
+    f.id === id
+      ? {
+          ...f,
+          centreId: input.centreId,
+          source: input.source,
+          section: input.section.trim() || "6. Summary Details",
+          hiqaStandard: input.hiqaStandard,
+          finding: input.finding.trim(),
+          priority: input.priority,
+          actionRequired: input.actionRequired.trim(),
+          evidenceDueDays,
+          raisedOn: input.raisedOn,
+          dueOn: computeDueOn(input.raisedOn, input.priority, evidenceDueDays),
+        }
+      : f,
+  );
   commit();
 }
 
