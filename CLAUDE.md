@@ -245,10 +245,17 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   blanks a live walkthrough.
 - **Help** (`HelpDialog`, ? icon in top bar): table-of-contents help
   covering every section; opens on the topic matching the current route.
-- **Stat-card drill-down** (`StatCard onClick` + shared `DetailDialog`):
-  the summary cards on Group Overview (capacity / occupancy / open
-  findings / overdue) and HIQA Standards (the four judgement counts)
-  open a dialog listing the individual records behind the figure.
+- **Stat-card drill-down**: summary cards open a detail view of the
+  records behind the figure. Two shared dialogs — `DetailDialog` (a list)
+  and `ChartDialog` (an animated recharts chart with a bar/pie/line
+  toggle). Group Overview, HIQA Standards, Findings & Actions and KPI
+  Framework use the list; Centre Operations uses the chart (room status,
+  bed utilisation, capacity comparison, over-occupancy, issue mix).
+  Note: recharts animation is rAF-driven, so it only plays in a visible
+  tab — a backgrounded/headless tab renders the final frame (this is why
+  the automation preview shows empty charts; real browsers are fine).
+  `ChartDialog` gates the chart on the dialog's `onEntered` so recharts
+  measures the container at full size.
 - **Occupancy colour is commercial, not a space-standard risk**
   (`tokens.occupancyColor` / `occupancyBand`): low occupancy = red
   (empty beds = lost contract revenue), amber, then green as a centre

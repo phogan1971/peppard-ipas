@@ -19,12 +19,14 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
+import ChartDialog, { ChartContent } from "../components/ChartDialog";
 import { useAppState } from "../data/store";
 import { RegisterEntry, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
-import { rag, accent } from "../theme/tokens";
+import { rag, ragAccent, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
 const REGISTER_STATUS: Record<RegisterEntry["status"], { label: string; color: string; bg: string }> = {
@@ -49,6 +51,72 @@ export default function CentreOperations() {
   );
   const withIssues = rooms.filter((r) => r.issues.length > 0);
   const suitableTotal = rooms.reduce((s, r) => s + (r.suitableOccupancy ?? 0), 0);
+
+  const [chart, setChart] = useState<ChartContent | null>(null);
+
+  const emptyRooms = rooms.filter((r) => r.currentOccupancy === 0).length;
+  const withinRooms = occupied.length - overOccupied.length;
+
+  const roomStatusChart = (): ChartContent => ({
+    title: "Rooms by status",
+    subtitle: `${rooms.length} rooms at ${centre.shortName}`,
+    defaultType: "pie",
+    valueLabel: "Rooms",
+    data: [
+      { name: "Within standard", value: withinRooms, color: ragAccent.green },
+      { name: "Over-occupied", value: overOccupied.length, color: ragAccent.red },
+      { name: "Empty", value: emptyRooms, color: rag.neutral },
+    ].filter((d) => d.value > 0),
+  });
+
+  const occupancyChart = (): ChartContent => ({
+    title: "Bed utilisation",
+    subtitle: `${centre.occupancy} of ${centre.contractCapacity} contracted beds filled`,
+    defaultType: "pie",
+    valueLabel: "Beds",
+    data: [
+      { name: "Filled", value: centre.occupancy, color: ragAccent.green },
+      { name: "Available", value: Math.max(centre.contractCapacity - centre.occupancy, 0), color: rag.neutral },
+    ].filter((d) => d.value > 0),
+  });
+
+  const capacityChart = (): ChartContent => ({
+    title: "Capacity comparison",
+    subtitle: `Suitable occupancy derived @ ${SPACE_STANDARD_M2_PER_PERSON} m² per person`,
+    defaultType: "bar",
+    valueLabel: "Beds",
+    data: [
+      { name: "Contracted", value: centre.contractCapacity, color: accent.navy },
+      { name: "Suitable", value: suitableTotal, color: accent.purple },
+      { name: "Current", value: centre.occupancy, color: accent.blue },
+    ],
+  });
+
+  const overOccupiedChart = (): ChartContent => ({
+    title: "Over-occupied rooms",
+    subtitle: "Persons above the room's suitable occupancy",
+    defaultType: "bar",
+    valueLabel: "Persons over",
+    data: overOccupied.map((r) => ({
+      name: r.room,
+      value: (r.currentOccupancy ?? 0) - (r.suitableOccupancy ?? 0),
+      color: ragAccent.red,
+    })),
+    emptyText: "No rooms are above their suitable occupancy.",
+  });
+
+  const issuesChart = (): ChartContent => {
+    const counts = new Map<string, number>();
+    rooms.forEach((r) => r.issues.forEach((i) => counts.set(i, (counts.get(i) ?? 0) + 1)));
+    return {
+      title: "Issues flagged at inspection",
+      subtitle: `${withIssues.length} of ${rooms.length} rooms carry at least one issue`,
+      defaultType: "bar",
+      valueLabel: "Rooms",
+      data: [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value, color: ragAccent.amber })),
+      emptyText: "No issues recorded against any room.",
+    };
+  };
 
   return (
     <PageShell
@@ -104,13 +172,13 @@ export default function CentreOperations() {
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={2.4}>
-          <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={accent.navy} icon={MeetingRoomIcon} />
+          <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={accent.navy} icon={MeetingRoomIcon} onClick={() => setChart(roomStatusChart())} />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
-          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={accent.blue} icon={GroupsIcon} />
+          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={accent.blue} icon={GroupsIcon} onClick={() => setChart(occupancyChart())} />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
-          <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={accent.purple} icon={SquareFootIcon} />
+          <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={accent.purple} icon={SquareFootIcon} onClick={() => setChart(capacityChart())} />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard
@@ -119,6 +187,7 @@ export default function CentreOperations() {
             sub="rooms above suitable occupancy"
             accent={overOccupied.length > 0 ? accent.red : accent.green}
             icon={ErrorOutlineIcon}
+            onClick={() => setChart(overOccupiedChart())}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
@@ -128,9 +197,12 @@ export default function CentreOperations() {
             sub="flagged at inspection"
             accent={withIssues.length > 0 ? accent.orange : accent.green}
             icon={WarningAmberIcon}
+            onClick={() => setChart(issuesChart())}
           />
         </Grid>
       </Grid>
+
+      <ChartDialog content={chart} onClose={() => setChart(null)} />
 
       <Grid container spacing={2}>
         <Grid item xs={12} lg={8}>

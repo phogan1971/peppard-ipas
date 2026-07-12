@@ -61,9 +61,12 @@ export default function DetailDialog({ content, onClose }: { content: DetailCont
             >
               {row.leading && <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center" }}>{row.leading}</Box>}
               <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                <Typography sx={{ fontSize: "0.88rem", fontWeight: 600, color: "text.primary" }}>{row.primary}</Typography>
+                {/* component="div": primary/secondary may contain chips (block elements) */}
+                <Typography component="div" sx={{ fontSize: "0.88rem", fontWeight: 600, color: "text.primary", display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                  {row.primary}
+                </Typography>
                 {row.secondary && (
-                  <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>{row.secondary}</Typography>
+                  <Typography component="div" sx={{ fontSize: "0.8rem", color: "text.secondary" }}>{row.secondary}</Typography>
                 )}
               </Box>
               {row.trailing && (

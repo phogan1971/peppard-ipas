@@ -11,6 +11,7 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
+import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
@@ -60,6 +61,52 @@ export default function FindingsTracker() {
 
   const centreName = (id: string) => centres.find((c) => c.id === id)?.shortName ?? id;
 
+  const [detail, setDetail] = useState<DetailContent | null>(null);
+
+  const statusChip = (f: Finding) => {
+    const sm = STATUS_META[f.status];
+    return <Chip label={sm.label} size="small" sx={{ backgroundColor: sm.bg, color: sm.color, fontWeight: 700, height: 20, fontSize: "0.68rem" }} />;
+  };
+
+  const findingRows = (list: Finding[]) =>
+    [...list]
+      .sort((a, b) => (daysUntilDue(a) ?? 9999) - (daysUntilDue(b) ?? 9999))
+      .map((f) => ({
+        id: f.id,
+        leading: <RagChip priority={f.priority} />,
+        primary: `${centreName(f.centreId)} · ${f.finding}`,
+        secondary: f.actionRequired,
+        trailing: f.status === "closed" ? statusChip(f) : <DueClock finding={f} />,
+      }));
+
+  const openDetail = (): DetailContent => ({
+    title: "Open findings",
+    subtitle: `${open.length} open across all centres`,
+    rows: findingRows(open),
+    emptyText: "No open findings.",
+  });
+
+  const overdueDetail = (): DetailContent => ({
+    title: "Overdue evidence",
+    subtitle: `${overdueCount} finding${overdueCount === 1 ? "" : "s"} past the 14-day evidence clock`,
+    rows: findingRows(open.filter((f) => { const d = daysUntilDue(f); return d !== null && d < 0 && f.status === "open"; })),
+    emptyText: "Nothing is past the 14-day evidence clock.",
+  });
+
+  const dueSoonDetail = (): DetailContent => ({
+    title: "Due within 7 days",
+    subtitle: `${dueThisWeek} evidence deadline${dueThisWeek === 1 ? "" : "s"} approaching`,
+    rows: findingRows(open.filter((f) => { const d = daysUntilDue(f); return d !== null && d >= 0 && d <= 7; })),
+    emptyText: "No evidence deadlines within 7 days.",
+  });
+
+  const closedDetail = (): DetailContent => ({
+    title: "Closed findings",
+    subtitle: "Evidence accepted",
+    rows: findingRows(findings.filter((f) => f.status === "closed")),
+    emptyText: "No findings closed yet.",
+  });
+
   return (
     <PageShell
       icon={FactCheckIcon}
@@ -68,18 +115,20 @@ export default function FindingsTracker() {
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Open findings" value={open.length} sub="across all centres" accent={accent.navy} icon={FactCheckIcon} />
+          <StatCard label="Open findings" value={open.length} sub="across all centres" accent={accent.navy} icon={FactCheckIcon} onClick={() => setDetail(openDetail())} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Overdue evidence" value={overdueCount} sub="past the 14-day clock" accent={overdueCount > 0 ? accent.red : accent.green} icon={ErrorOutlineIcon} />
+          <StatCard label="Overdue evidence" value={overdueCount} sub="past the 14-day clock" accent={overdueCount > 0 ? accent.red : accent.green} icon={ErrorOutlineIcon} onClick={() => setDetail(overdueDetail())} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Due within 7 days" value={dueThisWeek} sub="evidence deadlines approaching" accent={accent.orange} icon={ScheduleIcon} />
+          <StatCard label="Due within 7 days" value={dueThisWeek} sub="evidence deadlines approaching" accent={accent.orange} icon={ScheduleIcon} onClick={() => setDetail(dueSoonDetail())} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Closed" value={findings.length - open.length} sub="evidence accepted" accent={accent.green} icon={CheckCircleOutlineIcon} />
+          <StatCard label="Closed" value={findings.length - open.length} sub="evidence accepted" accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(closedDetail())} />
         </Grid>
       </Grid>
+
+      <DetailDialog content={detail} onClose={() => setDetail(null)} />
 
       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2, alignItems: "center" }}>
         {[{ id: "all", label: "All centres" }, ...centres.map((c) => ({ id: c.id, label: c.shortName }))].map((opt) => {
