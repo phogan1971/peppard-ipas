@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
@@ -7,28 +7,18 @@ import IconButton from "@mui/material/IconButton";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
+import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PieChartOutlineIcon from "@mui/icons-material/PieChartOutline";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { useTheme } from "@mui/material/styles";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Tooltip as RTooltip,
-} from "recharts";
-import { accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
+
+// recharts (and its d3 deps) live in ChartCanvas so they load as a lazy
+// chunk only when a chart is actually opened, keeping them out of the
+// main bundle.
+const ChartCanvas = lazy(() => import("./ChartCanvas"));
 
 export type ChartType = "bar" | "pie" | "line";
 
@@ -48,7 +38,6 @@ export interface ChartContent {
   emptyText?: string;
 }
 
-const PALETTE = [accent.navy, accent.blue, accent.green, accent.orange, accent.purple, accent.red];
 // Animate the chart in on mount, unless the viewer prefers reduced motion.
 // (recharts animation is driven by requestAnimationFrame, so it only runs
 // in a visible tab — a backgrounded/headless tab renders the final frame.)
@@ -57,9 +46,9 @@ const TYPE_ICON = { bar: BarChartIcon, pie: PieChartOutlineIcon, line: ShowChart
 const TYPE_LABEL = { bar: "Bar", pie: "Pie", line: "Line" };
 
 // Drill-down for a summary stat card whose figure is best read as a
-// distribution or comparison: an animated recharts chart with a
-// bar/pie/line toggle. Content (the dataset + sensible default type) is
-// supplied by the caller so the dialog stays reusable.
+// distribution or comparison: an animated chart with a bar/pie/line
+// toggle. Content (the dataset + sensible default type) is supplied by the
+// caller so the dialog stays reusable.
 export default function ChartDialog({ content, onClose }: { content: ChartContent | null; onClose: () => void }) {
   const s = useSurfaces();
   const theme = useTheme();
@@ -75,11 +64,8 @@ export default function ChartDialog({ content, onClose }: { content: ChartConten
     if (content) setType(content.defaultType ?? (content.types ?? ["bar", "pie", "line"])[0]);
   }, [content]);
 
-  const colorAt = (i: number, d: ChartDatum) => d.color ?? PALETTE[i % PALETTE.length];
-  const axisTick = { fontSize: 11, fill: theme.palette.text.secondary };
   const valueLabel = content?.valueLabel ?? "Value";
   const tooltipStyle = { backgroundColor: s.cardBg, border: `1px solid ${s.border}`, borderRadius: 8, color: theme.palette.text.primary };
-
   const data = content?.data ?? [];
 
   return (
@@ -130,42 +116,21 @@ export default function ChartDialog({ content, onClose }: { content: ChartConten
           </Typography>
         ) : (
           <Box sx={{ width: "100%", height: 320 }}>
-            {/* key by type so switching remounts and re-runs the entry animation;
-                only render once the dialog has finished opening (see `entered`) */}
+            {/* only mount once the dialog has finished opening (see `entered`);
+                Suspense covers the lazy recharts chunk on first open */}
             {entered && (
-            <ResponsiveContainer key={type} width="100%" height="100%">
-              {type === "pie" ? (
-                <PieChart>
-                  <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={110} innerRadius={45} paddingAngle={2} isAnimationActive={ANIMATE} animationDuration={700}>
-                    {data.map((d, i) => (
-                      <Cell key={i} fill={colorAt(i, d)} />
-                    ))}
-                  </Pie>
-                  <RTooltip contentStyle={tooltipStyle} />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                </PieChart>
-              ) : type === "line" ? (
-                <LineChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: -12 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={s.border} />
-                  <XAxis dataKey="name" tick={axisTick} interval={0} />
-                  <YAxis allowDecimals={false} tick={axisTick} />
-                  <RTooltip contentStyle={tooltipStyle} />
-                  <Line type="monotone" dataKey="value" name={valueLabel} stroke={accent.navy} strokeWidth={2} isAnimationActive={ANIMATE} animationDuration={700} />
-                </LineChart>
-              ) : (
-                <BarChart data={data} margin={{ top: 8, right: 12, bottom: 8, left: -12 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={s.border} vertical={false} />
-                  <XAxis dataKey="name" tick={axisTick} interval={0} />
-                  <YAxis allowDecimals={false} tick={axisTick} />
-                  <RTooltip contentStyle={tooltipStyle} cursor={{ fill: s.hoverBg }} />
-                  <Bar dataKey="value" name={valueLabel} radius={[4, 4, 0, 0]} isAnimationActive={ANIMATE} animationDuration={700}>
-                    {data.map((d, i) => (
-                      <Cell key={i} fill={colorAt(i, d)} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              )}
-            </ResponsiveContainer>
+              <Suspense fallback={<Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress size={28} /></Box>}>
+                <ChartCanvas
+                  type={type}
+                  data={data}
+                  valueLabel={valueLabel}
+                  animate={ANIMATE}
+                  axisFill={theme.palette.text.secondary}
+                  tooltipStyle={tooltipStyle}
+                  gridStroke={s.border}
+                  cursorFill={s.hoverBg}
+                />
+              </Suspense>
             )}
           </Box>
         )}
