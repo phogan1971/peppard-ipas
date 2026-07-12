@@ -253,9 +253,13 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   bed utilisation, capacity comparison, over-occupancy, issue mix).
   Note: recharts animation is rAF-driven, so it only plays in a visible
   tab — a backgrounded/headless tab renders the final frame (this is why
-  the automation preview shows empty charts; real browsers are fine).
-  `ChartDialog` gates the chart on the dialog's `onEntered` so recharts
-  measures the container at full size.
+  the automation preview shows empty chart *shapes*; real browsers are
+  fine). recharts/d3 are code-split into a lazy `ChartCanvas` chunk that
+  only loads on first chart open (keeps the main bundle ~195 kB gzip).
+  `ChartCanvas` measures its width synchronously (`useLayoutEffect`) and
+  passes explicit dims instead of `ResponsiveContainer`, so it draws
+  deterministically from the lazy commit; `ChartDialog` still gates on
+  the dialog's `onEntered`.
 - **Occupancy colour is commercial, not a space-standard risk**
   (`tokens.occupancyColor` / `occupancyBand`): low occupancy = red
   (empty beds = lost contract revenue), amber, then green as a centre
