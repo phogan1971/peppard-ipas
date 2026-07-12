@@ -99,10 +99,21 @@ export function fireCurrencyFor(reg: FireRegister, today = new Date()): FireCurr
   return { state, daysSince, frequencyDays: reg.frequencyDays };
 }
 
+export type FindingSource = "IPPS inspection" | "HIQA monitoring" | "Internal audit" | "Self-inspection";
+
+export const FINDING_SOURCES: FindingSource[] = [
+  "IPPS inspection",
+  "HIQA monitoring",
+  "Internal audit",
+  "Self-inspection",
+];
+
 export interface Finding {
   id: string;
   centreId: string;
-  section: string;
+  source?: FindingSource; // which inspection/regime raised it
+  section: string; // IPPS report section reference
+  hiqaStandard?: string | null; // dual-axis link to a HIQA National Standard
   finding: string;
   priority: FindingPriority | null;
   actionRequired: string;

@@ -291,8 +291,17 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
     (operator never keys it).
   - **Fire registers** (`markRegisterReviewed`, `logFireCheck`): "Log
     check" stamps today and the currency chip recomputes.
-  - **Findings** (`FindingFormDialog` → `addFinding`): "Raise finding"
-    starts the 14-day clock; RED is flagged as escalated on creation.
+  - **Findings** (`FindingFormDialog` → `addFinding` / `updateFinding`):
+    "Raise finding" and per-card **Edit** share one dialog. Fields cover
+    source (IPPS inspection / HIQA monitoring / Internal audit /
+    Self-inspection), IPPS section, HIQA standard (dual-axis), priority,
+    action, raised date and evidence window. `computeDueOn` re-runs the
+    14-day clock on any priority/date change (GREEN carries no deadline;
+    RED escalates on creation). Every finding — seeded or entered —
+    carries `source` + `hiqaStandard` and is editable; all findings live
+    in `persisted.findings`, so edits persist without an override layer.
+    Date maths stays in local components (no UTC round-trip) so the
+    deadline never drifts a day in a positive-offset timezone.
   - **Mandatory notices** (`NoticeItem`, `buildNotices`, `NoticesPanel`
     → `setNoticeVerified`): the IPPS §2 public-notice checklist with a
     displayed/missing state per notice; "Verify" stamps today/by, "Flag"
