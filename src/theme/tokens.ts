@@ -61,6 +61,15 @@ export const rag = {
   neutralBg: "#ECEFF1",
 } as const;
 
+// Brighter RAG accents for chrome — card edges, progress bars, dots —
+// where the deep status inks above read too dark and heavy at small
+// sizes. Status TEXT keeps the darker `rag` set for contrast.
+export const ragAccent = {
+  red: "#E53935",
+  amber: "#FB8C00",
+  green: "#23A566", // Origin mark green — ties the healthy state to the brand
+} as const;
+
 // ── HIQA 4-point compliance scale ───────────────────────────────────────
 export const compliance = {
   compliant: "#1B5E20",

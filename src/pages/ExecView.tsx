@@ -22,7 +22,7 @@ import StatCard from "../components/StatCard";
 import { RagChip } from "../components/RagChip";
 import { useAppState, centreCompliance, daysUntilDue } from "../data/store";
 import { KPI_DOMAINS, domainRollup } from "../data/kpis";
-import { brand, rag, accent, text as textTokens } from "../theme/tokens";
+import { brand, rag, ragAccent, accent, text as textTokens } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 import { useColorMode } from "../theme/ColorModeContext";
 import ErrorBoundary from "../components/ErrorBoundary";
@@ -34,10 +34,10 @@ const GROUP_STATUS = {
 } as const;
 
 const WORST_COLOR: Record<string, string> = {
-  RED: rag.red,
-  AMBER: rag.amber,
-  GREEN: rag.green,
-  NONE: rag.green,
+  RED: ragAccent.red,
+  AMBER: ragAccent.amber,
+  GREEN: ragAccent.green,
+  NONE: ragAccent.green,
 };
 
 // Phone-first digest of the group governance position for directors:
