@@ -27,7 +27,7 @@ const PLATFORMS: PlatformCard[] = [
     logoHeight: 72,
     name: "Genesis Healthcare",
     descr: "Clinical governance portal — KPIs, compliance, audits, incidents and board reporting for hospital operations.",
-    cta: "Open connects.health",
+    cta: "Open Genesis portal",
     external: true,
     target: GENESIS_URL,
   },
