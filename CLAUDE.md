@@ -250,10 +250,13 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   findings / overdue) and HIQA Standards (the four judgement counts)
   open a dialog listing the individual records behind the figure.
 - **Occupancy colour is commercial, not a space-standard risk**
-  (`tokens.occupancyColor`): low occupancy = red (empty beds = lost
-  contract revenue), greening as it climbs toward 100% full. Do NOT
-  invert this — high occupancy is healthy at the centre level; the
-  4.65 m² space-standard breach is a separate *room-level* signal.
+  (`tokens.occupancyColor` / `occupancyBand`): low occupancy = red
+  (empty beds = lost contract revenue), amber, then green as a centre
+  approaches full. Discrete RAG bands (green ≥90%, amber ≥80%, else red
+  — `OCCUPANCY_GREEN_MIN` / `OCCUPANCY_AMBER_MIN`), NOT a continuous
+  blend, so every bar is cleanly one RAG colour. Do NOT invert this —
+  high occupancy is healthy at the centre level; the 4.65 m²
+  space-standard breach is a separate *room-level* signal.
 - **Dark mode** (moon/sun icon): `ColorModeProvider` +
   `buildPeppardTheme(mode)`; components take surfaces from the
   `useSurfaces()` hook (`tokens.surface` / `tokens.darkSurface`) —
