@@ -78,7 +78,7 @@ export const ragAccent = {
 // one of red / amber / green — no muddy in-between shades — and two
 // centres at the same band read identically. Thresholds are the single
 // place to tune the occupancy grading.
-export const OCCUPANCY_GREEN_MIN = 90; // near-full — healthy utilisation
+export const OCCUPANCY_GREEN_MIN = 85; // near-full — healthy utilisation
 export const OCCUPANCY_AMBER_MIN = 80; // some empty beds — watch
 
 export function occupancyBand(pct: number): "green" | "amber" | "red" {
