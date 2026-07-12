@@ -267,5 +267,6 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - Mackin EHS tracker ingestion (rollout ~Sep 2026, Maeve overseeing).
 - Backend + auth (AWS/Cognito vs Supabase — open commercial question),
   multi-user, audit trail.
-- GitHub remote + CI (repo is local-only so far; repo creation needs
-  Philip's approval or a repo created in the GitHub UI).
+- CI (none yet). Remote exists since 12 Jul 2026:
+  https://github.com/phogan1971/peppard-ipas (private) — push after
+  merging to main.
