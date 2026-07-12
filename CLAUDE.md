@@ -252,7 +252,7 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - **Occupancy colour is commercial, not a space-standard risk**
   (`tokens.occupancyColor` / `occupancyBand`): low occupancy = red
   (empty beds = lost contract revenue), amber, then green as a centre
-  approaches full. Discrete RAG bands (green ≥90%, amber ≥80%, else red
+  approaches full. Discrete RAG bands (green ≥85%, amber ≥80%, else red
   — `OCCUPANCY_GREEN_MIN` / `OCCUPANCY_AMBER_MIN`), NOT a continuous
   blend, so every bar is cleanly one RAG colour. Do NOT invert this —
   high occupancy is healthy at the centre level; the 4.65 m²
