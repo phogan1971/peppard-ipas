@@ -5,13 +5,17 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import AddIcon from "@mui/icons-material/Add";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import DetailDialog, { DetailContent } from "../components/DetailDialog";
+import FindingFormDialog from "../components/FindingFormDialog";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
@@ -62,6 +66,8 @@ export default function FindingsTracker() {
   const centreName = (id: string) => centres.find((c) => c.id === id)?.shortName ?? id;
 
   const [detail, setDetail] = useState<DetailContent | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   const statusChip = (f: Finding) => {
     const sm = STATUS_META[f.status];
@@ -112,6 +118,11 @@ export default function FindingsTracker() {
       icon={FactCheckIcon}
       title="Findings & Actions"
       subtitle="Inspection findings with RAG priority and the 14-day evidence clock"
+      actions={
+        <Button variant="contained" disableElevation startIcon={<AddIcon />} onClick={() => setFormOpen(true)}>
+          Raise finding
+        </Button>
+      }
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
@@ -215,6 +226,28 @@ export default function FindingsTracker() {
           </Paper>
         )}
       </Box>
+
+      <FindingFormDialog
+        open={formOpen}
+        centres={centres}
+        defaultCentreId={centreFilter === "all" ? undefined : centreFilter}
+        onClose={() => setFormOpen(false)}
+        onSaved={(summary) => {
+          setFormOpen(false);
+          setToast(summary);
+        }}
+      />
+
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={4500}
+        onClose={() => setToast(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={() => setToast(null)} severity="success" variant="filled" sx={{ width: "100%" }}>
+          {toast}
+        </Alert>
+      </Snackbar>
     </PageShell>
   );
 }

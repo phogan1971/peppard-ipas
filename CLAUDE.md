@@ -278,6 +278,56 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   evidence clocks read live; content is the real 24.03.2026 findings
   (statuses/dates driven by the findings-pressure slider; one worked
   example always stays visibly in flight).
+- **Operator data entry (write-through)** — the registers are the entry
+  point and everything derives, so the demo can *show data being
+  populated*, not just a pre-filled dashboard. The store persists three
+  override layers on top of the reseeded reference data
+  (`roomOverrides` / `registerOverrides` / `fireOverrides` in
+  `PersistedState`), each edit stamped `enteredBy`/`enteredAt`:
+  - **Room register** (`RoomFormDialog`): Add/Edit a room on Centre
+    Operations — enter length × width and suitable occupancy computes at
+    4.65 m² live in the dialog; on save the stat tiles, KPI-11-02 and the
+    Department return update. `upsertRoom` derives `suitableOccupancy`
+    (operator never keys it).
+  - **Fire registers** (`markRegisterReviewed`, `logFireCheck`): "Log
+    check" stamps today and the currency chip recomputes.
+  - **Findings** (`FindingFormDialog` → `addFinding`): "Raise finding"
+    starts the 14-day clock; RED is flagged as escalated on creation.
+  - **Mandatory notices** (`NoticeItem`, `buildNotices`, `NoticesPanel`
+    → `setNoticeVerified`): the IPPS §2 public-notice checklist with a
+    displayed/missing state per notice; "Verify" stamps today/by, "Flag"
+    marks it missing. Feeds readiness pack §7 and Department return.
+  - A success snackbar spells out the ripple ("…KPI, space-standard tiles
+    and the Department return updated"). `regenerateData` clears the
+    overrides with the seed.
+- **Fire safety registers are first-class** (`FireRegister` +
+  `fireCurrencyFor`, `buildFireRegisters`, `FireRegisterPanel`): six
+  registers with a required check frequency; currency = days-since-last
+  vs frequency → in-date / due-soon (>80%) / overdue. `lastEntry` is
+  scenario-anchored to today by the compliance slider (the real March
+  service dates would read 4 months stale). Shown on Centre Operations,
+  summarised in the readiness pack (§4), and drive live KPI-08-01. The
+  fire names are filtered out of the flat admin-register list to avoid
+  duplication.
+- **Dual regulatory axis is visible**: admin register rows carry
+  `ippsSection` + `hiqaStandard` tags (rendered as `IPPS §1.1 · HIQA
+  6.1` chips) — one entry evidencing both regimes, the descriptor's
+  central constraint made concrete. `REGISTER_TAGS` in `seed.ts` is the
+  map. Two registers the earlier set omitted were added (Transport
+  service & timetable, Resident comfort & wellbeing).
+- **7 KPIs computed live** (was 6): added KPI-08-01 fire register
+  currency.
+- **Group profile block** on Group Overview + a narrative paragraph on
+  the board pack cover (15 years, GM-per-centre, Cork/Dublin offices,
+  uniform policy suite, Mackin EHS) — the operator credibility narrative
+  from the client email. Mackin EHS also appears as a master-record line
+  in the readiness pack and Department return.
+- **Fire currency + dual-axis tags propagate to the generated
+  documents**: the Department return carries a regulatory-mapping column
+  (IPPS §/HIQA) on the admin registers and a fire-currency section; the
+  board pack shows a group fire-currency roll-up. The exec view's "needs
+  attention" list surfaces findings *approaching* breach (open, evidence
+  due ≤3 days), not only RED/overdue.
 
 ## What is NOT done yet
 

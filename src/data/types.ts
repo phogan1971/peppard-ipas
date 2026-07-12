@@ -42,6 +42,8 @@ export interface Room {
   dimensionsM2: number | null;
   suitableOccupancy: number | null;
   issues: string[];
+  enteredBy?: string;
+  enteredAt?: string; // ISO datetime — set when entered through the dashboard
 }
 
 export interface RegisterEntry {
@@ -49,6 +51,52 @@ export interface RegisterEntry {
   lastReviewed: string;
   status: "in_order" | "attention" | "not_reviewed";
   note: string | null;
+  // Dual regulatory axis — one register row evidences both regimes.
+  ippsSection: string | null; // e.g. "1.2" (IPPS report section)
+  hiqaStandard: string | null; // e.g. "8.1" (HIQA National Standard)
+  // Set when a centre manager records a review through the dashboard, so
+  // an operator-entered value is visibly distinct from seed data.
+  enteredBy?: string;
+  enteredAt?: string; // ISO datetime
+}
+
+// Fire safety registers are first-class: each carries its required check
+// frequency and turns amber, then red, as currency lapses (descriptor §3.5).
+export interface FireRegister {
+  name: string;
+  shortName: string;
+  frequencyDays: number; // required interval between checks
+  lastEntry: string | null; // ISO date of most recent check
+  enteredBy?: string;
+  enteredAt?: string;
+}
+
+// Mandatory public-notice checklist (IPPS report §2 visual inspection): each
+// line carries a compliant state, the date it was verified and by whom.
+export interface NoticeItem {
+  name: string;
+  compliant: boolean;
+  verifiedOn: string | null;
+  verifiedBy: string | null;
+}
+
+export type FireCurrencyState = "in_date" | "due_soon" | "overdue";
+
+export interface FireCurrency {
+  state: FireCurrencyState;
+  daysSince: number | null;
+  frequencyDays: number;
+}
+
+export function fireCurrencyFor(reg: FireRegister, today = new Date()): FireCurrency {
+  if (!reg.lastEntry) return { state: "overdue", daysSince: null, frequencyDays: reg.frequencyDays };
+  const last = new Date(reg.lastEntry + "T00:00:00");
+  const t = new Date(today);
+  t.setHours(0, 0, 0, 0);
+  const daysSince = Math.round((t.getTime() - last.getTime()) / 86400000);
+  const state: FireCurrencyState =
+    daysSince > reg.frequencyDays ? "overdue" : daysSince > reg.frequencyDays * 0.8 ? "due_soon" : "in_date";
+  return { state, daysSince, frequencyDays: reg.frequencyDays };
 }
 
 export interface Finding {

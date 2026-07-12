@@ -61,6 +61,11 @@ export default function ExecView() {
     const d = daysUntilDue(f);
     return d !== null && d < 0 && f.status === "open";
   }).length;
+  // Approaching breach: open, evidence still due within 3 days of the clock.
+  const atRisk = open.filter((f) => {
+    const d = daysUntilDue(f);
+    return d !== null && d >= 0 && d <= 3 && f.status === "open";
+  }).length;
 
   const kpiTotals = KPI_DOMAINS.reduce(
     (acc, domain) => {
@@ -82,19 +87,24 @@ export default function ExecView() {
   const roomsWithin = assessableRooms.filter((r) => r.currentOccupancy! <= r.suitableOccupancy!).length;
   const roomsPct = Math.round((roomsWithin / assessableRooms.length) * 100);
 
-  const groupWorst: keyof typeof GROUP_STATUS = openRed > 0 || overdue > 0 ? "RED" : openAmber > 0 ? "AMBER" : "GREEN";
+  const groupWorst: keyof typeof GROUP_STATUS = openRed > 0 || overdue > 0 ? "RED" : openAmber > 0 || atRisk > 0 ? "AMBER" : "GREEN";
   const gs = GROUP_STATUS[groupWorst];
+  const atRiskSuffix = atRisk > 0 ? ` · ${atRisk} approaching breach` : "";
   const statusLine =
     groupWorst === "RED"
-      ? `${openRed} RED finding${openRed === 1 ? "" : "s"} open · ${overdue} past the 14-day evidence clock`
+      ? `${openRed} RED finding${openRed === 1 ? "" : "s"} open · ${overdue} past the 14-day evidence clock${atRiskSuffix}`
       : groupWorst === "AMBER"
-        ? `No RED findings or overdue evidence · ${openAmber} AMBER item${openAmber === 1 ? "" : "s"} in the 14-day loop`
+        ? `No RED findings or overdue evidence · ${openAmber} AMBER item${openAmber === 1 ? "" : "s"} in the 14-day loop${atRiskSuffix}`
         : "No RED or AMBER findings open · nothing past the 14-day evidence clock";
 
+  // Escalation surface: RED, already overdue, or approaching breach (≤3 days).
   const attention = open
     .filter((f) => {
       const d = daysUntilDue(f);
-      return f.priority === "RED" || (d !== null && d < 0 && f.status === "open");
+      return (
+        f.priority === "RED" ||
+        (d !== null && f.status === "open" && (d < 0 || (d >= 0 && d <= 3)))
+      );
     })
     .sort((a, b) => (daysUntilDue(a) ?? 99) - (daysUntilDue(b) ?? 99))
     .slice(0, 5);
