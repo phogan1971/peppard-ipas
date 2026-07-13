@@ -357,6 +357,18 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
     → `setNoticeVerified`): the IPPS §2 public-notice checklist with a
     displayed/missing state per notice; "Verify" stamps today/by, "Flag"
     marks it missing. Feeds readiness pack §7 and Department return.
+  - **Inspection reports** (`SourceDocument`, `buildSourceDocuments`,
+    `InspectionReportsPanel` → `addSourceDocument`, `FindingsSummaryTable`):
+    Findings & Actions has an "Inspection reports" panel. Riverside ships
+    with its real 24.03.2026 IPPS report as a bundled **sample**
+    (`public/riverside-inspection-report.pdf`); an operator uploads a PDF
+    (attaches to the filtered centre) and it's referenced with a "View
+    report" link. No backend/AI PDF extraction offline — so the report's
+    findings (Riverside's are seeded from it) are shown as the readable
+    **Findings summary table** (Cards/Table toggle), each row linking back
+    to its source report. Uploaded PDFs persist as `data:` URLs in their
+    own `peppard-ipas:docs:v1` key so a large blob can't fail the main
+    state write; `regenerateData` clears them.
   - A success snackbar spells out the ripple ("…KPI, space-standard tiles
     and the Department return updated"). `regenerateData` clears the
     overrides with the seed.

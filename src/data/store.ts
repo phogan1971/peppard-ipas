@@ -7,6 +7,7 @@ import {
   buildNotices,
   buildRegisters,
   buildRooms,
+  buildSourceDocuments,
 } from "./seed";
 import { DataProfile, saveProfile } from "./profile";
 import { safeRemove, safeSet } from "./safeStorage";
@@ -21,6 +22,7 @@ import {
   NoticeItem,
   RegisterEntry,
   Room,
+  SourceDocument,
   StandardAssessment,
   fireCurrencyFor,
   suitableOccupancyFor,
@@ -32,6 +34,19 @@ import {
 // schema changes never strand stale copies.
 // v2: adds anchorDate + room lengthM/widthM; older blobs reseed cleanly.
 const STORAGE_KEY = "peppard-ipas:v2";
+// Uploaded inspection reports live in their own key: a PDF base64 blob must
+// not jeopardise the main state write if it pushes localStorage over quota.
+const DOCS_KEY = "peppard-ipas:docs:v1";
+
+function loadUploadedDocs(): Record<string, SourceDocument[]> {
+  try {
+    const raw = localStorage.getItem(DOCS_KEY);
+    if (raw) return JSON.parse(raw) as Record<string, SourceDocument[]>;
+  } catch {
+    // ignore — start with none
+  }
+  return {};
+}
 
 // Operator-entered edits persist as override layers on top of the reseeded
 // reference data, so a centre manager's entries survive reloads while schema
@@ -78,6 +93,7 @@ export interface AppState {
   registersByCentre: Record<string, RegisterEntry[]>;
   fireByCentre: Record<string, FireRegister[]>;
   noticesByCentre: Record<string, NoticeItem[]>;
+  documentsByCentre: Record<string, SourceDocument[]>;
   findings: Finding[];
   assessments: StandardAssessment[];
 }
@@ -133,6 +149,7 @@ function loadPersisted(): PersistedState {
 }
 
 let persisted: PersistedState = loadPersisted();
+let uploadedDocs: Record<string, SourceDocument[]> = loadUploadedDocs();
 
 function buildState(): AppState {
   const seeded = buildCentres();
@@ -173,6 +190,9 @@ function buildState(): AppState {
     ),
     noticesByCentre: Object.fromEntries(
       centres.map((c) => [c.id, persisted.noticeOverrides[c.id] ?? buildNotices(c.id)]),
+    ),
+    documentsByCentre: Object.fromEntries(
+      centres.map((c) => [c.id, [...buildSourceDocuments(c.id), ...(uploadedDocs[c.id] ?? [])]]),
     ),
     findings: persisted.findings,
     assessments: persisted.assessments,
@@ -385,16 +405,40 @@ export function updateFinding(id: string, input: FindingInput) {
   commit();
 }
 
+// Attach an uploaded inspection report to a centre. The PDF is held as a
+// data: URL so it opens without a backend; persisted in its own key.
+export function addSourceDocument(
+  centreId: string,
+  doc: { name: string; dataUrl: string; sizeKb: number },
+  uploadedBy: string,
+) {
+  const entry: SourceDocument = {
+    id: `${centreId}-doc-${Date.now()}`,
+    centreId,
+    name: doc.name,
+    uploadedOn: localDateIso(),
+    uploadedBy,
+    url: doc.dataUrl,
+    kind: "uploaded",
+    sizeKb: doc.sizeKb,
+  };
+  uploadedDocs = { ...uploadedDocs, [centreId]: [...(uploadedDocs[centreId] ?? []), entry] };
+  safeSet(DOCS_KEY, JSON.stringify(uploadedDocs));
+  commit();
+}
+
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);
   safeRemove(STORAGE_KEY);
+  safeRemove(DOCS_KEY);
   persisted = {
     anchorDate: localDateIso(),
     findings: buildFindings(),
     assessments: buildAssessments(),
     ...emptyOverrides(),
   };
+  uploadedDocs = {};
   state = buildState();
   listeners.forEach((l) => l());
 }

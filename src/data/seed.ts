@@ -14,6 +14,7 @@ import {
   RegisterEntry,
   Room,
   SectorDistribution,
+  SourceDocument,
   StandardAssessment,
   suitableOccupancyFor,
 } from "./types";
@@ -352,6 +353,25 @@ const FIRE_SPECS: FireSpec[] = [
   { name: "Staff Fire Safety Instruction & Training", shortName: "Staff fire training", frequencyDays: 365 },
 ];
 export const FIRE_REGISTER_NAMES = new Set(FIRE_SPECS.map((s) => s.name));
+
+// ── Source inspection reports ───────────────────────────────────────────
+// Riverside ships with its real 24.03.2026 IPPS report as a bundled sample;
+// its findings (seeded from this report) are the summarised table. Other
+// centres start with none — an operator uploads their own.
+export const RIVERSIDE_REPORT: SourceDocument = {
+  id: "riverside-ipps-2026-03-24",
+  centreId: "riverside",
+  name: "Riverside Park Hotel — IPPS Inspection 24.03.2026",
+  uploadedOn: "2026-03-24",
+  uploadedBy: "Dept of Justice (IPPS)",
+  url: "/riverside-inspection-report.pdf",
+  kind: "sample",
+  sizeKb: 552,
+};
+
+export function buildSourceDocuments(centreId: string): SourceDocument[] {
+  return centreId === "riverside" ? [RIVERSIDE_REPORT] : [];
+}
 
 // ── Mandatory public notices (IPPS report §2 visual inspection) ─────────
 export const MANDATORY_NOTICES: string[] = [

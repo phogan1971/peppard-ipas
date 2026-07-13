@@ -13,12 +13,18 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
+import TableRowsIcon from "@mui/icons-material/TableRows";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import DetailDialog, { DetailContent, DetailFilter } from "../components/DetailDialog";
 import FindingFormDialog from "../components/FindingFormDialog";
+import InspectionReportsPanel from "../components/InspectionReportsPanel";
+import FindingsSummaryTable from "../components/FindingsSummaryTable";
 import { RagChip } from "../components/RagChip";
-import { daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
+import { addSourceDocument, daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
 import { brand, rag, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -45,10 +51,11 @@ function DueClock({ finding }: { finding: Finding }) {
 }
 
 export default function FindingsTracker() {
-  const { centres, findings } = useAppState();
+  const { centres, findings, documentsByCentre } = useAppState();
   const s = useSurfaces();
   const [centreFilter, setCentreFilter] = useState<string>("all");
   const [showClosed, setShowClosed] = useState(false);
+  const [view, setView] = useState<"cards" | "table">("cards");
 
   const filtered = findings
     .filter((f) => centreFilter === "all" || f.centreId === centreFilter)
@@ -197,11 +204,39 @@ export default function FindingsTracker() {
           );
         })}
         <Box sx={{ flexGrow: 1 }} />
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={view}
+          onChange={(_, v) => v && setView(v)}
+          aria-label="Findings view"
+        >
+          <ToggleButton value="cards" aria-label="Card view">
+            <ViewAgendaIcon sx={{ fontSize: 18 }} />
+          </ToggleButton>
+          <ToggleButton value="table" aria-label="Table view">
+            <TableRowsIcon sx={{ fontSize: 18 }} />
+          </ToggleButton>
+        </ToggleButtonGroup>
         <Button size="small" onClick={() => setShowClosed((v) => !v)} sx={{ color: "text.primary", textDecoration: "underline" }}>
           {showClosed ? "Hide closed" : "Show closed"}
         </Button>
       </Box>
 
+      <InspectionReportsPanel
+        documents={centreFilter === "all" ? Object.values(documentsByCentre).flat() : documentsByCentre[centreFilter] ?? []}
+        uploadCentreId={centreFilter === "all" ? null : centreFilter}
+        uploadCentreName={centreName(centreFilter)}
+        centreName={centreName}
+        onUpload={(centreId, doc) => {
+          addSourceDocument(centreId, doc, centres.find((c) => c.id === centreId)?.manager ?? "Centre Manager");
+          setToast(`${doc.name} attached to ${centreName(centreId)} — its findings are summarised below.`);
+        }}
+      />
+
+      {view === "table" ? (
+        <FindingsSummaryTable findings={filtered} centreName={centreName} documentsByCentre={documentsByCentre} />
+      ) : (
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
         {filtered.map((f) => {
           const sm = STATUS_META[f.status];
@@ -265,6 +300,7 @@ export default function FindingsTracker() {
           </Paper>
         )}
       </Box>
+      )}
 
       <FindingFormDialog
         open={dialog.open}

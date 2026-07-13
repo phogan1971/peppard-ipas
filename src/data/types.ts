@@ -104,6 +104,19 @@ export function fireCurrencyFor(reg: FireRegister, today = new Date()): FireCurr
   return { state, daysSince, frequencyDays: reg.frequencyDays };
 }
 
+// An uploaded or bundled inspection report attached to a centre, whose
+// findings are summarised in the Findings & Actions table.
+export interface SourceDocument {
+  id: string;
+  centreId: string;
+  name: string;
+  uploadedOn: string; // ISO date
+  uploadedBy: string;
+  url: string; // public path (sample) or data: URL (operator upload)
+  kind: "sample" | "uploaded";
+  sizeKb?: number;
+}
+
 export type FindingSource = "IPPS inspection" | "HIQA monitoring" | "Internal audit" | "Self-inspection";
 
 export const FINDING_SOURCES: FindingSource[] = [
