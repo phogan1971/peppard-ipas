@@ -228,7 +228,13 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   readiness pack `/centres/:id/readiness`, Department return
   `/centres/:id/return`, quarterly board pack `/board-pack`.
 - PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (15 slides,
-  real app screenshots in `docs/screens/`). Reproducible via two committed
+  real app screenshots in `docs/screens/`). **The deck is a Peppard
+  document** (Peppard identity — white/charcoal editorial, Peppard-red
+  accents, Peppard logo on the cover) with **Origin credited "powered
+  by"** (donut + wordmark on light slides / footers, the full white
+  Origin lockup as the hero on the charcoal closing). This is the one
+  place Peppard identity leads — app chrome stays Origin navy.
+  Reproducible via two committed
   scripts (run the dev server first): `node scripts/capture-screens.mjs`
   re-shoots `docs/screens/*` with Playwright channel:"chrome" (system
   Chrome, no Chromium download), then `node scripts/build-deck.mjs`

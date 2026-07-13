@@ -6,22 +6,28 @@ import pptxgen from "pptxgenjs";
 const OUT = "docs/Peppard_IPAS_Dashboard_Demo.pptx";
 const S = "docs/screens";
 
-// ── Palette (from the app's theme/tokens; pptxgenjs hex: no leading #) ──
-const NAVY = "00465C";
-const NAVY_DK = "022A38";
-const TEAL = "0E7F8B";
-const GREEN = "23A566";
-const MINT_BG = "E4F1E8";
-const TEAL_BG = "E2EEF0";
-const RED = "E01E1F";
+// ── Palette — Peppard Investments identity (descriptor §8). The deck is
+//    Peppard's; Origin is credited as the technology ("powered by").
+//    Constant names kept; values re-toned to Peppard so every downstream
+//    reference (headings, cards, accents) reads charcoal + red + warm. ──
+const NAVY = "26262A"; // charcoal — primary headings & dark panels
+const NAVY_DK = "1A1A1D";
+const TEAL = "A81516"; // deep red — secondary accent
+const GREEN = "23A566"; // status green (RAG / LIVE) — used sparingly
+const MINT_BG = "F8F4F2"; // warm light panel fill
+const TEAL_BG = "FBEDED"; // pale red tint
+const RED = "E01E1F"; // Peppard red — primary brand accent (rules, kickers)
 const INK = "26262A";
-const GRAY = "5A6572";
-const LIGHT = "F4F6F8";
+const GRAY = "5C5C62";
+const GRAYLT = "8E8E94";
+const LIGHT = "F8F4F2"; // warm light
 const CARD = "FFFFFF";
-const BORDER = "E1E6EA";
+const BORDER = "E8E0DC";
 const WHITE = "FFFFFF";
+const ORIGIN_NAVY = "00465C"; // Origin wordmark colour — only for the credit
 
-const FONT = "Calibri";
+const FONT = "Calibri"; // body & data
+const HEAD = "Cambria"; // editorial serif for cover/closing headings
 const IMG_RATIO = 1.6; // screenshots are 2880 x 1800
 
 const p = new pptxgen();
@@ -45,6 +51,15 @@ function slideTitle(slide, title, sub) {
 }
 
 function pageNum(slide, n) {
+  // Persistent "powered by Origin" credit, bottom-left
+  slide.addImage({ path: "public/origin-mark.png", x: 0.55, y: 7.02, w: 0.17, h: 0.17 });
+  slide.addText(
+    [
+      { text: "Powered by ", options: { color: GRAYLT } },
+      { text: "Origin Care Group", options: { color: GRAY, bold: true } },
+    ],
+    { x: 0.77, y: 7.03, w: 3, h: 0.26, fontFace: FONT, fontSize: 9, valign: "middle", margin: 0 },
+  );
   slide.addText(String(n), { x: 12.6, y: 7.05, w: 0.5, h: 0.3, fontFace: FONT, fontSize: 9, color: GRAY, align: "right", margin: 0 });
 }
 
@@ -76,27 +91,20 @@ function shotSlide({ n, title, sub, img, header, points, accent }) {
   return s;
 }
 
-// 1 ── Title
+// 1 ── Title — light Peppard editorial cover
 {
   const s = p.addSlide();
-  s.background = { color: NAVY };
-  s.addShape(p.ShapeType.rect, { x: 0, y: 0, w: 13.333, h: 7.5, fill: { color: NAVY } });
-  s.addImage({ path: "public/origin-logo-white.png", x: 0.7, y: 0.6, w: 2.3, h: 0.72, sizing: { type: "contain", w: 2.3, h: 0.72 } });
-  s.addText("Peppard IPAS", { x: 0.7, y: 2.35, w: 12, h: 1.0, fontFace: FONT, fontSize: 54, bold: true, color: WHITE, margin: 0 });
-  s.addText("Operator Compliance Dashboard", { x: 0.7, y: 3.35, w: 12, h: 0.8, fontFace: FONT, fontSize: 30, color: MINT_BG, margin: 0 });
-  s.addText("One dataset — two regulatory regimes — no double entry", {
-    x: 0.72, y: 4.35, w: 12, h: 0.5, fontFace: FONT, fontSize: 16, italic: true, color: "9FCFA8", margin: 0,
-  });
-  s.addText(
-    [
-      { text: "Eight IPAS accommodation centres · Department of Justice IPPS + HIQA National Standards", options: { breakLine: true, paraSpaceAfter: 4 } },
-      { text: "Delivered by Origin under the Framework Services Agreement · peppard-ipas.netlify.app", options: {} },
-    ],
-    { x: 0.72, y: 6.35, w: 12, h: 0.8, fontFace: FONT, fontSize: 12.5, color: "B8CDD6", margin: 0 },
-  );
-  // Peppard identity chip, bottom-right
-  s.addShape(p.ShapeType.roundRect, { x: 11.0, y: 0.6, w: 1.7, h: 0.95, rectRadius: 0.08, fill: { color: WHITE } });
-  s.addImage({ path: "public/peppard-logo.jpg", x: 11.15, y: 0.72, w: 1.4, h: 0.7, sizing: { type: "contain", w: 1.4, h: 0.7 } });
+  s.background = { color: WHITE };
+  s.addImage({ path: "public/peppard-logo.jpg", x: 0.85, y: 0.7, w: 2.75, h: 2.75 / 2.493, sizing: { type: "contain", w: 2.75, h: 2.75 / 2.493 } });
+  s.addText("IPAS OPERATOR DASHBOARD", { x: 0.88, y: 2.35, w: 8, h: 0.3, fontFace: FONT, fontSize: 13, bold: true, color: RED, charSpacing: 3, margin: 0 });
+  s.addShape(p.ShapeType.rect, { x: 0.9, y: 2.78, w: 0.55, h: 0.05, fill: { color: RED } });
+  s.addText("Compliance & operations, across every centre", { x: 0.85, y: 2.95, w: 11.6, h: 1.2, fontFace: HEAD, fontSize: 38, bold: true, color: INK, margin: 0 });
+  s.addText("One dataset, two regulatory regimes — nothing keyed twice", { x: 0.88, y: 4.3, w: 11, h: 0.5, fontFace: FONT, fontSize: 19, color: GRAY, margin: 0 });
+  // Powered by Origin
+  s.addText("POWERED BY", { x: 0.88, y: 6.11, w: 3, h: 0.22, fontFace: FONT, fontSize: 8.5, bold: true, color: GRAYLT, charSpacing: 2, margin: 0 });
+  s.addImage({ path: "public/origin-mark.png", x: 0.88, y: 6.35, w: 0.42, h: 0.42 });
+  s.addText("Origin Care Group", { x: 1.42, y: 6.4, w: 3.4, h: 0.42, fontFace: FONT, fontSize: 15, bold: true, color: ORIGIN_NAVY, valign: "middle", margin: 0 });
+  s.addText("Department of Justice demo · 8 accommodation centres across Ireland", { x: 5.6, y: 6.55, w: 6.85, h: 0.4, align: "right", fontFace: FONT, fontSize: 12.5, color: GRAYLT, margin: 0 });
 }
 
 // 2 ── The dual regulatory axis
@@ -325,20 +333,32 @@ shotSlide({
   pageNum(s, 14);
 }
 
-// 15 ── Closing
+// 15 ── Closing — charcoal cover, Origin lockup as the "powered by" hero
 {
   const s = p.addSlide();
-  s.background = { color: NAVY };
-  s.addImage({ path: "public/origin-logo-white.png", x: 0.7, y: 0.6, w: 2.3, h: 0.72, sizing: { type: "contain", w: 2.3, h: 0.72 } });
-  s.addText("Live now", { x: 0.7, y: 2.6, w: 12, h: 1.0, fontFace: FONT, fontSize: 48, bold: true, color: WHITE, margin: 0 });
-  s.addText("peppard-ipas.netlify.app", { x: 0.72, y: 3.7, w: 12, h: 0.7, fontFace: FONT, fontSize: 26, color: "9FCFA8", margin: 0 });
-  s.addText(
-    [
-      { text: "A live demo built for the Department of Justice, Home Affairs and Migration meeting.", options: { breakLine: true, paraSpaceAfter: 4 } },
-      { text: "Delivered by Origin under the Framework Services Agreement.", options: {} },
-    ],
-    { x: 0.72, y: 5.6, w: 12, h: 0.9, fontFace: FONT, fontSize: 14, color: "B8CDD6", margin: 0 },
-  );
+  s.background = { color: INK };
+  s.addShape(p.ShapeType.rect, { x: 0, y: 0, w: 13.333, h: 7.5, fill: { color: INK } });
+  s.addText("One dataset. Two regimes.\nNothing keyed twice.", { x: 0.85, y: 1.15, w: 11.5, h: 2.0, fontFace: HEAD, fontSize: 36, bold: true, color: WHITE, lineSpacingMultiple: 1.05, margin: 0 });
+  const pts = [
+    ["Every KPI computes from a register", "the 74-KPI framework, not a spreadsheet"],
+    ["Operators enter once; both regimes are served", "IPPS § and HIQA standard on every record"],
+    ["One-click returns, readiness packs and board packs", "generated from live registers"],
+  ];
+  pts.forEach((pt, i) => {
+    const y = 3.45 + i * 0.62;
+    s.addShape(p.ShapeType.ellipse, { x: 0.9, y: y + 0.05, w: 0.15, h: 0.15, fill: { color: RED } });
+    s.addText(
+      [
+        { text: pt[0] + "  ", options: { color: WHITE, bold: true } },
+        { text: "— " + pt[1], options: { color: "B9B4B0" } },
+      ],
+      { x: 1.24, y, w: 11, h: 0.45, fontFace: FONT, fontSize: 14.5, margin: 0 },
+    );
+  });
+  s.addText("POWERED BY", { x: 0.88, y: 5.75, w: 3, h: 0.25, fontFace: FONT, fontSize: 9, bold: true, color: GRAYLT, charSpacing: 3, margin: 0 });
+  s.addImage({ path: "public/origin-logo-white.png", x: 0.85, y: 5.95, w: 3.1, h: 3.1 / 2.682, sizing: { type: "contain", w: 3.1, h: 3.1 / 2.682 } });
+  s.addText("Designed, built and delivered by Origin Care Group", { x: 4.2, y: 6.35, w: 8.2, h: 0.4, align: "right", fontFace: FONT, fontSize: 12, color: "B9B4B0", margin: 0 });
+  s.addText("peppard-ipas.netlify.app", { x: 4.2, y: 6.75, w: 8.25, h: 0.4, align: "right", fontFace: FONT, fontSize: 14, bold: true, color: RED, margin: 0 });
 }
 
 await p.writeFile({ fileName: OUT });
