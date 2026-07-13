@@ -199,9 +199,9 @@ export default function ExecView() {
             </Grid>
             <Grid item xs={6}>
               <StatCard
-                label="HIQA position"
+                label="Standards self-assessment"
                 value={`${hiqaPct}%`}
-                sub="at or above substantial compliance"
+                sub="self-assessed at or above substantial compliance"
                 accent={accent.green}
                 icon={RuleIcon}
               />

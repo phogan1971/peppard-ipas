@@ -342,11 +342,31 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   fire names are filtered out of the flat admin-register list to avoid
   duplication.
 - **Dual regulatory axis is visible**: admin register rows carry
-  `ippsSection` + `hiqaStandard` tags (rendered as `IPPS §1.1 · HIQA
-  6.1` chips) — one entry evidencing both regimes, the descriptor's
+  `ippsSection` + `hiqaStandard` tags (rendered as `IPPS §1.3 · HIQA
+  4.8` chips) — one entry evidencing both regimes, the descriptor's
   central constraint made concrete. `REGISTER_TAGS` in `seed.ts` is the
-  map. Two registers the earlier set omitted were added (Transport
-  service & timetable, Resident comfort & wellbeing).
+  map; **IPPS §s are the real report's own section numbers** (staff/DLP/
+  maintenance sit in §1.1 Office Admin per its checklist, kitchen records
+  in §2.6) and every HIQA id was verified against the standard texts
+  (security→4.8, transport→7.2, comfort/toiletries→4.9, space-standard &
+  maintenance→4.2, DLP/visitor child-protection→8.2, kitchen→5.1) — do
+  not retag without re-checking `hiqa-standards.json`. Two registers the
+  earlier set omitted were added (Transport service & timetable,
+  Resident comfort & wellbeing).
+- **Riverside seeds its real inspection outcomes, never RNG** (13 Jul
+  2026): register statuses come from the report (`RIVERSIDE_REGISTER_GAPS`
+  — security roster + both kitchen records "not available", visitor book
+  missing its CSS declaration, transport timetable owed within 14 days,
+  comfort items partial), notices seed the report's exact §2.2 result
+  (only House rules + IPAS house rules missing), and the Department
+  return's §3 statuses are DERIVED per section from live registers /
+  notices / fire currency (`sectionStatusFor` in store.ts — the old
+  `sectionStatus` PRNG is gone). The gaps are the demo's data-entry
+  story: "Review"/"Verify" clears them and §3 updates. Closed findings
+  never claim IPAS accepted evidence (the real report's evidence boxes
+  are unchecked); GREEN findings carry no evidence lifecycle; the finding
+  dialog has an UNMARKED priority so the report's ungraded findings stay
+  ungraded through an edit.
 - **7 KPIs computed live** (was 6): added KPI-08-01 fire register
   currency.
 - **Group profile block** on Group Overview + a narrative paragraph on

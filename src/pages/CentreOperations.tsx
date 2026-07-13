@@ -398,7 +398,7 @@ export default function CentreOperations() {
                 setNoticeVerified(centre.id, name, compliant, centre.manager);
                 setToast(
                   compliant
-                    ? `${name} verified as displayed — readiness pack updated.`
+                    ? `${name} verified as displayed — readiness pack and Department return updated.`
                     : `${name} flagged as missing — needs attention.`,
                 );
               }}

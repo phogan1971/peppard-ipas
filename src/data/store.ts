@@ -21,6 +21,7 @@ import {
   RegisterEntry,
   Room,
   StandardAssessment,
+  fireCurrencyFor,
   suitableOccupancyFor,
 } from "./types";
 
@@ -308,7 +309,9 @@ export interface FindingInput {
   section: string;
   hiqaStandard: string | null;
   finding: string;
-  priority: FindingPriority;
+  // null = ungraded, matching the real report's unchecked RAG boxes —
+  // editing an UNMARKED finding must not force a grade onto it.
+  priority: FindingPriority | null;
   actionRequired: string;
   raisedOn: string; // ISO date
   evidenceDueDays: number | null;
@@ -318,7 +321,7 @@ export interface FindingInput {
 // evidence deadline; everything else dues at raisedOn + evidenceDueDays.
 // Date arithmetic stays in local components (no toISOString/UTC round-trip)
 // so the deadline never drifts a day in a positive-offset timezone.
-function computeDueOn(raisedOn: string, priority: FindingPriority, evidenceDueDays: number | null): string | null {
+function computeDueOn(raisedOn: string, priority: FindingPriority | null, evidenceDueDays: number | null): string | null {
   if (priority === "GREEN" || evidenceDueDays === null) return null;
   const [y, m, d] = raisedOn.split("-").map(Number);
   const dt = new Date(y, m - 1, d + evidenceDueDays);
@@ -403,6 +406,34 @@ export interface CentreCompliance {
   openUnmarked: number;
   overdue: number;
   worst: "RED" | "AMBER" | "GREEN" | "NONE";
+}
+
+// §3 of the Department return: each inspection section's status is DERIVED
+// from the live registers, notices and fire currency mapped to it — never
+// generated. A section is in order exactly when nothing tagged to it needs
+// attention.
+export interface SectionState {
+  status: "in_order" | "attention";
+  notes: string[];
+}
+
+export function sectionStatusFor(sectionTitle: string, centreId: string, s: AppState): SectionState {
+  const num = sectionTitle.match(/^\d+(?:\.\d+)?/)?.[0] ?? "";
+  const notes: string[] = [];
+  for (const r of s.registersByCentre[centreId] ?? []) {
+    if (r.ippsSection === num && r.status !== "in_order") {
+      notes.push(`${r.name}: ${r.status === "attention" ? "needs attention" : "not reviewed"}`);
+    }
+  }
+  if (num === "2.2") {
+    const missing = (s.noticesByCentre[centreId] ?? []).filter((n) => !n.compliant);
+    if (missing.length > 0) notes.push(`${missing.length} mandatory notice${missing.length > 1 ? "s" : ""} not displayed`);
+  }
+  if (num === "2.3") {
+    const overdue = (s.fireByCentre[centreId] ?? []).filter((r) => fireCurrencyFor(r).state === "overdue");
+    if (overdue.length > 0) notes.push(`${overdue.length} fire register${overdue.length > 1 ? "s" : ""} overdue`);
+  }
+  return { status: notes.length > 0 ? "attention" : "in_order", notes };
 }
 
 export function centreCompliance(centreId: string, findings: Finding[]): CentreCompliance {

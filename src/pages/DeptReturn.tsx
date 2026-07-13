@@ -9,8 +9,8 @@ import TableRow from "@mui/material/TableRow";
 import { useParams } from "react-router-dom";
 import PrintDocShell, { SectionTitle } from "../components/PrintDoc";
 import { RagChip } from "../components/RagChip";
-import { useAppState } from "../data/store";
-import { AREAS_INSPECTED_CHECKLIST, INSPECTION_SECTIONS, RAG_LEGEND, sectionStatus } from "../data/seed";
+import { sectionStatusFor, useAppState } from "../data/store";
+import { AREAS_INSPECTED_CHECKLIST, INSPECTION_SECTIONS, RAG_LEGEND } from "../data/seed";
 import { fireCurrencyFor, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { brand, rag } from "../theme/tokens";
 
@@ -27,6 +27,7 @@ export default function DeptReturn() {
   const unrecordedRooms = rooms.filter((r) => r.currentOccupancy === null).length;
   const registers = state.registersByCentre[centre.id] ?? [];
   const fireRegisters = state.fireByCentre[centre.id] ?? [];
+  const notices = state.noticesByCentre[centre.id] ?? [];
   const findings = state.findings.filter((f) => f.centreId === centre.id);
 
   return (
@@ -72,19 +73,30 @@ export default function DeptReturn() {
         ))}
       </Box>
 
-      <SectionTitle n={3}>Inspection sections — self-assessment status</SectionTitle>
+      <SectionTitle n={3}>Inspection sections — status derived from live registers</SectionTitle>
+      <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1 }}>
+        Each section's status is computed from the registers, notices and fire records mapped to it — a section reads
+        "In order" only when nothing tagged to it needs attention.
+      </Typography>
       <Table size="small">
         <TableBody>
           {INSPECTION_SECTIONS.map((title) => {
-            const status = sectionStatus(centre.id, title);
+            const section = sectionStatusFor(title, centre.id, state);
             return (
               <TableRow key={title}>
-                <TableCell sx={{ fontWeight: 600 }}>{title}</TableCell>
-                <TableCell sx={{ width: 190 }}>
-                  {status === "in_order" ? (
+                <TableCell sx={{ fontWeight: 600 }}>
+                  {title}
+                  {section.notes.map((note) => (
+                    <Typography key={note} sx={{ fontSize: "0.75rem", fontWeight: 400, color: "text.secondary" }}>
+                      {note}
+                    </Typography>
+                  ))}
+                </TableCell>
+                <TableCell sx={{ width: 190, verticalAlign: "top" }}>
+                  {section.status === "in_order" ? (
                     <Chip label="In order" size="small" sx={{ backgroundColor: rag.greenBg, color: rag.green }} />
                   ) : (
-                    <Chip label="See findings register" size="small" sx={{ backgroundColor: rag.amberBg, color: rag.amber }} />
+                    <Chip label="Attention required" size="small" sx={{ backgroundColor: rag.amberBg, color: rag.amber }} />
                   )}
                 </TableCell>
               </TableRow>
@@ -93,7 +105,31 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={4}>Administration registers</SectionTitle>
+      <SectionTitle n={4}>Mandatory public notices</SectionTitle>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Notice</TableCell>
+            <TableCell sx={{ width: 120 }}>Status</TableCell>
+            <TableCell sx={{ width: 200 }}>Last verified</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {notices.map((n) => (
+            <TableRow key={n.name}>
+              <TableCell>{n.name}</TableCell>
+              <TableCell sx={{ color: n.compliant ? rag.green : rag.red, fontWeight: 700 }}>
+                {n.compliant ? "Displayed" : "Missing"}
+              </TableCell>
+              <TableCell sx={{ fontSize: "0.78rem" }}>
+                {n.verifiedOn ? `${n.verifiedOn}${n.verifiedBy ? ` · ${n.verifiedBy}` : ""}` : "—"}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <SectionTitle n={5}>Administration registers</SectionTitle>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -121,7 +157,7 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={5}>Fire safety register currency</SectionTitle>
+      <SectionTitle n={6}>Fire safety register currency</SectionTitle>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -148,7 +184,7 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={6}>Room-by-room register</SectionTitle>
+      <SectionTitle n={7}>Room-by-room register</SectionTitle>
       <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1 }}>
         Suitable occupancy derived at {SPACE_STANDARD_M2_PER_PERSON} m² per person (rooms with varying ceiling height:
         only areas at 2.4 m or higher count).
@@ -183,7 +219,7 @@ export default function DeptReturn() {
         </TableBody>
       </Table>
 
-      <SectionTitle n={7}>Summary details — findings & corrective actions</SectionTitle>
+      <SectionTitle n={8}>Summary details — findings & corrective actions</SectionTitle>
       {findings.length === 0 ? (
         <Typography sx={{ fontSize: "0.87rem" }}>No findings recorded.</Typography>
       ) : (
@@ -215,7 +251,7 @@ export default function DeptReturn() {
         </Table>
       )}
 
-      <SectionTitle n={8}>RAG legend</SectionTitle>
+      <SectionTitle n={9}>RAG legend</SectionTitle>
       <Table size="small">
         <TableBody>
           {Object.entries(RAG_LEGEND).map(([key, desc]) => (

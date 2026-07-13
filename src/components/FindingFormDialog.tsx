@@ -23,10 +23,15 @@ interface Props {
   onSaved: (summary: string) => void;
 }
 
-const PRIORITIES: { value: FindingPriority; help: string }[] = [
+// "UNMARKED" mirrors the real report's unchecked RAG boxes — two Riverside
+// findings carry no grade, and editing them must not force one on.
+type PriorityChoice = FindingPriority | "UNMARKED";
+
+const PRIORITIES: { value: PriorityChoice; help: string }[] = [
   { value: "RED", help: "Contractual breach / high risk — escalates to executives on creation" },
   { value: "AMBER", help: "Medium risk — 14-day evidence clock applies" },
   { value: "GREEN", help: "Low operational concern — monitored, no evidence deadline" },
+  { value: "UNMARKED", help: "No RAG grade recorded — as on the source report; evidence clock still applies if a window is set" },
 ];
 
 function todayIso(): string {
@@ -40,7 +45,7 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
   const [section, setSection] = useState("6. Summary Details");
   const [hiqaStandard, setHiqaStandard] = useState<string>("");
   const [finding, setFinding] = useState("");
-  const [priority, setPriority] = useState<FindingPriority>("AMBER");
+  const [priority, setPriority] = useState<PriorityChoice>("AMBER");
   const [action, setAction] = useState("");
   const [raisedOn, setRaisedOn] = useState(todayIso());
   const [dueDays, setDueDays] = useState("14");
@@ -53,7 +58,7 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
     setSection(existing?.section ?? "6. Summary Details");
     setHiqaStandard(existing?.hiqaStandard ?? "");
     setFinding(existing?.finding ?? "");
-    setPriority((existing?.priority as FindingPriority) ?? "AMBER");
+    setPriority(existing ? (existing.priority ?? "UNMARKED") : "AMBER");
     setAction(existing?.actionRequired ?? "");
     setRaisedOn(existing?.raisedOn ?? todayIso());
     setDueDays(existing?.evidenceDueDays != null ? String(existing.evidenceDueDays) : "14");
@@ -71,7 +76,7 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
       section,
       hiqaStandard: hiqaStandard || null,
       finding,
-      priority,
+      priority: priority === "UNMARKED" ? null : priority,
       actionRequired: action,
       raisedOn,
       evidenceDueDays: isGreen ? null : parseInt(dueDays, 10) || 14,
@@ -79,13 +84,15 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
     const centre = centres.find((c) => c.id === centreId);
     if (isEdit && existing) {
       updateFinding(existing.id, input);
-      onSaved(`Finding updated for ${centre?.shortName} — evidence clock and status re-applied.`);
+      onSaved(`Finding updated for ${centre?.shortName} — evidence clock re-applied.`);
     } else {
       addFinding(input);
       onSaved(
         isGreen
           ? `Finding raised for ${centre?.shortName} — monitored, no evidence deadline.`
-          : `${priority} finding raised for ${centre?.shortName} — 14-day evidence clock started${priority === "RED" ? " and escalated to executives" : ""}.`,
+          : priority === "UNMARKED"
+            ? `Finding raised for ${centre?.shortName} (ungraded) — evidence clock started.`
+            : `${priority} finding raised for ${centre?.shortName} — 14-day evidence clock started${priority === "RED" ? " and escalated to executives" : ""}.`,
       );
     }
   };
@@ -120,7 +127,7 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
             <TextField label="Action required" value={action} onChange={(e) => setAction(e.target.value)} fullWidth size="small" multiline minRows={2} placeholder="Corrective action and evidence expected" />
           </Grid>
           <Grid item xs={6} sm={4}>
-            <TextField select label="Priority" value={priority} onChange={(e) => setPriority(e.target.value as FindingPriority)} fullWidth size="small">
+            <TextField select label="Priority" value={priority} onChange={(e) => setPriority(e.target.value as PriorityChoice)} fullWidth size="small">
               {PRIORITIES.map((p) => (
                 <MenuItem key={p.value} value={p.value}>
                   {p.value}
@@ -158,7 +165,15 @@ export default function FindingFormDialog({ open, centres, existing, defaultCent
             />
           </Grid>
         </Grid>
-        <Box sx={{ mt: 1.5, p: 1, borderRadius: 1, backgroundColor: priority === "RED" ? rag.redBg : priority === "AMBER" ? rag.amberBg : rag.greenBg }}>
+        <Box
+          sx={{
+            mt: 1.5,
+            p: 1,
+            borderRadius: 1,
+            backgroundColor:
+              priority === "RED" ? rag.redBg : priority === "AMBER" ? rag.amberBg : priority === "GREEN" ? rag.greenBg : rag.neutralBg,
+          }}
+        >
           <Typography sx={{ fontSize: "0.78rem", color: "text.secondary" }}>{priorityMeta.help}</Typography>
         </Box>
       </DialogContent>

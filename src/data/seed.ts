@@ -30,7 +30,7 @@ interface RiversideJson {
     roomCount: number;
     centreProfile: string;
   };
-  registers: { name: string }[];
+  registers: { name: string; status?: string; observations?: string | null; cssDeclarationIncluded?: boolean }[];
   rooms: Room[];
   findings: {
     ref: number;
@@ -110,11 +110,6 @@ export const AREAS_INSPECTED_CHECKLIST: string[] = riverside.areasInspectedCheck
 export const INSPECTION_SECTIONS: string[] = riverside.sections.map((s) => s.title);
 export const RAG_LEGEND: Record<string, string> = riverside.ragLegend;
 
-export function sectionStatus(centreId: string, sectionTitle: string): "in_order" | "see_findings" {
-  const c = getProfile().compliance / 100;
-  const rand = mulberry(`section-${centreId}-${sectionTitle}-${Math.round(c * 100)}`);
-  return rand() < 0.7 + 0.28 * c ? "in_order" : "see_findings";
-}
 
 // ── Standards (real, from national-standards.pdf) ───────────────────────
 export const STANDARDS: HiqaStandard[] = standardsSrc.themes.flatMap((t) =>
@@ -239,25 +234,46 @@ export function buildRooms(centreId: string): Room[] {
 // ── Administration registers ────────────────────────────────────────────
 // Dual regulatory axis: each register row maps to the IPPS report section it
 // evidences and to a HIQA National Standard, so one entry serves both regimes.
+// IPPS §s are the REAL report's own section numbers (1.1 Office Admin,
+// 1.2 Child Protection, 1.3 General Safety & Security, 1.5 Resident
+// Wellbeing, 1.6 Transport, 2.6 Kitchen Area) — the register appears in
+// that section's checklist. HIQA ids verified against the standard texts:
+// 4.8 security measures/licensing, 7.2 dedicated transport service,
+// 4.9 non-food items (toiletries/nappies), 4.2 maintenance & repairs,
+// 8.2 child protection incl. the DLP indicator, 5.1 kitchen facilities
+// equipped and maintained, 1.2 governance records, 2.1 recruitment/roles.
 const REGISTER_TAGS: Record<string, { ipps: string; hiqa: string }> = {
-  "Latest Resident Register": { ipps: "1.1", hiqa: "6.1" },
-  "Full List of Staff Employed including roles & duties": { ipps: "1.2", hiqa: "2.1" },
-  "Separate list of designated liaison persons for child protection": { ipps: "1.3", hiqa: "8.1" },
-  "Appendix 2 visitor child-protection declaration record": { ipps: "1.3", hiqa: "8.2" },
-  "Visitor sign-in book": { ipps: "1.4", hiqa: "8.3" },
-  "Maintenance issues log": { ipps: "1.7", hiqa: "4.1" },
-  "Security roster": { ipps: "1.4", hiqa: "1.4" },
-  "Kitchen daily cleaning record": { ipps: "1.7", hiqa: "5.1" },
-  "Kitchen periodic deep-clean record": { ipps: "1.7", hiqa: "5.2" },
+  "Latest Resident Register": { ipps: "1.1", hiqa: "1.2" },
+  "Full List of Staff Employed including roles & duties": { ipps: "1.1", hiqa: "2.1" },
+  "Separate list of designated liaison persons for child protection": { ipps: "1.1", hiqa: "8.2" },
+  "Appendix 2 visitor child-protection declaration record": { ipps: "1.2", hiqa: "8.2" },
+  "Visitor sign-in book": { ipps: "1.3", hiqa: "8.2" },
+  "Maintenance issues log": { ipps: "1.1", hiqa: "4.2" },
+  "Security roster": { ipps: "1.3", hiqa: "4.8" },
+  "Kitchen daily cleaning record": { ipps: "2.6", hiqa: "5.1" },
+  "Kitchen periodic deep-clean record": { ipps: "2.6", hiqa: "5.1" },
   // Transport and resident comfort — the two admin areas the IPPS report
   // covers but the earlier register set omitted.
-  "Transport service & timetable": { ipps: "1.6", hiqa: "7.3" },
-  "Resident comfort & wellbeing provision": { ipps: "1.5", hiqa: "6.2" },
+  "Transport service & timetable": { ipps: "1.6", hiqa: "7.2" },
+  "Resident comfort & wellbeing provision": { ipps: "1.5", hiqa: "4.9" },
 };
 
 // Extra admin registers added to every centre (not present in the raw
 // Riverside register list, which folds these into inspection sections).
 const EXTRA_REGISTER_NAMES = ["Transport service & timetable", "Resident comfort & wellbeing provision"];
+
+// Riverside's register states come from the real 24.03.2026 report — three
+// registers were recorded "not available" and the visitor book lacks its
+// CSS declaration. They seed as needing attention so the demo can show the
+// operator closing real gaps; "Review" clears them via the override layer.
+const RIVERSIDE_REGISTER_GAPS: Record<string, string> = {
+  "Security roster": "Not available at 24.03.2026 inspection — 24/7 PSA-licenced security staff not in place (Grennan Security)",
+  "Kitchen daily cleaning record": "Not available at 24.03.2026 inspection — no record of daily cleaning of kitchen, food service & dining areas",
+  "Kitchen periodic deep-clean record": "Not available at 24.03.2026 inspection — no record of periodic deep cleans (behind cookers/fridges etc.)",
+  "Visitor sign-in book": "In place at reception but does not include a CSS declaration (24.03.2026 inspection)",
+  "Transport service & timetable": "Timetable to be submitted within 14 days of receipt of the 24.03.2026 inspection report",
+  "Resident comfort & wellbeing provision": "Baby lotions and hand soap not provided free of charge at 24.03.2026 inspection",
+};
 
 export function buildRegisters(centreId: string): RegisterEntry[] {
   const c = getProfile().compliance / 100;
@@ -269,9 +285,20 @@ export function buildRegisters(centreId: string): RegisterEntry[] {
   ];
   return names.map((name) => {
     const roll = rand();
-    const status: RegisterEntry["status"] =
-      centreId === "riverside" || roll < inOrder ? "in_order" : roll < inOrder + (1 - inOrder) * 0.75 ? "attention" : "not_reviewed";
     const tag = REGISTER_TAGS[name] ?? null;
+    if (centreId === "riverside") {
+      const gap = RIVERSIDE_REGISTER_GAPS[name];
+      return {
+        name,
+        lastReviewed: gap ? riverside.inspectionDate : isoDaysFromToday(-Math.round(rand() * 21)),
+        status: gap ? ("attention" as const) : ("in_order" as const),
+        note: gap ?? null,
+        ippsSection: tag?.ipps ?? null,
+        hiqaStandard: tag?.hiqa ?? null,
+      };
+    }
+    const status: RegisterEntry["status"] =
+      roll < inOrder ? "in_order" : roll < inOrder + (1 - inOrder) * 0.75 ? "attention" : "not_reviewed";
     return {
       name,
       lastReviewed: isoDaysFromToday(-Math.round(rand() * 45)),
@@ -315,12 +342,18 @@ export const MANDATORY_NOTICES: string[] = [
   "IPAS contact email address",
 ];
 
+// The real report's §2.2 result: everything displayed except the two sets
+// of house rules. Riverside seeds exactly that — the operator can close the
+// two gaps live via "Verify".
+const RIVERSIDE_NOTICES_MISSING = new Set(["House rules", "IPAS house rules"]);
+
 export function buildNotices(centreId: string): NoticeItem[] {
   const c = getProfile().compliance / 100;
   const rand = mulberry(`notices-${centreId}-${Math.round(c * 100)}`);
   const compliantRate = 0.7 + 0.28 * c;
   return MANDATORY_NOTICES.map((name) => {
-    const compliant = centreId === "riverside" ? rand() < 0.85 : rand() < compliantRate;
+    const compliant =
+      centreId === "riverside" ? !RIVERSIDE_NOTICES_MISSING.has(name) : rand() < compliantRate;
     return {
       name,
       compliant,
@@ -355,20 +388,23 @@ export function buildFireRegisters(centreId: string): FireRegister[] {
 const DEMO_FINDING_POOL: { section: string; finding: string; priority: FindingPriority; actionRequired: string; hiqaStandard: string }[] = [
   { section: "6. Summary Details", finding: "Fire Safety Issues", priority: "RED", actionRequired: "Fire drill records incomplete for the previous quarter. Full drill to be carried out and register updated; confirmation within 14 days.", hiqaStandard: "3.1" },
   { section: "6. Summary Details", finding: "Electrical Equipment in Room", priority: "AMBER", actionRequired: "Prohibited electrical items found during spot checks. Management to inspect all rooms and remove; confirmation within 14 days.", hiqaStandard: "4.2" },
-  { section: "6. Summary Details", finding: "Mould/Damp", priority: "AMBER", actionRequired: "Mould identified in bathroom areas. Deep clean and remediation required; photographic evidence within 14 days.", hiqaStandard: "4.1" },
+  { section: "6. Summary Details", finding: "Mould/Damp", priority: "AMBER", actionRequired: "Mould identified in bathroom areas. Deep clean and remediation required; photographic evidence within 14 days.", hiqaStandard: "4.2" },
   { section: "6. Summary Details", finding: "Food Safety Issues", priority: "AMBER", actionRequired: "Kitchen deep-clean record gaps. Deep clean to be completed and register brought up to date; confirmation within 14 days.", hiqaStandard: "5.1" },
-  { section: "6. Summary Details", finding: "Overcrowding", priority: "GREEN", actionRequired: "Room occupancies verified against the 4.65 m² space standard. No action required.", hiqaStandard: "4.1" },
+  { section: "6. Summary Details", finding: "Overcrowding", priority: "GREEN", actionRequired: "Room occupancies verified against the 4.65 m² space standard. No action required.", hiqaStandard: "4.2" },
   { section: "6. Summary Details", finding: "Fixtures & Fittings", priority: "GREEN", actionRequired: "Minor wear noted in communal areas. Monitor at next internal audit.", hiqaStandard: "4.3" },
 ];
 
 // HIQA standard a Riverside inspection finding maps to (dual-axis), keyed by
 // the finding title from the real report.
+// 4.2 carries the 4.65 m² space-standard and maintenance/repairs
+// indicators (not 4.1, which is allocation planning); 4.8 is security.
 const RIVERSIDE_FINDING_HIQA: Record<string, string> = {
   "Fire Safety Issues": "3.1",
   "Electrical Equipment in Room": "4.2",
-  "Mould/Damp": "4.1",
+  "Mould/Damp": "4.2",
   "Food Safety Issues": "5.1",
-  "Overcrowding": "4.1",
+  "Overcrowding": "4.2",
+  "Security & Staffing": "4.8",
   "Fixtures & Fittings": "4.3",
 };
 
@@ -415,9 +451,11 @@ export function buildFindings(): Finding[] {
       raisedOn,
       dueOn,
       status,
+      // Never assert a Department outcome the real report doesn't record —
+      // the report's evidence-of-resolution boxes are unchecked throughout.
       evidenceNote:
         status === "closed"
-          ? "Evidence pack submitted and accepted by IPAS"
+          ? "Closed — evidence pack on file"
           : status === "evidence_submitted"
             ? "Evidence pack submitted — awaiting confirmation"
             : null,
@@ -442,6 +480,10 @@ export function buildFindings(): Finding[] {
       const overdueAllowed = intensity >= 0.7;
       const raisedDaysAgo = overdueAllowed ? Math.round(rand() * 25) : 2 + Math.round(rand() * 9);
       const closed = rand() < 0.7 - intensity * 0.5;
+      const isGreen = tpl.priority === "GREEN";
+      // GREEN carries no evidence loop — it is noted and monitored, never
+      // "evidence submitted"; internal-audit closures never claim a
+      // Department acceptance.
       findings.push({
         id: `${spec.id}-f${i + 1}`,
         centreId: spec.id,
@@ -451,11 +493,15 @@ export function buildFindings(): Finding[] {
         finding: tpl.finding,
         priority: tpl.priority,
         actionRequired: tpl.actionRequired,
-        evidenceDueDays: tpl.priority === "GREEN" ? null : 14,
+        evidenceDueDays: isGreen ? null : 14,
         raisedOn: isoDaysFromToday(-raisedDaysAgo),
-        dueOn: tpl.priority === "GREEN" ? null : isoDaysFromToday(-raisedDaysAgo + 14),
-        status: closed ? "closed" : rand() < 0.5 ? "evidence_submitted" : "open",
-        evidenceNote: closed ? "Evidence pack submitted and accepted by IPAS" : null,
+        dueOn: isGreen ? null : isoDaysFromToday(-raisedDaysAgo + 14),
+        status: closed ? "closed" : !isGreen && rand() < 0.5 ? "evidence_submitted" : "open",
+        evidenceNote: closed
+          ? isGreen
+            ? "No action required — noted at internal review"
+            : "Closed at internal review — evidence on file"
+          : null,
       });
     }
   }
