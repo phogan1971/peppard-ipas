@@ -35,7 +35,7 @@ const PLATFORMS: PlatformCard[] = [
     target: GENESIS_URL,
   },
   {
-    logo: "/peppard-logo.jpg",
+    logo: "/peppard-logo.png",
     logoHeight: 64,
     name: "Peppard IPAS Governance",
     descr: "Operator dashboard for 8 IPAS accommodation centres — Department returns, HIQA standards, findings and the 74-KPI framework.",
@@ -88,7 +88,7 @@ export default function SplashScreen() {
       >
         <Box
           component="img"
-          src="/peppard-logo.jpg"
+          src="/peppard-logo.png"
           alt="Peppard Investments Limited"
           sx={{
             width: "min(72vw, 620px)",
