@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
-import DetailDialog, { DetailContent } from "../components/DetailDialog";
+import DetailDialog, { DetailContent, DetailFilter } from "../components/DetailDialog";
 import { RagChip } from "../components/RagChip";
 import { useAppState, centreCompliance, centreStatusLabel, daysUntilDue, isOverdue } from "../data/store";
 import { rag, ragAccent, accent, occupancyColor } from "../theme/tokens";
@@ -113,17 +113,30 @@ export default function GroupOverview() {
       .sort((a, b) => (daysUntilDue(a) ?? 9999) - (daysUntilDue(b) ?? 9999))
       .map((f) => ({
         id: f.id,
+        filterValue: f.centreId,
         leading: <RagChip priority={f.priority} />,
         primary: `${centreName(f.centreId)} · ${f.section}`,
         secondary: f.finding,
         trailing: dueChip(f),
       }));
 
+  // "Filter by facility" dropdown for a findings drill-down — only when the
+  // list spans more than one centre, listing only the centres present.
+  const centreDetailFilter = (list: typeof open): DetailFilter | undefined => {
+    const present = new Set(list.map((f) => f.centreId));
+    if (present.size <= 1) return undefined;
+    return {
+      allLabel: "All centres",
+      options: centres.filter((c) => present.has(c.id)).map((c) => ({ value: c.id, label: c.shortName })),
+    };
+  };
+
   const openFindingsDetail = (): DetailContent => ({
     title: "Open findings",
     subtitle: `${open.length} open · ${openRed} red · ${openAmber} amber`,
     rows: findingRows(open),
     emptyText: "No open findings across the group.",
+    filter: centreDetailFilter(open),
   });
 
   const overdueDetail = (): DetailContent => {
@@ -131,16 +144,9 @@ export default function GroupOverview() {
     return {
       title: "Overdue evidence",
       subtitle: `${list.length} finding${list.length === 1 ? "" : "s"} past the 14-day evidence clock`,
-      rows: list
-        .sort((a, b) => (daysUntilDue(a) ?? 0) - (daysUntilDue(b) ?? 0))
-        .map((f) => ({
-          id: f.id,
-          leading: <RagChip priority={f.priority} />,
-          primary: `${centreName(f.centreId)} · ${f.section}`,
-          secondary: f.finding,
-          trailing: dueChip(f),
-        })),
+      rows: findingRows(list),
       emptyText: "Nothing is past the 14-day evidence clock.",
+      filter: centreDetailFilter(list),
     };
   };
 
