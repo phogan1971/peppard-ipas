@@ -16,7 +16,7 @@ import Chip from "@mui/material/Chip";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import AccordionBlock from "../components/AccordionBlock";
-import DetailDialog, { DetailContent } from "../components/DetailDialog";
+import DetailDialog, { DetailContent, DetailRow } from "../components/DetailDialog";
 import { setAssessment, useAppState } from "../data/store";
 import { sectorDistributionFor, STANDARDS } from "../data/seed";
 import { Judgement, JUDGEMENT_LABELS, StandardAssessment } from "../data/types";
@@ -135,10 +135,11 @@ export default function StandardsRegister() {
   const [detail, setDetail] = useState<DetailContent | null>(null);
 
   const judgementDetail = (judgement: ScoredJudgement, sub: string): DetailContent => {
-    const rows = isGroup
+    const rows: DetailRow[] = isGroup
       ? centres.flatMap((c) =>
           STANDARDS.filter((std) => (byCentre.get(c.id)?.get(std.id)?.judgement ?? "notAssessed") === judgement).map((std) => ({
             id: `${c.id}-${std.id}`,
+            filterValue: c.id,
             leading: (
               <Chip label={std.id} size="small" sx={{ height: 22, minWidth: 44, fontWeight: 700, fontSize: "0.72rem", color: JUDGEMENT_COLORS[judgement].color, backgroundColor: JUDGEMENT_COLORS[judgement].bg }} />
             ),
@@ -154,11 +155,20 @@ export default function StandardsRegister() {
           primary: std.text,
           secondary: `Theme ${std.themeNumber}: ${std.themeName}`,
         }));
+    // In group mode, offer a facility filter — only for centres that actually
+    // have a standard at this judgement, so no option lands on an empty list.
+    const centresPresent = new Set(rows.map((r) => r.filterValue).filter(Boolean));
     return {
       title: `${JUDGEMENT_LABELS[judgement]} — ${isGroup ? "All centres" : centre.shortName}`,
       subtitle: sub,
       rows,
       emptyText: `No standards judged ${JUDGEMENT_LABELS[judgement].toLowerCase()} at ${scopeLabel}.`,
+      filter: isGroup
+        ? {
+            allLabel: "All centres",
+            options: centres.filter((c) => centresPresent.has(c.id)).map((c) => ({ value: c.id, label: c.shortName })),
+          }
+        : undefined,
     };
   };
 
