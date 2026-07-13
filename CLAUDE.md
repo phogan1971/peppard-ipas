@@ -227,9 +227,13 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - All three generated documents (shared `PrintDoc` frame, print → PDF):
   readiness pack `/centres/:id/readiness`, Department return
   `/centres/:id/return`, quarterly board pack `/board-pack`.
-- PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (11 slides,
-  real app screenshots in `docs/screens/`; regenerate screenshots with
-  Playwright channel:"chrome" against the dev server).
+- PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (15 slides,
+  real app screenshots in `docs/screens/`). Reproducible via two committed
+  scripts (run the dev server first): `node scripts/capture-screens.mjs`
+  re-shoots `docs/screens/*` with Playwright channel:"chrome" (system
+  Chrome, no Chromium download), then `node scripts/build-deck.mjs`
+  rebuilds the `.pptx` with `pptxgenjs`. Slide narrative + layout live in
+  `build-deck.mjs`; edit there, never hand-edit the `.pptx`.
 - **Data scenario system** (`data/profile.ts` + `SettingsDialog`): the
   generated dataset is driven by a profile (compliance / findings
   pressure / KPI performance, each 0–100) persisted in localStorage.
