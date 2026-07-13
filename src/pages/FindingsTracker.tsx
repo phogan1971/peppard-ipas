@@ -229,6 +229,7 @@ export default function FindingsTracker() {
         documents={centreFilter === "all" ? Object.values(documentsByCentre).flat() : documentsByCentre[centreFilter] ?? []}
         uploadCentreId={centreFilter === "all" ? null : centreFilter}
         uploadCentreName={centreName(centreFilter)}
+        centres={centres}
         centreName={centreName}
         onUpload={(centreId, doc) => {
           addSourceDocument(centreId, doc, centres.find((c) => c.id === centreId)?.manager ?? "Centre Manager");
