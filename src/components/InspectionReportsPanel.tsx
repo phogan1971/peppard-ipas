@@ -9,6 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import DescriptionIcon from "@mui/icons-material/Description";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import InsightsIcon from "@mui/icons-material/Insights";
 import { SourceDocument } from "../data/types";
 import { accent, rag } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -21,10 +22,11 @@ interface Props {
   uploadCentreId: string | null;
   uploadCentreName: string;
   onUpload: (centreId: string, doc: { name: string; dataUrl: string; sizeKb: number }) => void;
+  onProcess: (doc: SourceDocument) => void;
   centreName: (id: string) => string;
 }
 
-export default function InspectionReportsPanel({ documents, uploadCentreId, uploadCentreName, onUpload, centreName }: Props) {
+export default function InspectionReportsPanel({ documents, uploadCentreId, uploadCentreName, onUpload, onProcess, centreName }: Props) {
   const surf = useSurfaces();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -115,9 +117,14 @@ export default function InspectionReportsPanel({ documents, uploadCentreId, uplo
                   {d.sizeKb ? ` · ${d.sizeKb >= 1024 ? (d.sizeKb / 1024).toFixed(1) + " MB" : d.sizeKb + " KB"}` : ""}
                 </Typography>
               </Box>
-              <Link href={d.url} target="_blank" rel="noopener" sx={{ flexShrink: 0, display: "flex", alignItems: "center", gap: 0.5, fontSize: "0.8rem", fontWeight: 600 }}>
-                View report <OpenInNewIcon sx={{ fontSize: 15 }} />
-              </Link>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexShrink: 0 }}>
+                <Button size="small" variant="outlined" startIcon={<InsightsIcon sx={{ fontSize: 16 }} />} onClick={() => onProcess(d)}>
+                  Disseminate
+                </Button>
+                <Link href={d.url} target="_blank" rel="noopener" sx={{ display: "flex", alignItems: "center", gap: 0.5, fontSize: "0.8rem", fontWeight: 600 }}>
+                  View report <OpenInNewIcon sx={{ fontSize: 15 }} />
+                </Link>
+              </Box>
             </Box>
           ))}
         </Box>

@@ -23,9 +23,10 @@ import DetailDialog, { DetailContent, DetailFilter } from "../components/DetailD
 import FindingFormDialog from "../components/FindingFormDialog";
 import InspectionReportsPanel from "../components/InspectionReportsPanel";
 import FindingsSummaryTable from "../components/FindingsSummaryTable";
+import ReportDisseminationDialog from "../components/ReportDisseminationDialog";
 import { RagChip } from "../components/RagChip";
 import { addSourceDocument, daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
-import { Finding, FindingStatus } from "../data/types";
+import { Finding, FindingStatus, SourceDocument } from "../data/types";
 import { brand, rag, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
@@ -77,6 +78,7 @@ export default function FindingsTracker() {
 
   const [detail, setDetail] = useState<DetailContent | null>(null);
   const [dialog, setDialog] = useState<{ open: boolean; existing: Finding | null }>({ open: false, existing: null });
+  const [processDoc, setProcessDoc] = useState<SourceDocument | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const statusChip = (f: Finding) => {
@@ -231,6 +233,18 @@ export default function FindingsTracker() {
         onUpload={(centreId, doc) => {
           addSourceDocument(centreId, doc, centres.find((c) => c.id === centreId)?.manager ?? "Centre Manager");
           setToast(`${doc.name} attached to ${centreName(centreId)} — its findings are summarised below.`);
+        }}
+        onProcess={(doc) => setProcessDoc(doc)}
+      />
+
+      <ReportDisseminationDialog
+        open={!!processDoc}
+        doc={processDoc}
+        centreName={centreName}
+        onClose={() => setProcessDoc(null)}
+        onApply={(doc) => {
+          setProcessDoc(null);
+          setToast(`${centreName(doc.centreId)} inspection disseminated — findings, registers, notices and the room register updated; live KPIs recomputed.`);
         }}
       />
 

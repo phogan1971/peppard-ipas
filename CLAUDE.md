@@ -374,6 +374,16 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
     to its source report. Uploaded PDFs persist as `data:` URLs in their
     own `peppard-ipas:docs:v1` key so a large blob can't fail the main
     state write; `regenerateData` clears them.
+  - **Report → system → KPIs dissemination** (`ReportDisseminationDialog`,
+    "Disseminate" per report row): the design-aligned workflow the client
+    asked for — the Department inspection is the *source* that fans out.
+    A 3-stage flow (Source inspection → Populates registers/findings/
+    notices/rooms/fire, with live counts → Informs the KPI framework, the
+    7 live KPIs badged by domain). "Apply to system" confirms the
+    dissemination. Framed explicitly as design: real per-field extraction
+    is a later build; today the mapping is shown and the live KPIs already
+    recompute from the populated registers. The KPI Framework page links
+    back to this ("upload a report … choose Disseminate").
   - A success snackbar spells out the ripple ("…KPI, space-standard tiles
     and the Department return updated"). `regenerateData` clears the
     overrides with the seed.
