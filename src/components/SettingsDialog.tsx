@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -49,6 +49,12 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
   const activePreset = matchingPreset(draft);
   const s = useSurfaces();
 
+  // Reset the draft to the active profile each time the dialog opens, so a
+  // cancelled adjustment doesn't linger as a stale draft on reopen.
+  useEffect(() => {
+    if (open) setDraft(getProfile());
+  }, [open]);
+
   const apply = (profile: DataProfile) => {
     regenerateData(profile);
     onClose();
@@ -61,7 +67,11 @@ export default function SettingsDialog({ open, onClose }: { open: boolean; onClo
       <DialogContent>
         <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
           Choose how the sample dataset presents. Presets set the overall tone; the sliders fine-tune it.
-          Applying regenerates all centres, findings, assessments and KPI positions.
+          Applying regenerates all centres, findings, assessments and KPI positions — and{" "}
+          <Box component="span" sx={{ fontWeight: 700, color: "text.primary" }}>
+            clears any records entered through the dashboard
+          </Box>{" "}
+          (room edits, logged fire checks, verified notices, raised findings).
         </Typography>
 
         <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 3 }}>

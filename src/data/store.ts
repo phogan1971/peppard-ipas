@@ -208,16 +208,22 @@ function nowIso(): string {
 }
 
 export function setFindingStatus(findingId: string, status: FindingStatus, evidenceNote?: string) {
-  persisted.findings = persisted.findings.map((f) =>
-    f.id === findingId ? { ...f, status, evidenceNote: evidenceNote ?? f.evidenceNote } : f,
-  );
+  const today = localDateIso();
+  persisted.findings = persisted.findings.map((f) => {
+    if (f.id !== findingId) return f;
+    // Stamp the close date (so KPI-11-04 can tell on-time from late) and
+    // clear it — plus any stale evidence note — when a finding reopens.
+    const closedOn = status === "closed" ? today : null;
+    const note = status === "open" ? null : evidenceNote ?? f.evidenceNote;
+    return { ...f, status, closedOn, evidenceNote: note };
+  });
   commit();
 }
 
 export function setAssessment(centreId: string, standardId: string, judgement: Judgement, note?: string) {
   persisted.assessments = persisted.assessments.map((a) =>
     a.centreId === centreId && a.standardId === standardId
-      ? { ...a, judgement, note: note ?? a.note, assessedOn: new Date().toISOString().slice(0, 10) }
+      ? { ...a, judgement, note: note ?? a.note, assessedOn: localDateIso() }
       : a,
   );
   commit();
@@ -270,7 +276,7 @@ export function markRegisterReviewed(centreId: string, name: string, enteredBy: 
   persisted.registerOverrides = {
     ...persisted.registerOverrides,
     [`${centreId}::${name}`]: {
-      lastReviewed: new Date().toISOString().slice(0, 10),
+      lastReviewed: localDateIso(),
       status: "in_order",
       note: null,
       enteredBy,
@@ -284,7 +290,7 @@ export function setNoticeVerified(centreId: string, name: string, compliant: boo
   const current = state.noticesByCentre[centreId] ?? [];
   const updated = current.map((n) =>
     n.name === name
-      ? { ...n, compliant, verifiedOn: new Date().toISOString().slice(0, 10), verifiedBy: enteredBy }
+      ? { ...n, compliant, verifiedOn: localDateIso(), verifiedBy: enteredBy }
       : n,
   );
   persisted.noticeOverrides = { ...persisted.noticeOverrides, [centreId]: updated };
@@ -295,7 +301,7 @@ export function logFireCheck(centreId: string, name: string, enteredBy: string) 
   persisted.fireOverrides = {
     ...persisted.fireOverrides,
     [`${centreId}::${name}`]: {
-      lastEntry: new Date().toISOString().slice(0, 10),
+      lastEntry: localDateIso(),
       enteredBy,
       enteredAt: nowIso(),
     },
@@ -345,9 +351,12 @@ export function addFinding(input: FindingInput) {
     raisedOn: input.raisedOn,
     dueOn: computeDueOn(input.raisedOn, input.priority, evidenceDueDays),
     status: "open",
+    closedOn: null,
     evidenceNote: null,
   };
-  persisted.findings = [finding, ...persisted.findings];
+  // Append, not prepend: the Department return numbers findings by position,
+  // so a new manual finding must not displace the report's real refs 1–7.
+  persisted.findings = [...persisted.findings, finding];
   commit();
 }
 
@@ -399,13 +408,44 @@ export function daysUntilDue(finding: Finding): number | null {
   return Math.round((due.getTime() - today.getTime()) / 86400000);
 }
 
+// THE single definition of "overdue evidence", used by every count, chip and
+// KPI: a finding whose 14-day clock has run out while it is still open —
+// evidence_submitted means the operator has responded, so it is not overdue.
+export function isOverdue(finding: Finding): boolean {
+  if (finding.status !== "open") return false;
+  const d = daysUntilDue(finding);
+  return d !== null && d < 0;
+}
+
+export type EscalationLevel = "RED" | "AMBER" | "GREEN" | "UNMARKED" | "NONE";
+
 export interface CentreCompliance {
   openRed: number;
   openAmber: number;
   openGreen: number;
   openUnmarked: number;
   overdue: number;
-  worst: "RED" | "AMBER" | "GREEN" | "NONE";
+  // Worst open finding by inspector RAG grade (ignores the evidence clock).
+  worst: EscalationLevel;
+  // Headline escalation: overdue evidence is a contractual-loop breach, so it
+  // lifts a centre to RED regardless of the underlying grade. Group Overview,
+  // the board pack and the exec view all read this, so they never disagree.
+  status: EscalationLevel;
+}
+
+const ESCALATION_LABELS: Record<EscalationLevel, string> = {
+  RED: "RED items open",
+  AMBER: "AMBER items open",
+  GREEN: "GREEN items only",
+  UNMARKED: "Ungraded items open",
+  NONE: "No open findings",
+};
+
+// Shared headline for a centre's status chip — reason-accurate so an overdue
+// AMBER centre reads "Evidence overdue", not "AMBER items open".
+export function centreStatusLabel(cc: CentreCompliance): string {
+  if (cc.overdue > 0 && cc.openRed === 0) return "Evidence overdue";
+  return ESCALATION_LABELS[cc.status];
 }
 
 // §3 of the Department return: each inspection section's status is DERIVED
@@ -442,10 +482,9 @@ export function centreCompliance(centreId: string, findings: Finding[]): CentreC
   const openAmber = open.filter((f) => f.priority === "AMBER").length;
   const openGreen = open.filter((f) => f.priority === "GREEN").length;
   const openUnmarked = open.filter((f) => f.priority === null).length;
-  const overdue = open.filter((f) => {
-    const d = daysUntilDue(f);
-    return d !== null && d < 0 && f.status === "open";
-  }).length;
-  const worst = openRed > 0 ? "RED" : openAmber > 0 ? "AMBER" : openGreen > 0 ? "GREEN" : "NONE";
-  return { openRed, openAmber, openGreen, openUnmarked, overdue, worst };
+  const overdue = open.filter(isOverdue).length;
+  const worst: EscalationLevel =
+    openRed > 0 ? "RED" : openAmber > 0 ? "AMBER" : openGreen > 0 ? "GREEN" : openUnmarked > 0 ? "UNMARKED" : "NONE";
+  const status: EscalationLevel = overdue > 0 ? "RED" : worst;
+  return { openRed, openAmber, openGreen, openUnmarked, overdue, worst, status };
 }

@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { useParams } from "react-router-dom";
 import PrintDocShell, { SectionTitle } from "../components/PrintDoc";
 import { RagChip } from "../components/RagChip";
-import { daysUntilDue, useAppState } from "../data/store";
+import { daysUntilDue, isOverdue, useAppState } from "../data/store";
 import { STANDARDS } from "../data/seed";
 import { fireCurrencyFor, JUDGEMENT_LABELS, Judgement, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { brand, rag } from "../theme/tokens";
@@ -196,7 +196,7 @@ export default function ReadinessPack() {
                     <TableCell>{f.raisedOn}</TableCell>
                     <TableCell>
                       {f.dueOn ?? "—"}
-                      {f.status === "open" && d !== null && d < 0 ? ` (${-d}d overdue)` : ""}
+                      {isOverdue(f) && d !== null ? ` (${-d}d overdue)` : ""}
                     </TableCell>
                     <TableCell>
                       {f.status === "open" ? "Open" : f.status === "evidence_submitted" ? "Evidence submitted" : "Closed"}

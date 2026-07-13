@@ -18,7 +18,7 @@ import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import { RagChip } from "../components/RagChip";
-import { useAppState, centreCompliance, daysUntilDue } from "../data/store";
+import { useAppState, centreCompliance, centreStatusLabel, daysUntilDue, isOverdue } from "../data/store";
 import { rag, ragAccent, accent, occupancyColor } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
@@ -26,6 +26,7 @@ const WORST_ACCENT: Record<string, string> = {
   RED: ragAccent.red,
   AMBER: ragAccent.amber,
   GREEN: ragAccent.green,
+  UNMARKED: ragAccent.amber,
   NONE: ragAccent.green,
 };
 
@@ -33,6 +34,7 @@ const WORST_TEXT: Record<string, { color: string; bg: string }> = {
   RED: { color: rag.red, bg: rag.redBg },
   AMBER: { color: rag.amber, bg: rag.amberBg },
   GREEN: { color: rag.green, bg: rag.greenBg },
+  UNMARKED: { color: rag.amber, bg: rag.amberBg },
   NONE: { color: rag.green, bg: rag.greenBg },
 };
 
@@ -44,13 +46,6 @@ function occupancyGradient(occPct: number): string {
   const c = occupancyColor(occPct);
   return `linear-gradient(90deg, ${c}66, ${c})`;
 }
-
-const WORST_LABEL: Record<string, string> = {
-  RED: "RED items open",
-  AMBER: "AMBER items open",
-  GREEN: "GREEN items only",
-  NONE: "No open findings",
-};
 
 export default function GroupOverview() {
   const { centres, findings } = useAppState();
@@ -71,10 +66,10 @@ export default function GroupOverview() {
   const dueChip = (f: (typeof open)[number]) => {
     const d = daysUntilDue(f);
     if (d === null) return null;
-    const late = d < 0;
+    const late = isOverdue(f);
     return (
       <Chip
-        label={late ? `${-d}d overdue` : `due in ${d}d`}
+        label={late ? `${-d}d overdue` : f.status === "evidence_submitted" ? "evidence in" : `due in ${d}d`}
         size="small"
         sx={{
           height: 20,
@@ -132,10 +127,7 @@ export default function GroupOverview() {
   });
 
   const overdueDetail = (): DetailContent => {
-    const list = open.filter((f) => {
-      const d = daysUntilDue(f);
-      return d !== null && d < 0 && f.status === "open";
-    });
+    const list = open.filter(isOverdue);
     return {
       title: "Overdue evidence",
       subtitle: `${list.length} finding${list.length === 1 ? "" : "s"} past the 14-day evidence clock`,
@@ -244,7 +236,7 @@ export default function GroupOverview() {
                       left: 0,
                       right: 0,
                       height: 7,
-                      background: `linear-gradient(90deg, ${WORST_ACCENT[cc.worst]}, ${WORST_ACCENT[cc.worst]}99)`,
+                      background: `linear-gradient(90deg, ${WORST_ACCENT[cc.status]}, ${WORST_ACCENT[cc.status]}99)`,
                     },
                   }}
                 >
@@ -282,14 +274,14 @@ export default function GroupOverview() {
 
                   <Box sx={{ mt: 1.5, display: "flex", gap: 0.75, flexWrap: "wrap", alignItems: "center" }}>
                     <Chip
-                      label={WORST_LABEL[cc.worst]}
+                      label={centreStatusLabel(cc)}
                       size="small"
                       sx={{
                         height: 22,
                         fontSize: "0.72rem",
                         fontWeight: 700,
-                        color: WORST_TEXT[cc.worst].color,
-                        backgroundColor: WORST_TEXT[cc.worst].bg,
+                        color: WORST_TEXT[cc.status].color,
+                        backgroundColor: WORST_TEXT[cc.status].bg,
                       }}
                     />
                     {cc.overdue > 0 && (

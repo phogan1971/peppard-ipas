@@ -79,7 +79,11 @@ function pick<T>(rand: () => number, arr: readonly T[]): T {
 function isoDaysFromToday(offset: number): string {
   const d = new Date();
   d.setDate(d.getDate() + offset);
-  return d.toISOString().slice(0, 10);
+  // Local components (not toISOString/UTC) so seeded dates line up with the
+  // store's local-date evidence-clock maths in a positive-offset timezone.
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
 // ── The 8 Peppard centres (client email, 11 Jul 2026) ───────────────────
@@ -415,6 +419,14 @@ function normalisePriority(raw: string | null): FindingPriority | null {
   return v === "RED" || v === "AMBER" || v === "GREEN" ? v : null;
 }
 
+// A closed finding's close date: raised-to-now, biased inside its evidence
+// window (a well-run loop closes on time) and never in the future. KPI-11-04
+// compares this to the due date to judge on-time vs late closure.
+function closedOnFor(raisedDaysAgo: number, evidenceDueDays: number | null, roll: number): string {
+  const closeLag = Math.round((evidenceDueDays ?? 14) * (0.4 + roll * 0.5));
+  return isoDaysFromToday(-Math.max(0, raisedDaysAgo - closeLag));
+}
+
 export function buildFindings(): Finding[] {
   const findings: Finding[] = [];
   const intensity = getProfile().findings / 100;
@@ -451,6 +463,7 @@ export function buildFindings(): Finding[] {
       raisedOn,
       dueOn,
       status,
+      closedOn: status === "closed" ? closedOnFor(raisedDaysAgo, f.evidenceDueDays, roll) : null,
       // Never assert a Department outcome the real report doesn't record —
       // the report's evidence-of-resolution boxes are unchecked throughout.
       evidenceNote:
@@ -497,6 +510,7 @@ export function buildFindings(): Finding[] {
         raisedOn: isoDaysFromToday(-raisedDaysAgo),
         dueOn: isGreen ? null : isoDaysFromToday(-raisedDaysAgo + 14),
         status: closed ? "closed" : !isGreen && rand() < 0.5 ? "evidence_submitted" : "open",
+        closedOn: closed ? closedOnFor(raisedDaysAgo, isGreen ? null : 14, roll) : null,
         evidenceNote: closed
           ? isGreen
             ? "No action required — noted at internal review"

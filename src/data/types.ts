@@ -126,6 +126,7 @@ export interface Finding {
   raisedOn: string; // ISO date
   dueOn: string | null; // ISO date — raisedOn + evidenceDueDays
   status: FindingStatus;
+  closedOn?: string | null; // ISO date the finding was closed — lets KPI-11-04 judge lateness
   evidenceNote: string | null;
 }
 

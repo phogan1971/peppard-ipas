@@ -18,7 +18,7 @@ import StatCard from "../components/StatCard";
 import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import FindingFormDialog from "../components/FindingFormDialog";
 import { RagChip } from "../components/RagChip";
-import { daysUntilDue, setFindingStatus, useAppState } from "../data/store";
+import { daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus } from "../data/types";
 import { brand, rag, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -32,7 +32,12 @@ const STATUS_META: Record<FindingStatus, { label: string; color: string; bg: str
 function DueClock({ finding }: { finding: Finding }) {
   const days = daysUntilDue(finding);
   if (days === null || finding.status === "closed") return null;
-  const overdue = days < 0;
+  // Evidence submitted pauses the clock — it is no longer "overdue" (the
+  // operator has responded); show that state rather than a red countdown.
+  if (finding.status === "evidence_submitted") {
+    return <Chip label="Awaiting confirmation" size="small" sx={{ backgroundColor: rag.amberBg, color: rag.amber, fontWeight: 700 }} />;
+  }
+  const overdue = isOverdue(finding);
   const dueSoon = days >= 0 && days <= 5;
   const label = overdue ? `${-days}d overdue` : days === 0 ? "Due today" : `${days}d remaining`;
   const c = overdue ? { color: "#fff", bg: rag.red } : dueSoon ? { color: rag.amber, bg: rag.amberBg } : { color: rag.green, bg: rag.greenBg };
@@ -55,10 +60,7 @@ export default function FindingsTracker() {
     });
 
   const open = findings.filter((f) => f.status !== "closed");
-  const overdueCount = open.filter((f) => {
-    const d = daysUntilDue(f);
-    return d !== null && d < 0 && f.status === "open";
-  }).length;
+  const overdueCount = open.filter(isOverdue).length;
   const dueThisWeek = open.filter((f) => {
     const d = daysUntilDue(f);
     return d !== null && d >= 0 && d <= 7;
@@ -96,7 +98,7 @@ export default function FindingsTracker() {
   const overdueDetail = (): DetailContent => ({
     title: "Overdue evidence",
     subtitle: `${overdueCount} finding${overdueCount === 1 ? "" : "s"} past the 14-day evidence clock`,
-    rows: findingRows(open.filter((f) => { const d = daysUntilDue(f); return d !== null && d < 0 && f.status === "open"; })),
+    rows: findingRows(open.filter(isOverdue)),
     emptyText: "Nothing is past the 14-day evidence clock.",
   });
 
@@ -109,7 +111,7 @@ export default function FindingsTracker() {
 
   const closedDetail = (): DetailContent => ({
     title: "Closed findings",
-    subtitle: "Evidence accepted",
+    subtitle: "Evidence on file",
     rows: findingRows(findings.filter((f) => f.status === "closed")),
     emptyText: "No findings closed yet.",
   });
@@ -136,7 +138,7 @@ export default function FindingsTracker() {
           <StatCard label="Due within 7 days" value={dueThisWeek} sub="evidence deadlines approaching" accent={accent.orange} icon={ScheduleIcon} onClick={() => setDetail(dueSoonDetail())} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Closed" value={findings.length - open.length} sub="evidence accepted" accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(closedDetail())} />
+          <StatCard label="Closed" value={findings.length - open.length} sub="evidence on file" accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(closedDetail())} />
         </Grid>
       </Grid>
 
@@ -215,7 +217,7 @@ export default function FindingsTracker() {
                     size="small"
                     variant="contained"
                     disableElevation
-                    onClick={() => setFindingStatus(f.id, "closed", "Evidence accepted — finding closed")}
+                    onClick={() => setFindingStatus(f.id, "closed", "Closed — evidence on file")}
                   >
                     Close finding
                   </Button>

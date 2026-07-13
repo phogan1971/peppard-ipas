@@ -1,7 +1,24 @@
 import kpiJson from "../../docs/source-data/kpi-framework.json";
-import { AppState, daysUntilDue } from "./store";
+import { AppState, isOverdue } from "./store";
 import { getProfile } from "./profile";
 import { fireCurrencyFor } from "./types";
+
+// Prohibited-item keywords for KPI-07-06 — the electrical/food/knife items an
+// inspection flags. Deliberately excludes structural/hygiene issues (mould,
+// damp, floor, repair, wall, cockroach) and "Empty", which are not
+// prohibited items and belong to other KPIs.
+const PROHIBITED_ITEM_RE =
+  /fridge|freezer|kettle|microwave|heater|\bfan\b|iron|cook|electric|knife|alcohol|extension|candle|incense|airfryer|toaster|plug|dehumidifier|food/i;
+const MOULD_DAMP_RE = /mould|damp/i;
+
+// KPI-08-01 names four checks explicitly (lighting, panel, equipment, exits);
+// drills and staff training are excluded from the currency figure.
+const CURRENCY_FIRE_REGISTERS = new Set([
+  "Emergency lighting",
+  "Fire alarm & detection",
+  "Firefighting equipment",
+  "Fire exits & escape routes",
+]);
 
 export interface KpiDef {
   id: string;
@@ -49,10 +66,18 @@ function liveValue(kpiId: string, state: AppState): KpiValue | null {
       return { display: `${pct}% of rooms`, status: pct === 100 ? "meets" : pct >= 95 ? "near" : "breach", live: true };
     }
     case "kpi-11-04": {
-      const due = state.findings.filter((f) => f.dueOn !== null);
-      if (due.length === 0) return { display: "No findings due", status: "meets", live: true };
-      const onTime = due.filter((f) => f.status !== "open" || (daysUntilDue(f) ?? 0) >= 0).length;
-      const pct = Math.round((onTime / due.length) * 100);
+      // Definition: "% Department findings closed within 14 days with
+      // evidence." Population is Department (IPPS inspection) findings whose
+      // outcome is settled — closed, or past due and still open. In-window
+      // findings aren't yet a pass or a fail, so they're excluded from both
+      // sides; a finding counts on-time only if it was actually closed on or
+      // before its due date (closedOn), so closing a late finding can't flip
+      // the KPI to 100%.
+      const dept = state.findings.filter((f) => f.source === "IPPS inspection" && f.dueOn !== null);
+      const settled = dept.filter((f) => f.status === "closed" || isOverdue(f));
+      if (settled.length === 0) return { display: "None due yet", status: "meets", live: true };
+      const onTime = settled.filter((f) => f.status === "closed" && f.closedOn != null && f.closedOn <= f.dueOn!).length;
+      const pct = Math.round((onTime / settled.length) * 100);
       return { display: `${pct}% on time`, status: pct === 100 ? "meets" : pct >= 90 ? "near" : "breach", live: true };
     }
     case "kpi-11-05": {
@@ -60,21 +85,28 @@ function liveValue(kpiId: string, state: AppState): KpiValue | null {
       return { display: `${reds} open`, status: reds === 0 ? "meets" : "breach", live: true };
     }
     case "kpi-07-05": {
-      const mould = open.filter((f) => /mould|damp/i.test(f.finding));
-      const overdue = mould.filter((f) => (daysUntilDue(f) ?? 0) < 0).length;
+      // Sourced from the room register (per the framework): a "case" is a room
+      // flagged with mould/damp. The overdue count comes from the linked
+      // remediation findings, which carry the 14-day clock.
+      const mouldRooms = allRooms.filter((r) => r.issues.some((i) => MOULD_DAMP_RE.test(i))).length;
+      const overdueFindings = open.filter((f) => MOULD_DAMP_RE.test(f.finding) && isOverdue(f)).length;
       return {
-        display: `${mould.length} open, ${overdue} >14 days`,
-        status: overdue === 0 ? (mould.length === 0 ? "meets" : "near") : "breach",
+        display: `${mouldRooms} room${mouldRooms === 1 ? "" : "s"} flagged · ${overdueFindings} >14d`,
+        status: overdueFindings > 0 ? "breach" : mouldRooms === 0 ? "meets" : "near",
         live: true,
       };
     }
     case "kpi-07-06": {
-      const flagged = allRooms.filter((r) => r.issues.length > 0).length;
+      // Prohibited items only — "Empty", mould/damp and structural issues are
+      // not prohibited items and must not inflate this figure.
+      const flagged = allRooms.filter((r) => r.issues.some((i) => PROHIBITED_ITEM_RE.test(i))).length;
       const per100 = Math.round((flagged / allRooms.length) * 100);
       return { display: `${per100} per 100 rooms`, status: per100 <= 10 ? "meets" : per100 <= 25 ? "near" : "breach", live: true };
     }
     case "kpi-08-01": {
-      const fire = Object.values(state.fireByCentre).flat();
+      const fire = Object.values(state.fireByCentre)
+        .flat()
+        .filter((r) => CURRENCY_FIRE_REGISTERS.has(r.shortName));
       if (fire.length === 0) return null;
       const inDate = fire.filter((r) => fireCurrencyFor(r).state === "in_date").length;
       const pct = Math.round((inDate / fire.length) * 100);

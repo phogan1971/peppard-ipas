@@ -8,11 +8,19 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import PrintDocShell, { SectionTitle } from "../components/PrintDoc";
 import { RagChip } from "../components/RagChip";
-import { centreCompliance, daysUntilDue, useAppState } from "../data/store";
+import { centreCompliance, centreStatusLabel, daysUntilDue, isOverdue, useAppState } from "../data/store";
 import { STANDARDS } from "../data/seed";
 import { KPI_DOMAINS, domainRollup } from "../data/kpis";
 import { fireCurrencyFor, JUDGEMENT_LABELS, Judgement } from "../data/types";
 import { brand, rag, compliance } from "../theme/tokens";
+
+const STATUS_TEXT: Record<string, { color: string; bg: string }> = {
+  RED: { color: rag.red, bg: rag.redBg },
+  AMBER: { color: rag.amber, bg: rag.amberBg },
+  GREEN: { color: rag.green, bg: rag.greenBg },
+  UNMARKED: { color: rag.amber, bg: rag.amberBg },
+  NONE: { color: rag.green, bg: rag.greenBg },
+};
 
 function quarterLabel(d: Date): string {
   return `Q${Math.floor(d.getMonth() / 3) + 1} ${d.getFullYear()}`;
@@ -28,7 +36,7 @@ export default function BoardPack() {
   const open = state.findings.filter((f) => f.status !== "closed");
   const openRed = open.filter((f) => f.priority === "RED").length;
   const openAmber = open.filter((f) => f.priority === "AMBER").length;
-  const overdue = open.filter((f) => f.status === "open" && (daysUntilDue(f) ?? 0) < 0).length;
+  const overdue = open.filter(isOverdue).length;
 
   const fireAll = Object.values(state.fireByCentre).flat();
   const fireInDate = fireAll.filter((r) => fireCurrencyFor(r).state === "in_date").length;
@@ -133,11 +141,11 @@ export default function BoardPack() {
                   </TableCell>
                   <TableCell align="center">{compliantCount}/40 at or above substantial</TableCell>
                   <TableCell>
-                    {cc.worst === "NONE" ? (
-                      <Chip label="No open findings" size="small" sx={{ backgroundColor: rag.greenBg, color: rag.green }} />
-                    ) : (
-                      <RagChip priority={cc.worst} />
-                    )}
+                    <Chip
+                      label={centreStatusLabel(cc)}
+                      size="small"
+                      sx={{ backgroundColor: STATUS_TEXT[cc.status].bg, color: STATUS_TEXT[cc.status].color, fontWeight: 700 }}
+                    />
                   </TableCell>
                 </TableRow>
               );
@@ -199,7 +207,7 @@ export default function BoardPack() {
                       <TableCell sx={{ fontWeight: 600 }}>{f.finding}</TableCell>
                       <TableCell>
                         {f.dueOn ?? "—"}
-                        {f.status === "open" && d !== null && d < 0 ? ` (${-d}d overdue)` : ""}
+                        {isOverdue(f) && d !== null ? ` (${-d}d overdue)` : ""}
                       </TableCell>
                       <TableCell>{f.status === "open" ? "Open" : "Evidence submitted"}</TableCell>
                     </TableRow>

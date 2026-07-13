@@ -20,7 +20,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useNavigate } from "react-router-dom";
 import StatCard from "../components/StatCard";
 import { RagChip } from "../components/RagChip";
-import { useAppState, centreCompliance, daysUntilDue } from "../data/store";
+import { useAppState, centreCompliance, daysUntilDue, isOverdue } from "../data/store";
 import { KPI_DOMAINS, domainRollup } from "../data/kpis";
 import { brand, rag, ragAccent, accent, text as textTokens } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -37,7 +37,16 @@ const WORST_COLOR: Record<string, string> = {
   RED: ragAccent.red,
   AMBER: ragAccent.amber,
   GREEN: ragAccent.green,
+  UNMARKED: ragAccent.amber,
   NONE: ragAccent.green,
+};
+
+const STATUS_SHORT: Record<string, string> = {
+  RED: "RED",
+  AMBER: "AMBER",
+  GREEN: "GREEN",
+  UNMARKED: "UNGRADED",
+  NONE: "CLEAR",
 };
 
 // Phone-first digest of the group governance position for directors:
@@ -57,10 +66,7 @@ export default function ExecView() {
   const open = findings.filter((f) => f.status !== "closed");
   const openRed = open.filter((f) => f.priority === "RED").length;
   const openAmber = open.filter((f) => f.priority === "AMBER").length;
-  const overdue = open.filter((f) => {
-    const d = daysUntilDue(f);
-    return d !== null && d < 0 && f.status === "open";
-  }).length;
+  const overdue = open.filter(isOverdue).length;
   // Approaching breach: open, evidence still due within 3 days of the clock.
   const atRisk = open.filter((f) => {
     const d = daysUntilDue(f);
@@ -250,15 +256,15 @@ export default function ExecView() {
                           </Typography>
                           {d !== null && (
                             <Chip
-                              label={d < 0 ? `${-d}d overdue` : `due in ${d}d`}
+                              label={isOverdue(f) ? `${-d}d overdue` : f.status === "evidence_submitted" ? "evidence in" : `due in ${d}d`}
                               size="small"
                               sx={{
                                 ml: "auto",
                                 height: 20,
                                 fontSize: "0.68rem",
                                 fontWeight: 700,
-                                color: d < 0 ? rag.red : rag.amber,
-                                backgroundColor: d < 0 ? rag.redBg : rag.amberBg,
+                                color: isOverdue(f) ? rag.red : rag.amber,
+                                backgroundColor: isOverdue(f) ? rag.redBg : rag.amberBg,
                               }}
                             />
                           )}
@@ -299,7 +305,7 @@ export default function ExecView() {
                       aria-label={`Open ${centre.name}`}
                       sx={{ width: "100%", textAlign: "left", px: 1.75, py: 1.5, display: "flex", alignItems: "center", gap: 1.25 }}
                     >
-                      <Box sx={{ width: 8, height: 8, borderRadius: "50%", flexShrink: 0, backgroundColor: WORST_COLOR[cc.worst] }} />
+                      <Box sx={{ width: 8, height: 8, borderRadius: "50%", flexShrink: 0, backgroundColor: WORST_COLOR[cc.status] }} />
                       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                         <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "text.primary", lineHeight: 1.3 }} noWrap>
                           {centre.shortName}
@@ -315,8 +321,8 @@ export default function ExecView() {
                           sx={{ height: 20, fontSize: "0.68rem", fontWeight: 700, color: rag.red, backgroundColor: rag.redBg }}
                         />
                       )}
-                      <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: WORST_COLOR[cc.worst], flexShrink: 0 }}>
-                        {cc.worst === "NONE" ? "CLEAR" : cc.worst}
+                      <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: WORST_COLOR[cc.status], flexShrink: 0 }}>
+                        {STATUS_SHORT[cc.status]}
                       </Typography>
                       <ChevronRightIcon sx={{ fontSize: 18, color: "text.secondary", flexShrink: 0 }} />
                     </ButtonBase>
