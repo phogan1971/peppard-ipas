@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import RuleIcon from "@mui/icons-material/Rule";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { SvgIconComponent } from "@mui/icons-material";
@@ -30,6 +31,12 @@ const NAV_ITEMS: NavItem[] = [
     path: "/findings",
     Icon: FactCheckIcon,
     isActive: (p) => p.startsWith("/findings"),
+  },
+  {
+    label: "Compliance",
+    path: "/compliance",
+    Icon: VerifiedUserIcon,
+    isActive: (p) => p.startsWith("/compliance"),
   },
   {
     label: "HIQA Standards",

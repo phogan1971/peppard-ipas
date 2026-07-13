@@ -213,7 +213,7 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 ├── public/peppard-logo.jpg
 └── src/
     ├── main.tsx / App.tsx   # router: / (splash) , /overview , /centres/:centreId(/readiness|/return) ,
-    │                        # /findings , /standards , /kpis , /board-pack
+    │                        # /findings , /compliance , /standards , /kpis , /board-pack
     ├── theme/tokens.ts      # ALL colours + fonts (single source of truth)
     ├── theme/index.ts       # MUI theme built from tokens
     ├── components/          # AppShell, PageShell, PortalSubNav, RagChip, StatCard, ErrorBoundary
@@ -445,6 +445,20 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   board pack shows a group fire-currency roll-up. The exec view's "needs
   attention" list surfaces findings *approaching* breach (open, evidence
   due ≤3 days), not only RED/overdue.
+- **Compliance section** (`/compliance`, `pages/Compliance.tsx`) — an
+  IPAS-native rebuild of Genisis3's `components/compliance` module (which
+  is 16k LOC of nursing-home JSX on an axios backend; NOT ported — the IA
+  and design are the blueprint, built fresh in peppard's TS/localStorage/
+  Origin stack, no new deps). Tabbed sub-nav (Cockpit · Audit programme ·
+  Actions/CAPA · QIP register · Risk register) with a facility filter.
+  Phase 1 built: **Governance Cockpit** (`components/compliance/
+  GovernanceCockpit.tsx`) — Regulatory Readiness (evidence timeliness,
+  open/overdue actions, next internal audit due) + Operational Posture
+  (open-actions domain×age matrix, risk posture, audit-programme %), all
+  from live findings/documents; **Audit programme** (internal audits +
+  inspections on a 90-day cycle, from `documentsByCentre`); **Actions/
+  CAPA** (reuses `FindingsSummaryTable` — findings *are* the CAPA loop).
+  QIP + Risk register are Phase-2 placeholders (new persisted models next).
 
 ## What is NOT done yet
 

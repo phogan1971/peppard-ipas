@@ -6,6 +6,7 @@ import ExecView from "./pages/ExecView";
 import GroupOverview from "./pages/GroupOverview";
 import CentreOperations from "./pages/CentreOperations";
 import FindingsTracker from "./pages/FindingsTracker";
+import Compliance from "./pages/Compliance";
 import StandardsRegister from "./pages/StandardsRegister";
 import KpiFramework from "./pages/KpiFramework";
 import ReadinessPack from "./pages/ReadinessPack";
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/centres/:centreId/readiness" element={<ReadinessPack />} />
           <Route path="/centres/:centreId/return" element={<DeptReturn />} />
           <Route path="/findings" element={<FindingsTracker />} />
+          <Route path="/compliance" element={<Compliance />} />
           <Route path="/standards" element={<StandardsRegister />} />
           <Route path="/kpis" element={<KpiFramework />} />
           <Route path="/board-pack" element={<BoardPack />} />
