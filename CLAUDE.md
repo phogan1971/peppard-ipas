@@ -161,7 +161,11 @@ editing tokens.ts + one sed rename, zero component redesign.)
   `public/connects-logo.png` (connects.health, used on the splash).
 - Splash screen at `/` (Genesis-navy hero): launcher cards for the
   Genesis portal (https://genesishealthcarenew.netlify.app/, external)
-  and this dashboard (`/overview`).
+  and this dashboard (`/overview`). The AppShell top bar has a **Log out**
+  button that navigates to `/` with router state `{ skipIntro: true }`,
+  so the splash lands straight on the two launcher cards (skipping the
+  2.6s logo intro, which is only for a fresh launch). No real auth — this
+  is a return-to-launcher in the offline demo.
 
 ## Design system — Genesis patterns
 

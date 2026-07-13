@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { brand } from "../theme/tokens";
 import { printTheme } from "../theme";
 
@@ -53,7 +53,11 @@ const LOGO_HOLD_MS = 2600;
 // Stage 2: platform launcher in the connects.health idiom: navy hero, white cards.
 export default function SplashScreen() {
   const navigate = useNavigate();
-  const [stage, setStage] = useState<"logo" | "choose">("logo");
+  const location = useLocation();
+  // Arriving via the in-app "Log out" lands straight on the launcher cards,
+  // skipping the branded logo intro (which is for a fresh app launch).
+  const skipIntro = (location.state as { skipIntro?: boolean } | null)?.skipIntro === true;
+  const [stage, setStage] = useState<"logo" | "choose">(skipIntro ? "choose" : "logo");
 
   useEffect(() => {
     if (stage !== "logo") return;

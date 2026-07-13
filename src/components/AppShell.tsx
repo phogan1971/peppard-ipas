@@ -9,6 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useLocation, useNavigate } from "react-router-dom";
 import { brand, fonts } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -150,6 +151,15 @@ export default function AppShell({ children }: { children: ReactNode }) {
               sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
             >
               <SettingsIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Log out">
+            <IconButton
+              aria-label="Log out"
+              onClick={() => navigate("/", { state: { skipIntro: true } })}
+              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+            >
+              <LogoutIcon />
             </IconButton>
           </Tooltip>
         </Toolbar>
