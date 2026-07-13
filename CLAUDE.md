@@ -458,7 +458,20 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   from live findings/documents; **Audit programme** (internal audits +
   inspections on a 90-day cycle, from `documentsByCentre`); **Actions/
   CAPA** (reuses `FindingsSummaryTable` — findings *are* the CAPA loop).
-  QIP + Risk register are Phase-2 placeholders (new persisted models next).
+  Phase 2 built the two persisted registers:
+  - **Risk register** (`Risk` type, `buildRisks`, `RiskRegister` +
+    `RiskFormDialog`, `riskColors.ts`): 5×5 likelihood × impact with
+    `riskScore`/`riskBand` (low/moderate/high/extreme), a heatmap plotting
+    open risks per cell, KPI cards (open · extreme · high · reviews
+    overdue), and an add/edit register table. Feeds the cockpit's Risk
+    posture panel.
+  - **QIP register** (`Qip` type, `buildQips`, `QipRegister` +
+    `QipFormDialog`): quality-improvement plans with theme/owner/target,
+    `actionsDone`/`actionsTotal` → `qipProgress`, progress bars and KPI
+    cards (active · under review · avg progress · targets overdue).
+  Both persist in the main state blob (`risks`/`qips` on `PersistedState`)
+  and re-anchor their dates on load like findings; `regenerateData`
+  reseeds them.
 
 ## What is NOT done yet
 

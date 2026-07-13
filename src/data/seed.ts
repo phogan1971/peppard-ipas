@@ -11,7 +11,10 @@ import {
   HiqaStandard,
   Judgement,
   NoticeItem,
+  Qip,
   RegisterEntry,
+  Risk,
+  RiskScale,
   Room,
   SectorDistribution,
   SourceDocument,
@@ -576,6 +579,82 @@ export function buildFindings(): Finding[] {
   }
 
   return findings;
+}
+
+// ── Risk register (seed) ────────────────────────────────────────────────
+interface RiskSpec {
+  centreId: string | null;
+  title: string;
+  category: string;
+  likelihood: RiskScale;
+  impact: RiskScale;
+  controls: string;
+  owner: string;
+  reviewInDays: number; // + future / - overdue, relative to today
+  status: Risk["status"];
+}
+const RISK_SPECS: RiskSpec[] = [
+  { centreId: null, title: "Over-occupancy against the 4.65 m² space standard", category: "Accommodation", likelihood: 3, impact: 4, controls: "Weekly room-register review; reallocation on breach", owner: "Group Operations", reviewInDays: 12, status: "open" },
+  { centreId: null, title: "Fire drill / register currency slipping at scale", category: "Fire safety", likelihood: 3, impact: 5, controls: "Mackin EHS programme; per-centre currency chips; KPI-08-01", owner: "Maeve (EHS lead)", reviewInDays: 6, status: "open" },
+  { centreId: null, title: "24/7 PSA-licensed security cover continuity", category: "Safety & security", likelihood: 2, impact: 4, controls: "Contracted security; roster audit", owner: "Group Operations", reviewInDays: -4, status: "monitoring" },
+  { centreId: null, title: "Garda vetting currency across staff & contractors", category: "Safeguarding", likelihood: 2, impact: 4, controls: "Vetting matrix; renewal alerts", owner: "Designated Officer", reviewInDays: 21, status: "open" },
+  { centreId: "riverside", title: "Recurrent mould/damp in older room stock", category: "Accommodation", likelihood: 3, impact: 3, controls: "Deep-clean + remediation; room-issue tracking", owner: "Peter O'Brien", reviewInDays: -2, status: "open" },
+  { centreId: "riverside", title: "Kitchen HACCP record gaps", category: "Food, catering", likelihood: 2, impact: 3, controls: "FSAI Safe Catering; daily/periodic cleaning records", owner: "Peter O'Brien", reviewInDays: 9, status: "monitoring" },
+  { centreId: "ballaghaderreen", title: "Contract capacity vs occupancy pressure", category: "Governance", likelihood: 3, impact: 3, controls: "Daily occupancy vs contract capacity monitoring", owner: "Aoife Duignan", reviewInDays: 30, status: "open" },
+  { centreId: "st-johns", title: "Prohibited electrical items in rooms", category: "Accommodation", likelihood: 3, impact: 2, controls: "Room spot checks; resident engagement", owner: "Mark Whelan", reviewInDays: 15, status: "monitoring" },
+  { centreId: null, title: "IPPS contract renewal timeline slippage", category: "Governance", likelihood: 2, impact: 4, controls: "Renewal calendar; readiness packs", owner: "Group Executive", reviewInDays: 45, status: "open" },
+];
+
+export function buildRisks(): Risk[] {
+  return RISK_SPECS.map((r, i) => ({
+    id: `risk-${i + 1}`,
+    centreId: r.centreId,
+    title: r.title,
+    category: r.category,
+    likelihood: r.likelihood,
+    impact: r.impact,
+    controls: r.controls,
+    owner: r.owner,
+    openedOn: isoDaysFromToday(-Math.round(20 + i * 9)),
+    reviewOn: isoDaysFromToday(r.reviewInDays),
+    status: r.status,
+  }));
+}
+
+// ── QIP register (seed) ─────────────────────────────────────────────────
+interface QipSpec {
+  centreId: string | null;
+  title: string;
+  theme: string;
+  objective: string;
+  owner: string;
+  status: Qip["status"];
+  targetInDays: number;
+  actionsTotal: number;
+  actionsDone: number;
+}
+const QIP_SPECS: QipSpec[] = [
+  { centreId: null, title: "Fire safety improvement plan", theme: "Fire & environmental safety", objective: "Sustain 100% fire-register currency and quarterly drills across all centres", owner: "Maeve (EHS lead)", status: "active", targetInDays: 40, actionsTotal: 8, actionsDone: 5 },
+  { centreId: "riverside", title: "Accommodation fabric & mould remediation", theme: "Accommodation (HIQA 4)", objective: "Close all open mould/damp findings and prevent recurrence", owner: "Peter O'Brien", status: "active", targetInDays: 25, actionsTotal: 6, actionsDone: 2 },
+  { centreId: null, title: "Safeguarding & vetting assurance", theme: "Safeguarding (HIQA 8)", objective: "100% current Garda vetting and DLP Children First training", owner: "Designated Officer", status: "under_review", targetInDays: 10, actionsTotal: 5, actionsDone: 4 },
+  { centreId: null, title: "Food safety & HACCP uplift", theme: "Food, catering (HIQA 5)", objective: "Complete daily and periodic kitchen cleaning records at every centre", owner: "Group Operations", status: "active", targetInDays: 55, actionsTotal: 7, actionsDone: 4 },
+  { centreId: null, title: "Governance & internal-audit maturity", theme: "Governance (HIQA 1)", objective: "Embed the quarterly internal-audit programme and centralised action tracking", owner: "Group Executive", status: "active", targetInDays: 70, actionsTotal: 6, actionsDone: 2 },
+];
+
+export function buildQips(): Qip[] {
+  return QIP_SPECS.map((q, i) => ({
+    id: `qip-${i + 1}`,
+    centreId: q.centreId,
+    title: q.title,
+    theme: q.theme,
+    objective: q.objective,
+    owner: q.owner,
+    status: q.status,
+    openedOn: isoDaysFromToday(-Math.round(30 + i * 12)),
+    targetOn: isoDaysFromToday(q.targetInDays),
+    actionsTotal: q.actionsTotal,
+    actionsDone: q.actionsDone,
+  }));
 }
 
 // ── HIQA self-assessments ───────────────────────────────────────────────

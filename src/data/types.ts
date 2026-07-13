@@ -176,6 +176,65 @@ export interface SectorDistribution {
   totalAssessed: number;
 }
 
+// ── Risk register (5×5 likelihood × impact) ─────────────────────────────
+export type RiskScale = 1 | 2 | 3 | 4 | 5;
+export type RiskBand = "low" | "moderate" | "high" | "extreme";
+export type RiskStatus = "open" | "monitoring" | "closed";
+
+export interface Risk {
+  id: string;
+  centreId: string | null; // null = group-level risk
+  title: string;
+  category: string;
+  likelihood: RiskScale;
+  impact: RiskScale;
+  controls: string;
+  owner: string;
+  openedOn: string; // ISO
+  reviewOn: string | null; // ISO — next review date
+  status: RiskStatus;
+}
+
+export const RISK_LIKELIHOOD_LABELS = ["", "Rare", "Unlikely", "Possible", "Likely", "Almost certain"];
+export const RISK_IMPACT_LABELS = ["", "Negligible", "Minor", "Moderate", "Major", "Catastrophic"];
+
+export function riskScore(likelihood: number, impact: number): number {
+  return likelihood * impact;
+}
+export function riskBand(score: number): RiskBand {
+  if (score >= 15) return "extreme";
+  if (score >= 8) return "high";
+  if (score >= 4) return "moderate";
+  return "low";
+}
+export const RISK_BAND_LABELS: Record<RiskBand, string> = {
+  low: "Low",
+  moderate: "Moderate",
+  high: "High",
+  extreme: "Extreme",
+};
+
+// ── QIP register (Quality Improvement Plans) ────────────────────────────
+export type QipStatus = "active" | "under_review" | "closed";
+
+export interface Qip {
+  id: string;
+  centreId: string | null;
+  title: string;
+  theme: string; // HIQA theme / domain the plan improves
+  objective: string;
+  owner: string;
+  status: QipStatus;
+  openedOn: string; // ISO
+  targetOn: string | null; // ISO — target completion
+  actionsTotal: number;
+  actionsDone: number;
+}
+
+export function qipProgress(q: Qip): number {
+  return q.actionsTotal === 0 ? 0 : Math.round((q.actionsDone / q.actionsTotal) * 100);
+}
+
 export const SPACE_STANDARD_M2_PER_PERSON = 4.65;
 
 // The epsilon guards exact multiples of 4.65: in IEEE doubles

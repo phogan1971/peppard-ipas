@@ -15,14 +15,15 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import ConstructionIcon from "@mui/icons-material/Construction";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
 import GovernanceCockpit from "../components/compliance/GovernanceCockpit";
+import RiskRegister from "../components/compliance/RiskRegister";
+import QipRegister from "../components/compliance/QipRegister";
 import FindingsSummaryTable from "../components/FindingsSummaryTable";
 import { useAppState } from "../data/store";
 import { SourceDocument } from "../data/types";
-import { rag, accent } from "../theme/tokens";
+import { rag } from "../theme/tokens";
 
 const AUDIT_CYCLE_DAYS = 90;
 const KIND_LABEL: Record<SourceDocument["kind"], string> = {
@@ -45,19 +46,6 @@ const TABS = [
   { key: "qip", label: "QIP register" },
   { key: "risk", label: "Risk register" },
 ];
-
-function PhaseTwoTab({ title, blurb }: { title: string; blurb: string }) {
-  return (
-    <Paper sx={{ p: 4, textAlign: "center", maxWidth: 560, mx: "auto", mt: 2 }}>
-      <ConstructionIcon sx={{ fontSize: 36, color: accent.orange, mb: 1 }} />
-      <Typography variant="h6" sx={{ color: "text.primary", mb: 0.5 }}>
-        {title}
-      </Typography>
-      <Chip label="Phase 2" size="small" sx={{ mb: 1.5, backgroundColor: rag.amberBg, color: rag.amber, fontWeight: 700 }} />
-      <Typography sx={{ fontSize: "0.9rem", color: "text.secondary" }}>{blurb}</Typography>
-    </Paper>
-  );
-}
 
 export default function Compliance() {
   const navigate = useNavigate();
@@ -173,19 +161,9 @@ export default function Compliance() {
         </Box>
       )}
 
-      {tab === "qip" && (
-        <PhaseTwoTab
-          title="Quality Improvement Plan register"
-          blurb="A QIP per centre/theme, its improvement actions linked to the findings and audits that raised them, with owners, target dates and progress. Built next in peppard's stack with real persistence."
-        />
-      )}
+      {tab === "qip" && <QipRegister centreFilter={centreFilter} centres={centres} centreName={centreName} />}
 
-      {tab === "risk" && (
-        <PhaseTwoTab
-          title="Risk register"
-          blurb="A living risk register with a likelihood × impact heatmap, RAG scoring, controls and review dates — linked to findings, audits and the KPI framework. Built next as a persisted model."
-        />
-      )}
+      {tab === "risk" && <RiskRegister centreFilter={centreFilter} centres={centres} centreName={centreName} />}
     </PageShell>
   );
 }

@@ -5,7 +5,9 @@ import {
   buildFindings,
   buildFireRegisters,
   buildNotices,
+  buildQips,
   buildRegisters,
+  buildRisks,
   buildRooms,
   buildSourceDocuments,
 } from "./seed";
@@ -20,7 +22,9 @@ import {
   FindingStatus,
   Judgement,
   NoticeItem,
+  Qip,
   RegisterEntry,
+  Risk,
   Room,
   SourceDocument,
   StandardAssessment,
@@ -62,6 +66,8 @@ interface PersistedState {
   anchorDate: string;
   findings: Finding[];
   assessments: StandardAssessment[];
+  risks: Risk[];
+  qips: Qip[];
   roomOverrides: Record<string, Room[]>; // centreId -> full edited room list
   registerOverrides: Record<string, RegisterOverride>; // `${centreId}::${name}`
   fireOverrides: Record<string, FireOverride>; // `${centreId}::${name}`
@@ -96,6 +102,8 @@ export interface AppState {
   documentsByCentre: Record<string, SourceDocument[]>;
   findings: Finding[];
   assessments: StandardAssessment[];
+  risks: Risk[];
+  qips: Qip[];
 }
 
 const emptyOverrides = () => ({ roomOverrides: {}, registerOverrides: {}, fireOverrides: {}, noticeOverrides: {} });
@@ -118,6 +126,16 @@ function reanchor(parsed: PersistedState, today: string): PersistedState {
       ...a,
       assessedOn: a.assessedOn ? shiftIsoDate(a.assessedOn, delta) : null,
     })),
+    risks: parsed.risks.map((r) => ({
+      ...r,
+      openedOn: shiftIsoDate(r.openedOn, delta),
+      reviewOn: r.reviewOn ? shiftIsoDate(r.reviewOn, delta) : null,
+    })),
+    qips: parsed.qips.map((q) => ({
+      ...q,
+      openedOn: shiftIsoDate(q.openedOn, delta),
+      targetOn: q.targetOn ? shiftIsoDate(q.targetOn, delta) : null,
+    })),
   };
 }
 
@@ -133,6 +151,8 @@ function loadPersisted(): PersistedState {
             anchorDate: parsed.anchorDate,
             findings: parsed.findings,
             assessments: parsed.assessments,
+            risks: parsed.risks ?? buildRisks(),
+            qips: parsed.qips ?? buildQips(),
             roomOverrides: parsed.roomOverrides ?? {},
             registerOverrides: parsed.registerOverrides ?? {},
             fireOverrides: parsed.fireOverrides ?? {},
@@ -145,7 +165,7 @@ function loadPersisted(): PersistedState {
   } catch {
     // corrupt storage — fall through to reseed
   }
-  return { anchorDate: today, findings: buildFindings(), assessments: buildAssessments(), ...emptyOverrides() };
+  return { anchorDate: today, findings: buildFindings(), assessments: buildAssessments(), risks: buildRisks(), qips: buildQips(), ...emptyOverrides() };
 }
 
 let persisted: PersistedState = loadPersisted();
@@ -196,6 +216,8 @@ function buildState(): AppState {
     ),
     findings: persisted.findings,
     assessments: persisted.assessments,
+    risks: persisted.risks,
+    qips: persisted.qips,
   };
 }
 
@@ -444,6 +466,32 @@ export function recordInternalAudit(centreId: string, by: string) {
   commit();
 }
 
+// ── Risk register ─────────────────────────────────────────────────────
+export type RiskInput = Omit<Risk, "id" | "openedOn">;
+
+export function addRisk(input: RiskInput) {
+  const risk: Risk = { ...input, id: `risk-manual-${Date.now()}`, openedOn: localDateIso() };
+  persisted.risks = [risk, ...persisted.risks];
+  commit();
+}
+export function updateRisk(id: string, input: RiskInput) {
+  persisted.risks = persisted.risks.map((r) => (r.id === id ? { ...r, ...input } : r));
+  commit();
+}
+
+// ── QIP register ──────────────────────────────────────────────────────
+export type QipInput = Omit<Qip, "id" | "openedOn">;
+
+export function addQip(input: QipInput) {
+  const qip: Qip = { ...input, id: `qip-manual-${Date.now()}`, openedOn: localDateIso() };
+  persisted.qips = [qip, ...persisted.qips];
+  commit();
+}
+export function updateQip(id: string, input: QipInput) {
+  persisted.qips = persisted.qips.map((q) => (q.id === id ? { ...q, ...input } : q));
+  commit();
+}
+
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);
@@ -453,6 +501,8 @@ export function regenerateData(profile?: DataProfile) {
     anchorDate: localDateIso(),
     findings: buildFindings(),
     assessments: buildAssessments(),
+    risks: buildRisks(),
+    qips: buildQips(),
     ...emptyOverrides(),
   };
   uploadedDocs = {};

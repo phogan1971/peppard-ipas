@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
 import Button from "@mui/material/Button";
 import GavelIcon from "@mui/icons-material/Gavel";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -11,7 +12,7 @@ import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import StatCard from "../StatCard";
 import { daysUntilDue, isOverdue, useAppState } from "../../data/store";
-import { Finding } from "../../data/types";
+import { Finding, riskBand, riskScore } from "../../data/types";
 import { accent, rag } from "../../theme/tokens";
 import { useSurfaces } from "../../theme";
 
@@ -47,11 +48,20 @@ const AGE_BUCKETS = [
 
 export default function GovernanceCockpit({ centreFilter, onOpenTab }: { centreFilter: string; onOpenTab: (tab: string) => void }) {
   const surf = useSurfaces();
-  const { findings, documentsByCentre, centres } = useAppState();
+  const { findings, documentsByCentre, centres, risks } = useAppState();
 
   const scope = centreFilter === "all" ? centres.map((c) => c.id) : [centreFilter];
   const inScope = (id: string) => scope.includes(id);
   const cFindings = findings.filter((f) => inScope(f.centreId));
+
+  // Risk posture (group-level risks show in every facility view)
+  const scopedRisks = risks.filter((r) => centreFilter === "all" || r.centreId === centreFilter || r.centreId === null);
+  const openRisks = scopedRisks.filter((r) => r.status !== "closed");
+  const riskExtreme = openRisks.filter((r) => riskBand(riskScore(r.likelihood, r.impact)) === "extreme").length;
+  const riskHigh = openRisks.filter((r) => riskBand(riskScore(r.likelihood, r.impact)) === "high").length;
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const riskReviewsOverdue = openRisks.filter((r) => r.reviewOn && r.reviewOn < todayIso).length;
 
   const open = cFindings.filter((f) => f.status !== "closed");
   const openRed = open.filter((f) => f.priority === "RED").length;
@@ -204,12 +214,19 @@ export default function GovernanceCockpit({ centreFilter, onOpenTab }: { centreF
         {/* Risk posture — Phase 2 */}
         <Grid item xs={12} sm={6} lg={3}>
           <Paper sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-              <GppMaybeIcon sx={{ color: accent.purple, fontSize: 20 }} />
-              <Typography sx={{ fontWeight: 700 }}>Risk posture</Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <GppMaybeIcon sx={{ color: accent.purple, fontSize: 20 }} />
+                <Typography sx={{ fontWeight: 700 }}>Risk posture</Typography>
+              </Box>
+              {riskReviewsOverdue > 0 && (
+                <Chip label={`${riskReviewsOverdue} review${riskReviewsOverdue === 1 ? "" : "s"} due`} size="small" sx={{ height: 20, fontSize: "0.64rem", fontWeight: 700, backgroundColor: rag.redBg, color: rag.red }} />
+              )}
             </Box>
-            <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "text.primary", lineHeight: 1 }}>—</Typography>
-            <Typography sx={{ fontSize: "0.78rem", color: "text.secondary", mb: 1 }}>likelihood × impact register</Typography>
+            <Typography sx={{ fontSize: "2rem", fontWeight: 800, color: "text.primary", lineHeight: 1 }}>{openRisks.length}</Typography>
+            <Typography sx={{ fontSize: "0.78rem", color: "text.secondary", mb: 1 }}>
+              open risks · {riskExtreme} extreme · {riskHigh} high
+            </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <Button size="small" onClick={() => onOpenTab("risk")} sx={{ alignSelf: "flex-start", px: 0 }}>
               Open risk register →
