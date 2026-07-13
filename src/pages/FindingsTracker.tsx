@@ -25,7 +25,7 @@ import InspectionReportsPanel from "../components/InspectionReportsPanel";
 import FindingsSummaryTable from "../components/FindingsSummaryTable";
 import ReportDisseminationDialog from "../components/ReportDisseminationDialog";
 import { RagChip } from "../components/RagChip";
-import { addSourceDocument, daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
+import { addSourceDocument, daysUntilDue, isOverdue, recordInternalAudit, setFindingStatus, useAppState } from "../data/store";
 import { Finding, FindingStatus, SourceDocument } from "../data/types";
 import { brand, rag, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -233,6 +233,10 @@ export default function FindingsTracker() {
         onUpload={(centreId, doc) => {
           addSourceDocument(centreId, doc, centres.find((c) => c.id === centreId)?.manager ?? "Centre Manager");
           setToast(`${doc.name} attached to ${centreName(centreId)} — its findings are summarised below.`);
+        }}
+        onRecordAudit={(centreId) => {
+          recordInternalAudit(centreId, centres.find((c) => c.id === centreId)?.manager ?? "Centre Manager");
+          setToast(`Internal audit recorded for ${centreName(centreId)} — raise findings against it and disseminate to the KPIs.`);
         }}
         onProcess={(doc) => setProcessDoc(doc)}
       />

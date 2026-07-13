@@ -108,9 +108,9 @@ export default function KpiFramework() {
           The remainder carry indicative values pending their assurance registers coming online in Phase 2.
         </Typography>
         <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mt: 0.75 }}>
-          Those registers are populated by the Department inspection reports and daily operator entry — upload a report
-          in <strong>Findings &amp; Actions</strong> and choose <strong>Disseminate</strong> to see it flow through to
-          these KPIs.
+          Those registers are populated by the facility's own internal audits and daily operator entry — with Department
+          and HIQA inspections as additional inputs. In <strong>Findings &amp; Actions</strong>, record an internal audit
+          (or attach an inspection) and choose <strong>Disseminate</strong> to see it flow through to these KPIs.
         </Typography>
       </Paper>
 

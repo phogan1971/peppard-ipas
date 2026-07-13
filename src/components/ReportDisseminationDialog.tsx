@@ -90,15 +90,17 @@ export default function ReportDisseminationDialog({ open, doc, centreName, onClo
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ fontWeight: 700 }}>How this inspection report informs the system</DialogTitle>
+      <DialogTitle sx={{ fontWeight: 700 }}>How this audit informs the system</DialogTitle>
       <DialogContent dividers>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary", mb: 2 }}>
-          One upload, disseminated across the system: the Department inspection is the source — its sections populate the
-          registers and records, which in turn compute the KPIs. Nothing is keyed twice.
+          The dashboard is the internal governance record. This {doc.kind === "internal" ? "internal audit" : "inspection"}{" "}
+          — carried out {doc.kind === "internal" ? "by the facility itself" : "externally"} — populates the registers and
+          records, which in turn compute the KPIs. The same flow serves a proactive self-audit and an external
+          inspection, so nothing is keyed twice.
         </Typography>
 
         {/* Stage 1 — the source */}
-        <StageLabel n={1} text="Source — Department inspection" />
+        <StageLabel n={1} text={doc.kind === "internal" ? "Source — internal audit (facility-led)" : "Source — external inspection"} />
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5, borderRadius: 1.5, border: `1px solid ${brand.primary}`, backgroundColor: surf.subtleBg }}>
           <DescriptionIcon sx={{ color: brand.primary, fontSize: 26 }} />
           <Box sx={{ minWidth: 0 }}>
@@ -141,9 +143,10 @@ export default function ReportDisseminationDialog({ open, doc, centreName, onClo
 
         <Box sx={{ mt: 2, p: 1.25, borderRadius: 1, backgroundColor: rag.amberBg }}>
           <Typography sx={{ fontSize: "0.76rem", color: "text.primary" }}>
-            <strong>Design workflow.</strong> In the full build the report's fields extract automatically on upload and
-            fan out to each register. Today the mapping is shown and the live KPIs already recompute from the populated
-            registers — so the flow is aligned end to end.
+            <strong>Design workflow.</strong> The facility drives this — internal audits are recorded here proactively, so
+            an external inspection should find nothing the dashboard hasn't already. In the full build an audit's fields
+            capture directly into each register; today the mapping is shown and the live KPIs already recompute from the
+            populated registers, so the flow is aligned end to end.
           </Typography>
         </Box>
       </DialogContent>

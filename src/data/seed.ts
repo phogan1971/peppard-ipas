@@ -370,7 +370,19 @@ export const RIVERSIDE_REPORT: SourceDocument = {
 };
 
 export function buildSourceDocuments(centreId: string): SourceDocument[] {
-  return centreId === "riverside" ? [RIVERSIDE_REPORT] : [];
+  const rand = mulberry(`audit-${centreId}`);
+  // Every centre runs its own internal audits — the dashboard is a proactive
+  // governance tool, so the facility's self-audit is the primary source; an
+  // external Department/HIQA inspection is an additional input.
+  const internalAudit: SourceDocument = {
+    id: `${centreId}-internal-audit`,
+    centreId,
+    name: "Internal audit — senior management",
+    uploadedOn: isoDaysFromToday(-Math.round(8 + rand() * 20)),
+    uploadedBy: "Senior management (internal)",
+    kind: "internal",
+  };
+  return centreId === "riverside" ? [internalAudit, RIVERSIDE_REPORT] : [internalAudit];
 }
 
 // ── Mandatory public notices (IPPS report §2 visual inspection) ─────────

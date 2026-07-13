@@ -104,16 +104,18 @@ export function fireCurrencyFor(reg: FireRegister, today = new Date()): FireCurr
   return { state, daysSince, frequencyDays: reg.frequencyDays };
 }
 
-// An uploaded or bundled inspection report attached to a centre, whose
-// findings are summarised in the Findings & Actions table.
+// A governance source attached to a centre — an internal audit the facility
+// carried out, or an external inspection (Department/HIQA) — whose findings
+// are summarised in the Findings & Actions table. The system is the internal
+// governance record; inspections are inputs to it, not the other way round.
 export interface SourceDocument {
   id: string;
   centreId: string;
   name: string;
-  uploadedOn: string; // ISO date
+  uploadedOn: string; // ISO date (audit/inspection date)
   uploadedBy: string;
-  url: string; // public path (sample) or data: URL (operator upload)
-  kind: "sample" | "uploaded";
+  url?: string; // public path (sample) or data: URL (upload); absent for an internal audit
+  kind: "internal" | "sample" | "uploaded";
   sizeKb?: number;
 }
 

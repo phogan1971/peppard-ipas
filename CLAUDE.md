@@ -374,16 +374,26 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
     to its source report. Uploaded PDFs persist as `data:` URLs in their
     own `peppard-ipas:docs:v1` key so a large blob can't fail the main
     state write; `regenerateData` clears them.
-  - **Report → system → KPIs dissemination** (`ReportDisseminationDialog`,
-    "Disseminate" per report row): the design-aligned workflow the client
-    asked for — the Department inspection is the *source* that fans out.
-    A 3-stage flow (Source inspection → Populates registers/findings/
-    notices/rooms/fire, with live counts → Informs the KPI framework, the
-    7 live KPIs badged by domain). "Apply to system" confirms the
-    dissemination. Framed explicitly as design: real per-field extraction
-    is a later build; today the mapping is shown and the live KPIs already
-    recompute from the populated registers. The KPI Framework page links
-    back to this ("upload a report … choose Disseminate").
+  - **Internal governance, audit-led** (Philip): the dashboard is the
+    facility's own governance record, NOT a byproduct of external
+    inspection. `buildSourceDocuments` seeds an "Internal audit — senior
+    management" per centre (kind `internal`, no document → shown
+    "Self-assessed"); `recordInternalAudit` lets the facility carry out a
+    new self-audit in-app. `SourceDocument.kind` is `internal` | `sample`
+    | `uploaded`; `url` is optional (internal audits have none). The
+    "Audits & inspections" panel leads with **Record internal audit**;
+    **Attach inspection** (Department/HIQA PDF) is the secondary,
+    additional input.
+  - **Audit → system → KPIs dissemination** (`ReportDisseminationDialog`,
+    "Disseminate" per audit/inspection): a 3-stage flow (Source — internal
+    audit *or* external inspection → Populates registers/findings/notices/
+    rooms/fire, with live counts → Informs the KPI framework, 7 live KPIs
+    badged by domain). "Apply to system" confirms it. Framed as design:
+    real per-field capture is a later build; today the mapping is shown
+    and the live KPIs already recompute from the populated registers. The
+    copy stresses the facility drives it — an external inspection should
+    find nothing the dashboard hasn't already. The KPI Framework page
+    links back ("record an internal audit … choose Disseminate").
   - A success snackbar spells out the ripple ("…KPI, space-standard tiles
     and the Department return updated"). `regenerateData` clears the
     overrides with the seed.

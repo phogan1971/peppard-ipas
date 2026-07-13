@@ -427,6 +427,23 @@ export function addSourceDocument(
   commit();
 }
 
+// The facility carries out its own audit inspection — recorded in-app as an
+// internal governance source (no external document), ready to raise findings
+// against and disseminate to the KPIs.
+export function recordInternalAudit(centreId: string, by: string) {
+  const entry: SourceDocument = {
+    id: `${centreId}-audit-${Date.now()}`,
+    centreId,
+    name: `Internal audit — ${localDateIso()}`,
+    uploadedOn: localDateIso(),
+    uploadedBy: by,
+    kind: "internal",
+  };
+  uploadedDocs = { ...uploadedDocs, [centreId]: [...(uploadedDocs[centreId] ?? []), entry] };
+  safeSet(DOCS_KEY, JSON.stringify(uploadedDocs));
+  commit();
+}
+
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);

@@ -60,8 +60,14 @@ export default function FindingsSummaryTable({ findings, centreName, documentsBy
               const d = daysUntilDue(f);
               const overdue = d !== null && d < 0 && f.status === "open";
               const sm = STATUS_LABEL[f.status];
-              const doc = (documentsByCentre[f.centreId] ?? [])[0];
-              const isReportSourced = f.source === "IPPS inspection" && !!doc;
+              const docs = documentsByCentre[f.centreId] ?? [];
+              // Link a finding to a matching source: an external inspection for
+              // IPPS/HIQA findings, the internal audit otherwise.
+              const doc =
+                f.source === "IPPS inspection" || f.source === "HIQA monitoring"
+                  ? docs.find((x) => x.kind !== "internal") ?? docs[0]
+                  : docs.find((x) => x.kind === "internal") ?? docs[0];
+              const isReportSourced = !!doc && !!doc.url;
               return (
                 <TableRow key={f.id} hover>
                   <TableCell>{i + 1}</TableCell>
