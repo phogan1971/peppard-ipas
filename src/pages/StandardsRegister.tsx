@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
 import Select from "@mui/material/Select";
 import Tooltip from "@mui/material/Tooltip";
 import RuleIcon from "@mui/icons-material/Rule";
@@ -18,13 +19,17 @@ import AccordionBlock from "../components/AccordionBlock";
 import DetailDialog, { DetailContent } from "../components/DetailDialog";
 import { setAssessment, useAppState } from "../data/store";
 import { sectorDistributionFor, STANDARDS } from "../data/seed";
-import { Judgement, JUDGEMENT_LABELS } from "../data/types";
+import { Judgement, JUDGEMENT_LABELS, StandardAssessment } from "../data/types";
 import { brand, compliance, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
+const GROUP = "__group__"; // sentinel: the all-centres roll-up
+
 const EDITABLE_JUDGEMENTS: Judgement[] = ["compliant", "substantiallyCompliant", "partiallyCompliant", "notCompliant"];
 
-const SEGMENTS: { key: Exclude<Judgement, "notAssessed">; color: string }[] = [
+type ScoredJudgement = Exclude<Judgement, "notAssessed">;
+
+const SEGMENTS: { key: ScoredJudgement; color: string }[] = [
   { key: "compliant", color: compliance.compliant },
   { key: "substantiallyCompliant", color: compliance.substantially },
   { key: "partiallyCompliant", color: compliance.partially },
@@ -32,79 +37,130 @@ const SEGMENTS: { key: Exclude<Judgement, "notAssessed">; color: string }[] = [
 ];
 
 // Judgement → chip colours (the token keys don't mirror the Judgement names)
-const JUDGEMENT_COLORS: Record<Exclude<Judgement, "notAssessed">, { color: string; bg: string }> = {
+const JUDGEMENT_COLORS: Record<ScoredJudgement, { color: string; bg: string }> = {
   compliant: { color: compliance.compliant, bg: compliance.compliantBg },
   substantiallyCompliant: { color: compliance.substantially, bg: compliance.substantiallyBg },
   partiallyCompliant: { color: compliance.partially, bg: compliance.partiallyBg },
   notCompliant: { color: compliance.notCompliant, bg: compliance.notCompliantBg },
 };
 
-// Stacked distribution of published HIQA judgements for this standard
-// across the sector (69 inspections) — colour + tooltip text, and an
-// accessible summary label.
-function BenchmarkBar({ standardId }: { standardId: string }) {
-  const dist = useMemo(() => sectorDistributionFor(standardId), [standardId]);
-  if (dist.totalAssessed === 0) {
-    return <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>No sector data</Typography>;
+interface Distribution {
+  compliant: number;
+  substantiallyCompliant: number;
+  partiallyCompliant: number;
+  notCompliant: number;
+  total: number;
+}
+
+// A stacked distribution bar (Peppard group or published sector) — colour +
+// tooltip + accessible summary, shared shape for both so they read alike.
+function DistributionBar({ dist, label }: { dist: Distribution; label: string }) {
+  if (dist.total === 0) {
+    return <Typography sx={{ fontSize: "0.75rem", color: "text.secondary" }}>No data</Typography>;
   }
   const summary = SEGMENTS.map((s) => `${JUDGEMENT_LABELS[s.key]}: ${dist[s.key]}`).join(", ");
   return (
-    <Tooltip title={`Sector (${dist.totalAssessed} inspections) — ${summary}`}>
+    <Tooltip title={`${label} (${dist.total}) — ${summary}`}>
       <Box
         role="img"
-        aria-label={`Sector benchmark for standard ${standardId}: ${summary}`}
+        aria-label={`${label} for this standard: ${summary}`}
         sx={{ display: "flex", height: 10, borderRadius: 5, overflow: "hidden", minWidth: 120, border: `1px solid ${brand.border}` }}
       >
         {SEGMENTS.filter((s) => dist[s.key] > 0).map((s) => (
-          <Box key={s.key} sx={{ width: `${(dist[s.key] / dist.totalAssessed) * 100}%`, backgroundColor: s.color }} />
+          <Box key={s.key} sx={{ width: `${(dist[s.key] / dist.total) * 100}%`, backgroundColor: s.color }} />
         ))}
       </Box>
     </Tooltip>
   );
 }
 
+// Published-sector distribution for a standard (69 HIQA inspections).
+function SectorBar({ standardId }: { standardId: string }) {
+  const d = useMemo(() => sectorDistributionFor(standardId), [standardId]);
+  const dist: Distribution = {
+    compliant: d.compliant,
+    substantiallyCompliant: d.substantiallyCompliant,
+    partiallyCompliant: d.partiallyCompliant,
+    notCompliant: d.notCompliant,
+    total: d.totalAssessed,
+  };
+  return <DistributionBar dist={dist} label={`Sector, ${d.totalAssessed} inspections`} />;
+}
+
 export default function StandardsRegister() {
   const { centres, assessments } = useAppState();
   const s = useSurfaces();
-  const [centreId, setCentreId] = useState(centres[0].id);
+  // Open on the group position — the page is about the whole portfolio, not
+  // one centre; a specific centre is a drill-in from here.
+  const [centreId, setCentreId] = useState<string>(GROUP);
+  const isGroup = centreId === GROUP;
 
   const centre = centres.find((c) => c.id === centreId) ?? centres[0];
-  const forCentre = new Map(
-    assessments.filter((a) => a.centreId === centreId).map((a) => [a.standardId, a]),
-  );
 
+  // centreId → (standardId → assessment), for both the single and group views.
+  const byCentre = useMemo(() => {
+    const m = new Map<string, Map<string, StandardAssessment>>();
+    for (const a of assessments) {
+      if (!m.has(a.centreId)) m.set(a.centreId, new Map());
+      m.get(a.centreId)!.set(a.standardId, a);
+    }
+    return m;
+  }, [assessments]);
+
+  const forCentre = byCentre.get(centreId) ?? new Map<string, StandardAssessment>();
+
+  // Peppard's own spread for a standard across all centres (group view).
+  const groupDistributionFor = (standardId: string): Distribution => {
+    const d: Distribution = { compliant: 0, substantiallyCompliant: 0, partiallyCompliant: 0, notCompliant: 0, total: 0 };
+    for (const c of centres) {
+      const j = byCentre.get(c.id)?.get(standardId)?.judgement;
+      if (j && j !== "notAssessed") {
+        d[j] += 1;
+        d.total += 1;
+      }
+    }
+    return d;
+  };
+
+  // Stat-card totals: 40 standards for one centre, 40 × 8 for the group.
   const counts = { compliant: 0, substantiallyCompliant: 0, partiallyCompliant: 0, notCompliant: 0, notAssessed: 0 };
-  for (const std of STANDARDS) {
-    const j = forCentre.get(std.id)?.judgement ?? "notAssessed";
-    counts[j] += 1;
+  const scope = isGroup ? centres : [centre];
+  for (const c of scope) {
+    const m = byCentre.get(c.id);
+    for (const std of STANDARDS) counts[m?.get(std.id)?.judgement ?? "notAssessed"] += 1;
   }
+  const denom = STANDARDS.length * scope.length;
+  const scopeLabel = isGroup ? "all 8 centres" : centre.shortName;
 
   const [detail, setDetail] = useState<DetailContent | null>(null);
 
-  const judgementDetail = (judgement: Exclude<Judgement, "notAssessed">, sub: string): DetailContent => ({
-    title: `${JUDGEMENT_LABELS[judgement]} — ${centre.shortName}`,
-    subtitle: sub,
-    rows: STANDARDS.filter((std) => (forCentre.get(std.id)?.judgement ?? "notAssessed") === judgement).map((std) => ({
-      id: std.id,
-      leading: (
-        <Chip
-          label={std.id}
-          size="small"
-          sx={{
-            height: 22,
-            minWidth: 44,
-            fontWeight: 700,
-            fontSize: "0.72rem",
-            color: JUDGEMENT_COLORS[judgement].color,
-            backgroundColor: JUDGEMENT_COLORS[judgement].bg,
-          }}
-        />
-      ),
-      primary: std.text,
-      secondary: `Theme ${std.themeNumber}: ${std.themeName}`,
-    })),
-    emptyText: `No standards judged ${JUDGEMENT_LABELS[judgement].toLowerCase()} at ${centre.shortName}.`,
-  });
+  const judgementDetail = (judgement: ScoredJudgement, sub: string): DetailContent => {
+    const rows = isGroup
+      ? centres.flatMap((c) =>
+          STANDARDS.filter((std) => (byCentre.get(c.id)?.get(std.id)?.judgement ?? "notAssessed") === judgement).map((std) => ({
+            id: `${c.id}-${std.id}`,
+            leading: (
+              <Chip label={std.id} size="small" sx={{ height: 22, minWidth: 44, fontWeight: 700, fontSize: "0.72rem", color: JUDGEMENT_COLORS[judgement].color, backgroundColor: JUDGEMENT_COLORS[judgement].bg }} />
+            ),
+            primary: `${c.shortName} · ${std.text}`,
+            secondary: `Theme ${std.themeNumber}: ${std.themeName}`,
+          })),
+        )
+      : STANDARDS.filter((std) => (forCentre.get(std.id)?.judgement ?? "notAssessed") === judgement).map((std) => ({
+          id: std.id,
+          leading: (
+            <Chip label={std.id} size="small" sx={{ height: 22, minWidth: 44, fontWeight: 700, fontSize: "0.72rem", color: JUDGEMENT_COLORS[judgement].color, backgroundColor: JUDGEMENT_COLORS[judgement].bg }} />
+          ),
+          primary: std.text,
+          secondary: `Theme ${std.themeNumber}: ${std.themeName}`,
+        }));
+    return {
+      title: `${JUDGEMENT_LABELS[judgement]} — ${isGroup ? "All centres" : centre.shortName}`,
+      subtitle: sub,
+      rows,
+      emptyText: `No standards judged ${JUDGEMENT_LABELS[judgement].toLowerCase()} at ${scopeLabel}.`,
+    };
+  };
 
   const themes = useMemo(() => {
     const byTheme = new Map<number, { name: string; standards: typeof STANDARDS }>();
@@ -125,9 +181,11 @@ export default function StandardsRegister() {
           size="small"
           value={centreId}
           onChange={(e) => setCentreId(e.target.value)}
-          aria-label="Select centre"
+          aria-label="Select centre or the group roll-up"
           sx={{ minWidth: 240, backgroundColor: "background.paper" }}
         >
+          <MenuItem value={GROUP}>All centres (group position)</MenuItem>
+          <Divider component="li" />
           {centres.map((c) => (
             <MenuItem key={c.id} value={c.id}>
               {c.shortName}
@@ -138,7 +196,7 @@ export default function StandardsRegister() {
     >
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard label="Compliant" value={counts.compliant} sub={`of ${STANDARDS.length} standards`} accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(judgementDetail("compliant", `${counts.compliant} of ${STANDARDS.length} standards fully compliant`))} />
+          <StatCard label="Compliant" value={counts.compliant} sub={`of ${denom} assessments`} accent={accent.green} icon={CheckCircleOutlineIcon} onClick={() => setDetail(judgementDetail("compliant", `${counts.compliant} of ${denom} fully compliant across ${scopeLabel}`))} />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard label="Substantially compliant" value={counts.substantiallyCompliant} sub="minor gaps identified" accent={accent.blue} icon={TaskAltIcon} onClick={() => setDetail(judgementDetail("substantiallyCompliant", "Minor gaps identified"))} />
@@ -155,93 +213,110 @@ export default function StandardsRegister() {
 
       <Paper sx={{ p: 2, mb: 2, backgroundColor: s.subtleBg }}>
         <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>
-          {centre.shortName} has not yet been inspected by HIQA — judgements below are internal self-assessments.
-          The sector bar shows how the 69 published HIQA IPAS inspections judged each standard, recomputed from the
-          raw judgement matrix; n varies per standard as not every inspection assesses every standard.
+          {isGroup
+            ? "Peppard has not yet been inspected by HIQA — judgements are internal self-assessments across all 8 centres. Each standard shows how the group's own centres self-assess (Peppard bar) beside how the 69 published HIQA IPAS inspections judged it (sector bar). Pick a centre above to view and edit its individual return."
+            : `${centre.shortName} has not yet been inspected by HIQA — judgements below are internal self-assessments. The sector bar shows how the 69 published HIQA IPAS inspections judged each standard, recomputed from the raw judgement matrix; n varies per standard as not every inspection assesses every standard.`}
         </Typography>
       </Paper>
 
       {themes.map(([themeNo, theme]) => {
-        const belowSubstantial = theme.standards.filter((std) => {
-          const j = forCentre.get(std.id)?.judgement;
-          return j === "partiallyCompliant" || j === "notCompliant";
-        }).length;
-        return (
-        <AccordionBlock
-          key={themeNo}
-          title={`Theme ${themeNo}: ${theme.name}`}
-          subtitle={`${theme.standards.length} standards`}
-          defaultExpanded={themeNo === 1}
-          headerExtra={
-            belowSubstantial > 0 ? (
-              <Chip
-                label={`${belowSubstantial} below substantial`}
-                size="small"
-                sx={{ backgroundColor: compliance.partiallyBg, color: compliance.partially, fontWeight: 600 }}
-              />
-            ) : (
-              <Chip
-                label="On track"
-                size="small"
-                sx={{ backgroundColor: compliance.compliantBg, color: compliance.compliant, fontWeight: 600 }}
-              />
+        const belowSubstantial = isGroup
+          ? centres.reduce(
+              (sum, c) =>
+                sum +
+                theme.standards.filter((std) => {
+                  const j = byCentre.get(c.id)?.get(std.id)?.judgement;
+                  return j === "partiallyCompliant" || j === "notCompliant";
+                }).length,
+              0,
             )
-          }
-        >
-          {theme.standards.map((std) => {
-            const assessment = forCentre.get(std.id);
-            const judgement = assessment?.judgement ?? "notAssessed";
-            return (
-              <Box
-                key={std.id}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 2,
-                  px: 2,
-                  py: 1.25,
-                  borderBottom: `1px solid ${brand.border}`,
-                  "&:last-child": { borderBottom: "none" },
-                  flexWrap: { xs: "wrap", md: "nowrap" },
-                }}
-              >
-                <Typography sx={{ fontWeight: 700, color: s.heading, width: 40, flexShrink: 0 }}>{std.id}</Typography>
-                <Typography sx={{ fontSize: "0.85rem", flexGrow: 1, minWidth: 240 }}>{std.text}</Typography>
-                <Box sx={{ width: 150, flexShrink: 0 }}>
-                  <Typography sx={{ fontSize: "0.68rem", color: "text.secondary", mb: 0.25 }}>Sector benchmark</Typography>
-                  <BenchmarkBar standardId={std.id} />
-                </Box>
-                <Select
+          : theme.standards.filter((std) => {
+              const j = forCentre.get(std.id)?.judgement;
+              return j === "partiallyCompliant" || j === "notCompliant";
+            }).length;
+        return (
+          <AccordionBlock
+            key={themeNo}
+            title={`Theme ${themeNo}: ${theme.name}`}
+            subtitle={`${theme.standards.length} standards`}
+            defaultExpanded={themeNo === 1}
+            headerExtra={
+              belowSubstantial > 0 ? (
+                <Chip
+                  label={`${belowSubstantial} below substantial`}
                   size="small"
-                  value={judgement}
-                  onChange={(e) => setAssessment(centreId, std.id, e.target.value as Judgement)}
-                  aria-label={`Judgement for standard ${std.id}`}
+                  sx={{ backgroundColor: compliance.partiallyBg, color: compliance.partially, fontWeight: 600 }}
+                />
+              ) : (
+                <Chip
+                  label="On track"
+                  size="small"
+                  sx={{ backgroundColor: compliance.compliantBg, color: compliance.compliant, fontWeight: 600 }}
+                />
+              )
+            }
+          >
+            {theme.standards.map((std) => {
+              const assessment = forCentre.get(std.id);
+              const judgement = assessment?.judgement ?? "notAssessed";
+              return (
+                <Box
+                  key={std.id}
                   sx={{
-                    minWidth: 200,
-                    flexShrink: 0,
-                    fontSize: "0.82rem",
-                    "& .MuiSelect-select": { color: "#333" },
-                    backgroundColor: {
-                      compliant: compliance.compliantBg,
-                      substantiallyCompliant: compliance.substantiallyBg,
-                      partiallyCompliant: compliance.partiallyBg,
-                      notCompliant: compliance.notCompliantBg,
-                      notAssessed: compliance.notAssessedBg,
-                    }[judgement],
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    px: 2,
+                    py: 1.25,
+                    borderBottom: `1px solid ${brand.border}`,
+                    "&:last-child": { borderBottom: "none" },
+                    flexWrap: { xs: "wrap", md: "nowrap" },
                   }}
                 >
-                  {(judgement === "notAssessed" ? [...EDITABLE_JUDGEMENTS, "notAssessed" as Judgement] : EDITABLE_JUDGEMENTS).map(
-                    (j) => (
-                      <MenuItem key={j} value={j} sx={{ fontSize: "0.82rem" }}>
-                        {JUDGEMENT_LABELS[j]}
-                      </MenuItem>
-                    ),
+                  <Typography sx={{ fontWeight: 700, color: s.heading, width: 40, flexShrink: 0 }}>{std.id}</Typography>
+                  <Typography sx={{ fontSize: "0.85rem", flexGrow: 1, minWidth: 240 }}>{std.text}</Typography>
+                  <Box sx={{ width: 150, flexShrink: 0 }}>
+                    <Typography sx={{ fontSize: "0.68rem", color: "text.secondary", mb: 0.25 }}>Sector benchmark</Typography>
+                    <SectorBar standardId={std.id} />
+                  </Box>
+                  {isGroup ? (
+                    <Box sx={{ width: 200, flexShrink: 0 }}>
+                      <Typography sx={{ fontSize: "0.68rem", color: "text.secondary", mb: 0.25 }}>Peppard (8 centres)</Typography>
+                      <DistributionBar dist={groupDistributionFor(std.id)} label="Peppard, 8 centres" />
+                    </Box>
+                  ) : (
+                    <Select
+                      size="small"
+                      value={judgement}
+                      onChange={(e) => setAssessment(centreId, std.id, e.target.value as Judgement)}
+                      aria-label={`Judgement for standard ${std.id}`}
+                      sx={{
+                        minWidth: 200,
+                        flexShrink: 0,
+                        fontSize: "0.82rem",
+                        "& .MuiSelect-select": { color: brand.charcoal },
+                        backgroundColor: {
+                          compliant: compliance.compliantBg,
+                          substantiallyCompliant: compliance.substantiallyBg,
+                          partiallyCompliant: compliance.partiallyBg,
+                          notCompliant: compliance.notCompliantBg,
+                          notAssessed: compliance.notAssessedBg,
+                        }[judgement],
+                      }}
+                    >
+                      {(judgement === "notAssessed" ? [...EDITABLE_JUDGEMENTS, "notAssessed" as Judgement] : EDITABLE_JUDGEMENTS).map(
+                        (j) => (
+                          <MenuItem key={j} value={j} sx={{ fontSize: "0.82rem" }}>
+                            {JUDGEMENT_LABELS[j]}
+                          </MenuItem>
+                        ),
+                      )}
+                    </Select>
                   )}
-                </Select>
-              </Box>
-            );
-          })}
-        </AccordionBlock>
+                </Box>
+              );
+            })}
+          </AccordionBlock>
         );
       })}
     </PageShell>
