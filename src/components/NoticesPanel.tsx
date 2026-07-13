@@ -11,23 +11,15 @@ import { useSurfaces } from "../theme";
 interface Props {
   notices: NoticeItem[];
   onVerify: (name: string, compliant: boolean) => void;
+  // Render just the list (no Paper/heading) so it can sit inside an accordion.
+  embedded?: boolean;
 }
 
-export default function NoticesPanel({ notices, onVerify }: Props) {
+export default function NoticesPanel({ notices, onVerify, embedded }: Props) {
   const surf = useSurfaces();
   const displayed = notices.filter((n) => n.compliant).length;
-  return (
-    <Paper sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-        <CampaignIcon sx={{ color: rag.amber, fontSize: 20 }} />
-        <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
-          Mandatory notices checklist
-        </Typography>
-      </Box>
-      <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1.5 }}>
-        {displayed} of {notices.length} mandatory public notices displayed and verified (IPPS visual-inspection §2).
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+  const list = (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {notices.map((n) => (
           <Box
             key={n.name}
@@ -74,7 +66,23 @@ export default function NoticesPanel({ notices, onVerify }: Props) {
             </Box>
           </Box>
         ))}
+    </Box>
+  );
+
+  if (embedded) return <Box sx={{ p: 2, pt: 1.5 }}>{list}</Box>;
+
+  return (
+    <Paper sx={{ p: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+        <CampaignIcon sx={{ color: rag.amber, fontSize: 20 }} />
+        <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
+          Mandatory notices checklist
+        </Typography>
       </Box>
+      <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1.5 }}>
+        {displayed} of {notices.length} mandatory public notices displayed and verified (IPPS visual-inspection §2).
+      </Typography>
+      {list}
     </Paper>
   );
 }

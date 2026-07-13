@@ -17,23 +17,14 @@ const CURRENCY_META: Record<FireCurrencyState, { label: string; color: string; b
 interface Props {
   registers: FireRegister[];
   onLog?: (name: string) => void;
+  // Render just the list (no Paper/heading) so it can sit inside an accordion.
+  embedded?: boolean;
 }
 
-export default function FireRegisterPanel({ registers, onLog }: Props) {
+export default function FireRegisterPanel({ registers, onLog, embedded }: Props) {
   const surf = useSurfaces();
-  return (
-    <Paper sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-        <LocalFireDepartmentIcon sx={{ color: rag.red, fontSize: 20 }} />
-        <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
-          Fire safety registers
-        </Typography>
-      </Box>
-      <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1.5 }}>
-        Each register shows days since the last entry against its required frequency, turning amber then red as currency
-        lapses.
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+  const list = (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {registers.map((reg) => {
           const cur = fireCurrencyFor(reg);
           const meta = CURRENCY_META[cur.state];
@@ -69,7 +60,24 @@ export default function FireRegisterPanel({ registers, onLog }: Props) {
             </Box>
           );
         })}
+    </Box>
+  );
+
+  if (embedded) return <Box sx={{ p: 2, pt: 1.5 }}>{list}</Box>;
+
+  return (
+    <Paper sx={{ p: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+        <LocalFireDepartmentIcon sx={{ color: rag.red, fontSize: 20 }} />
+        <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary" }}>
+          Fire safety registers
+        </Typography>
       </Box>
+      <Typography sx={{ fontSize: "0.8rem", color: "text.secondary", mb: 1.5 }}>
+        Each register shows days since the last entry against its required frequency, turning amber then red as currency
+        lapses.
+      </Typography>
+      {list}
     </Paper>
   );
 }

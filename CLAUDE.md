@@ -178,7 +178,12 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   lift). Accents from `tokens.accent` (navy/green/blue/orange/purple/red).
 - **Accordions** — `src/components/AccordionBlock.tsx`: Genesis §6 block
   (#ebf5ef wrapper, #dde3e6 clickable header hover #cdd5d9, navy bold
-  title + caption, navy chevron). Used for HIQA themes + KPI domains.
+  title + caption, navy chevron). Used for HIQA themes + KPI domains, and
+  the Centre Operations register/fire/notice panes — keyed on `centre.id`
+  so they reset **closed** when a facility opens, with a status chip
+  (e.g. "6 to review" / "All in date" / "2 missing") in the header.
+  `FireRegisterPanel`/`NoticesPanel` take an `embedded` prop to render
+  just their list inside the accordion.
 - **RAG / compliance chips** — `src/components/RagChip.tsx` (theme gives
   all chips Genesis 20px radius).
 - Cards/Paper: white, radius 10, 1px #e0e0e0 border, shadow

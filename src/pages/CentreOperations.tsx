@@ -32,8 +32,9 @@ import ChartDialog, { ChartContent } from "../components/ChartDialog";
 import RoomFormDialog from "../components/RoomFormDialog";
 import FireRegisterPanel from "../components/FireRegisterPanel";
 import NoticesPanel from "../components/NoticesPanel";
+import AccordionBlock from "../components/AccordionBlock";
 import { markRegisterReviewed, logFireCheck, setNoticeVerified, useAppState } from "../data/store";
-import { RegisterEntry, Room, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
+import { fireCurrencyFor, RegisterEntry, Room, SPACE_STANDARD_M2_PER_PERSON } from "../data/types";
 import { rag, ragAccent, accent } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 
@@ -54,6 +55,24 @@ export default function CentreOperations() {
   const registers = registersByCentre[centre.id] ?? [];
   const fireRegisters = fireByCentre[centre.id] ?? [];
   const notices = noticesByCentre[centre.id] ?? [];
+  const regAttention = registers.filter((r) => r.status !== "in_order").length;
+  const fireIssues = fireRegisters.filter((r) => fireCurrencyFor(r).state !== "in_date").length;
+  const noticesMissing = notices.filter((n) => !n.compliant).length;
+
+  // A green "all clear" / amber "N need attention" chip for an accordion header.
+  const summaryChip = (count: number, okLabel: string, attnLabel: string) => (
+    <Chip
+      label={count > 0 ? attnLabel : okLabel}
+      size="small"
+      sx={{
+        height: 20,
+        fontSize: "0.68rem",
+        fontWeight: 700,
+        backgroundColor: count > 0 ? rag.amberBg : rag.greenBg,
+        color: count > 0 ? rag.amber : rag.green,
+      }}
+    />
+  );
 
   const [roomDialog, setRoomDialog] = useState<{ open: boolean; existing: Room | null }>({ open: false, existing: null });
   const [toast, setToast] = useState<string | null>(null);
@@ -311,16 +330,14 @@ export default function CentreOperations() {
         </Grid>
 
         <Grid item xs={12} lg={4}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ fontSize: "1.05rem", color: "text.primary", mb: 0.5 }}>
-                Administration registers
-              </Typography>
-              <Typography sx={{ fontSize: "0.75rem", color: "text.secondary", mb: 1 }}>
-                Each register is tagged to the IPPS report section and the HIQA standard it evidences — one entry serves
-                both regimes.
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <AccordionBlock
+              key={`admin-${centre.id}`}
+              title="Administration registers"
+              subtitle="Tagged to the IPPS section and HIQA standard it evidences — one entry, both regimes"
+              headerExtra={summaryChip(regAttention, "All in order", `${regAttention} to review`)}
+            >
+              <Box sx={{ p: 2, pt: 1.5, display: "flex", flexDirection: "column", gap: 1 }}>
                 {registers.map((reg) => {
                   const s = REGISTER_STATUS[reg.status];
                   return (
@@ -382,27 +399,43 @@ export default function CentreOperations() {
                   );
                 })}
               </Box>
-            </Paper>
+            </AccordionBlock>
 
-            <FireRegisterPanel
-              registers={fireRegisters}
-              onLog={(name) => {
-                logFireCheck(centre.id, name, centre.manager);
-                setToast(`Fire check logged for ${centre.shortName} — register currency refreshed.`);
-              }}
-            />
+            <AccordionBlock
+              key={`fire-${centre.id}`}
+              title="Fire safety registers"
+              subtitle="Days since last check vs required frequency — amber then red as currency lapses"
+              headerExtra={summaryChip(fireIssues, "All in date", `${fireIssues} due/overdue`)}
+            >
+              <FireRegisterPanel
+                embedded
+                registers={fireRegisters}
+                onLog={(name) => {
+                  logFireCheck(centre.id, name, centre.manager);
+                  setToast(`Fire check logged for ${centre.shortName} — register currency refreshed.`);
+                }}
+              />
+            </AccordionBlock>
 
-            <NoticesPanel
-              notices={notices}
-              onVerify={(name, compliant) => {
-                setNoticeVerified(centre.id, name, compliant, centre.manager);
-                setToast(
-                  compliant
-                    ? `${name} verified as displayed — readiness pack and Department return updated.`
-                    : `${name} flagged as missing — needs attention.`,
-                );
-              }}
-            />
+            <AccordionBlock
+              key={`notices-${centre.id}`}
+              title="Mandatory notices checklist"
+              subtitle={`${notices.length - noticesMissing} of ${notices.length} displayed — IPPS §2 visual inspection`}
+              headerExtra={summaryChip(noticesMissing, "All displayed", `${noticesMissing} missing`)}
+            >
+              <NoticesPanel
+                embedded
+                notices={notices}
+                onVerify={(name, compliant) => {
+                  setNoticeVerified(centre.id, name, compliant, centre.manager);
+                  setToast(
+                    compliant
+                      ? `${name} verified as displayed — readiness pack and Department return updated.`
+                      : `${name} flagged as missing — needs attention.`,
+                  );
+                }}
+              />
+            </AccordionBlock>
           </Box>
         </Grid>
       </Grid>
