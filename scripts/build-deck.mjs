@@ -254,8 +254,26 @@ shotSlide({
     "The rest show indicative values until their registers come online in Phase 2",
   ],
 });
+shotSlide({
+  n: 12, title: "Compliance — the internal governance cockpit", sub: "The facility runs its own audits; an inspection should find nothing it hasn't",
+  img: "12-compliance-cockpit.png", header: "ON THIS SCREEN", accent: NAVY,
+  points: [
+    "Regulatory readiness: evidence timeliness, open/overdue actions, next internal audit due",
+    "Operational posture: open actions by domain × age, risk posture, audit-programme %",
+    "Cockpit · Audit programme · Actions/CAPA · QIP register · Risk register — one section",
+  ],
+});
+shotSlide({
+  n: 13, title: "Risk & QIP registers", sub: "Persisted governance registers, wired into the cockpit and KPIs",
+  img: "13-compliance-risk.png", header: "ON THIS SCREEN", accent: RED,
+  points: [
+    "Risk register: 5×5 likelihood × impact heatmap, RAG scoring, controls, review dates",
+    "QIP register: improvement plans by theme, owner, target and tracked progress",
+    "Both add/edit and persist — every finding, audit and risk feeds the same governance record",
+  ],
+});
 
-// 12 ── One-click documents
+// 14 ── One-click documents
 {
   const s = p.addSlide();
   s.background = { color: WHITE };
@@ -272,10 +290,10 @@ shotSlide({
     s.addText(d[1], { x, y: 1.6 + h + 0.12, w: cw, h: 0.35, fontFace: FONT, fontSize: 15, bold: true, color: NAVY, align: "center", margin: 0 });
     s.addText(d[2], { x, y: 1.6 + h + 0.5, w: cw, h: 0.7, fontFace: FONT, fontSize: 11.5, color: GRAY, align: "center", valign: "top", margin: 0 });
   });
-  pageNum(s, 12);
+  pageNum(s, 14);
 }
 
-// 13 ── Rigour
+// 15 ── Rigour
 {
   const s = p.addSlide();
   s.background = { color: WHITE };
@@ -302,10 +320,10 @@ shotSlide({
     ].map((t, i, a) => ({ text: t, options: { bullet: { indent: 14 }, breakLine: i < a.length - 1, paraSpaceAfter: 10 } })),
     { x: 0.7, y: 3.75, w: 12.1, h: 3.2, fontFace: FONT, fontSize: 14.5, color: INK, valign: "top", margin: 0 },
   );
-  pageNum(s, 13);
+  pageNum(s, 15);
 }
 
-// 14 ── Roadmap
+// 16 ── Roadmap
 {
   const s = p.addSlide();
   s.background = { color: WHITE };
@@ -330,10 +348,10 @@ shotSlide({
   s.addText("Backend & auth (AWS/Cognito vs Supabase) remain an open commercial question — deliberately not pre-empted in code.", {
     x: 0.55, y: 5.6, w: 12.25, h: 0.5, fontFace: FONT, fontSize: 12.5, italic: true, color: GRAY, margin: 0,
   });
-  pageNum(s, 14);
+  pageNum(s, 16);
 }
 
-// 15 ── Closing — charcoal cover, Origin lockup as the "powered by" hero
+// 17 ── Closing — charcoal cover, Origin lockup as the "powered by" hero
 {
   const s = p.addSlide();
   s.background = { color: INK };

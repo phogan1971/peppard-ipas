@@ -232,8 +232,9 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
 - All three generated documents (shared `PrintDoc` frame, print → PDF):
   readiness pack `/centres/:id/readiness`, Department return
   `/centres/:id/return`, quarterly board pack `/board-pack`.
-- PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (15 slides,
-  real app screenshots in `docs/screens/`). **The deck is a Peppard
+- PPT fallback deck: `docs/Peppard_IPAS_Dashboard_Demo.pptx` (17 slides,
+  real app screenshots in `docs/screens/`; includes two Compliance slides
+  — governance cockpit + risk/QIP registers). **The deck is a Peppard
   document** (Peppard identity — white/charcoal editorial, Peppard-red
   accents, Peppard logo on the cover) with **Origin credited "powered
   by"** (donut + wordmark on light slides / footers, the full white
