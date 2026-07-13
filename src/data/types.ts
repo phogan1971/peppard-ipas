@@ -143,7 +143,22 @@ export interface Finding {
   status: FindingStatus;
   closedOn?: string | null; // ISO date the finding was closed — lets KPI-11-04 judge lateness
   evidenceNote: string | null;
+  // Governance triage (Compliance → Findings): the pathway a finding was
+  // routed down, and the register entry it spawned (risk/QIP), if any.
+  triagePathway?: TriagePathway | null;
+  triageNote?: string | null;
+  linkedRiskId?: string | null;
+  linkedQipId?: string | null;
 }
+
+export type TriagePathway = "corrective_action" | "risk_register" | "qip_candidate" | "monitor";
+
+export const TRIAGE_PATHWAY_LABELS: Record<TriagePathway, string> = {
+  corrective_action: "Corrective action (CAPA)",
+  risk_register: "Escalate to risk register",
+  qip_candidate: "QIP candidate",
+  monitor: "Monitor — no action",
+};
 
 export interface HiqaStandard {
   id: string; // "1.1" … "10.5"
@@ -233,6 +248,154 @@ export interface Qip {
 
 export function qipProgress(q: Qip): number {
   return q.actionsTotal === 0 ? 0 : Math.round((q.actionsDone / q.actionsTotal) * 100);
+}
+
+// ── Audit types & checklists (Compliance → Audit types / Checklists) ────
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  critical: boolean; // a non-compliant critical item auto-raises a finding
+}
+
+export interface AuditType {
+  id: string;
+  name: string;
+  description: string;
+  category: string; // audit domain, e.g. "Fire safety", "Food & catering"
+  sourceStandard: string; // dual-axis reference, e.g. "IPPS §2.3 · HIQA 3.1"
+  targetPct: number; // target compliance %
+  active: boolean;
+  checklistVersion: number; // bumps on every checklist save
+  checklist: ChecklistItem[];
+}
+
+// ── Audit scheduling (Compliance → Scheduling) ──────────────────────────
+export type SchedulePriority = "high" | "medium" | "low";
+export type ScheduleRecurrence = "one_off" | "monthly" | "quarterly";
+export type ScheduleStatus = "scheduled" | "completed" | "cancelled";
+
+export interface AuditSchedule {
+  id: string;
+  centreId: string;
+  auditTypeId: string;
+  dueOn: string; // ISO date
+  assignedTo: string;
+  priority: SchedulePriority;
+  recurrence: ScheduleRecurrence;
+  status: ScheduleStatus;
+  notes: string | null;
+}
+
+export const RECURRENCE_LABELS: Record<ScheduleRecurrence, string> = {
+  one_off: "One-off",
+  monthly: "Monthly",
+  quarterly: "Quarterly",
+};
+
+// ── Conducted audits (Compliance → Conduct / Results / Dashboard) ───────
+export type AuditAnswer = "compliant" | "not_compliant" | "na";
+
+export interface AuditResponse {
+  itemId: string;
+  text: string;
+  critical: boolean;
+  answer: AuditAnswer;
+  note: string | null;
+}
+
+export interface AuditRecord {
+  id: string;
+  centreId: string;
+  auditTypeId: string;
+  auditName: string;
+  conductedOn: string; // ISO date
+  conductedBy: string;
+  compliancePct: number;
+  targetPct: number;
+  // Item-level responses exist for audits conducted in-app; seeded history
+  // rows carry a summary score only.
+  responses: AuditResponse[];
+  findingsRaised: number;
+  scheduleId: string | null;
+}
+
+export function auditCompliancePct(responses: AuditResponse[]): number {
+  const answered = responses.filter((r) => r.answer !== "na");
+  if (answered.length === 0) return 100;
+  return Math.round((answered.filter((r) => r.answer === "compliant").length / answered.length) * 100);
+}
+
+// ── Governance meetings (Compliance → Meetings) ─────────────────────────
+export type MeetingType = "governance" | "management" | "safeguarding" | "fire_safety" | "resident_forum";
+
+export const MEETING_TYPE_META: Record<MeetingType, { label: string; cadenceDays: number }> = {
+  governance: { label: "Group governance", cadenceDays: 30 },
+  management: { label: "Centre management", cadenceDays: 30 },
+  safeguarding: { label: "Safeguarding review", cadenceDays: 90 },
+  fire_safety: { label: "Fire safety review", cadenceDays: 90 },
+  resident_forum: { label: "Resident forum", cadenceDays: 30 },
+};
+
+export interface Meeting {
+  id: string;
+  centreId: string | null; // null = group-level
+  title: string;
+  type: MeetingType;
+  heldOn: string; // ISO date
+  chair: string;
+  attendees: number;
+  quorum: boolean;
+  minutesRef: string | null;
+  actionsTotal: number;
+  actionsDone: number;
+  nextOn: string | null; // ISO date of the next scheduled meeting
+}
+
+// ── Policy register (Compliance → Policies) ─────────────────────────────
+export interface Policy {
+  id: string;
+  name: string;
+  category: string; // Safeguarding / Fire & safety / Operations / HR / Governance
+  owner: string;
+  version: string; // e.g. "v3.1"
+  reviewCycleDays: number;
+  lastReviewed: string; // ISO date
+  nextReviewDue: string; // ISO date
+  docRef: string | null;
+}
+
+export type PolicyStatus = "current" | "due_soon" | "overdue";
+
+export function policyStatusFor(p: Policy, todayIso: string, dueSoonDays = 90): PolicyStatus {
+  if (p.nextReviewDue < todayIso) return "overdue";
+  const [y, m, d] = todayIso.split("-").map(Number);
+  const warn = new Date(y, m - 1, d + dueSoonDays);
+  const warnIso = `${warn.getFullYear()}-${String(warn.getMonth() + 1).padStart(2, "0")}-${String(warn.getDate()).padStart(2, "0")}`;
+  return p.nextReviewDue <= warnIso ? "due_soon" : "current";
+}
+
+// ── Alerts (Compliance → Alerts / Settings) ─────────────────────────────
+// Alerts are DERIVED live from the registers — never stored — so they can
+// never disagree with the underlying data. Only read-state and rule
+// enablement persist.
+export type AlertSeverity = "critical" | "warning" | "info";
+
+export interface ComplianceAlert {
+  id: string; // deterministic: `${ruleKey}:${entityId}` so read-state persists
+  ruleKey: string;
+  severity: AlertSeverity;
+  title: string;
+  body: string;
+  centreId: string | null;
+  tab: string | null; // compliance tab a click opens
+}
+
+export interface AlertRule {
+  key: string;
+  label: string;
+  description: string;
+  severity: AlertSeverity;
+  enabled: boolean;
 }
 
 export const SPACE_STANDARD_M2_PER_PERSON = 4.65;

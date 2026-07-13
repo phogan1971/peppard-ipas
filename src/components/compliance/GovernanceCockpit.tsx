@@ -142,7 +142,7 @@ export default function GovernanceCockpit({ centreFilter, onOpenTab }: { centreF
             sub={soonestNext < 0 ? "self-audit overdue" : "until next self-audit due"}
             accent={soonestNext < 0 ? accent.red : soonestNext <= 14 ? accent.orange : accent.blue}
             icon={EventAvailableIcon}
-            onClick={() => onOpenTab("audit")}
+            onClick={() => onOpenTab("scheduling")}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -251,7 +251,7 @@ export default function GovernanceCockpit({ centreFilter, onOpenTab }: { centreF
             <Typography sx={{ fontSize: "0.72rem", color: "text.secondary" }}>
               Next due in {soonestNext < 0 ? `${-soonestNext}d (overdue)` : `${soonestNext}d`}
             </Typography>
-            <Button size="small" onClick={() => onOpenTab("audit")} sx={{ alignSelf: "flex-start", px: 0 }}>
+            <Button size="small" onClick={() => onOpenTab("scheduling")} sx={{ alignSelf: "flex-start", px: 0 }}>
               Open audit programme →
             </Button>
           </Paper>

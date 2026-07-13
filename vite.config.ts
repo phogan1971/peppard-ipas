@@ -10,6 +10,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5184,
+    // PORT lets the preview harness assign a free port when 5184 is taken
+    // (e.g. two sessions on this folder); default stays 5184.
+    port: Number(process.env.PORT) || 5184,
   },
 });
