@@ -15,7 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
-import DetailDialog, { DetailContent } from "../components/DetailDialog";
+import DetailDialog, { DetailContent, DetailFilter } from "../components/DetailDialog";
 import FindingFormDialog from "../components/FindingFormDialog";
 import { RagChip } from "../components/RagChip";
 import { daysUntilDue, isOverdue, setFindingStatus, useAppState } from "../data/store";
@@ -82,39 +82,67 @@ export default function FindingsTracker() {
       .sort((a, b) => (daysUntilDue(a) ?? 9999) - (daysUntilDue(b) ?? 9999))
       .map((f) => ({
         id: f.id,
+        filterValue: f.centreId,
         leading: <RagChip priority={f.priority} />,
         primary: `${centreName(f.centreId)} · ${f.finding}`,
         secondary: f.actionRequired,
         trailing: f.status === "closed" ? statusChip(f) : <DueClock finding={f} />,
       }));
 
+  // A "filter by facility" dropdown for the drill-down, offered only when the
+  // list spans more than one centre and listing only the centres present.
+  const centreDetailFilter = (list: Finding[]): DetailFilter | undefined => {
+    const present = new Set(list.map((f) => f.centreId));
+    if (present.size <= 1) return undefined;
+    return {
+      allLabel: "All centres",
+      options: centres.filter((c) => present.has(c.id)).map((c) => ({ value: c.id, label: c.shortName })),
+    };
+  };
+
   const openDetail = (): DetailContent => ({
     title: "Open findings",
     subtitle: `${open.length} open across all centres`,
     rows: findingRows(open),
     emptyText: "No open findings.",
+    filter: centreDetailFilter(open),
   });
 
-  const overdueDetail = (): DetailContent => ({
-    title: "Overdue evidence",
-    subtitle: `${overdueCount} finding${overdueCount === 1 ? "" : "s"} past the 14-day evidence clock`,
-    rows: findingRows(open.filter(isOverdue)),
-    emptyText: "Nothing is past the 14-day evidence clock.",
-  });
+  const overdueDetail = (): DetailContent => {
+    const list = open.filter(isOverdue);
+    return {
+      title: "Overdue evidence",
+      subtitle: `${overdueCount} finding${overdueCount === 1 ? "" : "s"} past the 14-day evidence clock`,
+      rows: findingRows(list),
+      emptyText: "Nothing is past the 14-day evidence clock.",
+      filter: centreDetailFilter(list),
+    };
+  };
 
-  const dueSoonDetail = (): DetailContent => ({
-    title: "Due within 7 days",
-    subtitle: `${dueThisWeek} evidence deadline${dueThisWeek === 1 ? "" : "s"} approaching`,
-    rows: findingRows(open.filter((f) => { const d = daysUntilDue(f); return d !== null && d >= 0 && d <= 7; })),
-    emptyText: "No evidence deadlines within 7 days.",
-  });
+  const dueSoonDetail = (): DetailContent => {
+    const list = open.filter((f) => {
+      const d = daysUntilDue(f);
+      return d !== null && d >= 0 && d <= 7;
+    });
+    return {
+      title: "Due within 7 days",
+      subtitle: `${dueThisWeek} evidence deadline${dueThisWeek === 1 ? "" : "s"} approaching`,
+      rows: findingRows(list),
+      emptyText: "No evidence deadlines within 7 days.",
+      filter: centreDetailFilter(list),
+    };
+  };
 
-  const closedDetail = (): DetailContent => ({
-    title: "Closed findings",
-    subtitle: "Evidence on file",
-    rows: findingRows(findings.filter((f) => f.status === "closed")),
-    emptyText: "No findings closed yet.",
-  });
+  const closedDetail = (): DetailContent => {
+    const list = findings.filter((f) => f.status === "closed");
+    return {
+      title: "Closed findings",
+      subtitle: "Evidence on file",
+      rows: findingRows(list),
+      emptyText: "No findings closed yet.",
+      filter: centreDetailFilter(list),
+    };
+  };
 
   return (
     <PageShell
