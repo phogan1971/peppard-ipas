@@ -167,7 +167,7 @@ const TOPICS: Topic[] = [
         bullets: [
           "The cards roll up the whole framework: on target, near target, off target, and how many compute live right now.",
           "Each domain expands to its KPI table: measure, assurance source register, reporting frequency, target and current position.",
-          "KPIs marked LIVE are calculated in real time from data already in the system (occupancy vs contract, rooms within the space standard, findings closed on time, open REDs, mould cases, prohibited items).",
+          "KPIs marked LIVE are calculated in real time from data already in the system (occupancy vs contract, rooms within the space standard, findings closed on time, open REDs, mould cases, prohibited items and fire register currency).",
           "The remainder show indicative values until their assurance registers come online in Phase 2 — at which point they compute the same way.",
         ],
       },

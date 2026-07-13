@@ -6,8 +6,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { brand, surface } from "../theme/tokens";
+import { brand } from "../theme/tokens";
+import { printTheme } from "../theme";
 
 const GENESIS_URL = "https://genesishealthcarenew.netlify.app/";
 
@@ -61,6 +63,7 @@ export default function SplashScreen() {
 
   if (stage === "logo") {
     return (
+      <ThemeProvider theme={printTheme}>
       <Box
         role="button"
         tabIndex={0}
@@ -71,7 +74,7 @@ export default function SplashScreen() {
         }}
         sx={{
           minHeight: "100vh",
-          backgroundColor: surface.cardBg,
+          backgroundColor: "background.paper",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -95,13 +98,16 @@ export default function SplashScreen() {
           }}
         />
       </Box>
+      </ThemeProvider>
     );
   }
 
   return (
-    <Fade in timeout={600}>
-      {renderChooser(navigate)}
-    </Fade>
+    <ThemeProvider theme={printTheme}>
+      <Fade in timeout={600}>
+        {renderChooser(navigate)}
+      </Fade>
+    </ThemeProvider>
   );
 }
 

@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { buildPeppardTheme } from "./index";
+import { safeSet } from "../data/safeStorage";
 
 type Mode = "light" | "dark";
 
@@ -31,15 +32,16 @@ function initialMode(): Mode {
 export function ColorModeProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<Mode>(initialMode);
 
+  // Persist as a side effect, never inside the state updater — a throw there
+  // (storage disabled) would propagate during render and blank the app.
+  useEffect(() => {
+    safeSet(MODE_KEY, mode);
+  }, [mode]);
+
   const value = useMemo<ColorModeValue>(
     () => ({
       mode,
-      toggleMode: () =>
-        setMode((m) => {
-          const next = m === "light" ? "dark" : "light";
-          localStorage.setItem(MODE_KEY, next);
-          return next;
-        }),
+      toggleMode: () => setMode((m) => (m === "light" ? "dark" : "light")),
     }),
     [mode],
   );

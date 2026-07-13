@@ -54,7 +54,9 @@ one entry serves both regimes.
    **room-level register with automatic suitable-occupancy calculation at
    4.65 m² per person**, fire registers, findings + 14-day evidence loop.
 2. **HIQA standards register** — self-assessment per standard per centre,
-   with **sector benchmarking** against published HIQA audits (81 centres).
+   with **sector benchmarking** against published HIQA audits (69
+   inspections across 52 centres; the app copy says "69 published HIQA
+   IPAS inspections").
 3. **KPI framework** — **13 domains, 74 KPIs**, hard rule: *every KPI
    computes from a register; nothing is manually keyed*.
 
@@ -121,7 +123,7 @@ Every register row carries dual-axis tags: ipps section + hiqa theme/standard.
 |------|----------|
 | `docs/descriptor-extract.md` | Full text of the client descriptor v1.0 |
 | `docs/source-data/riverside-inspection.json` | Riverside 24.03.2026 IPPS inspection: centre master, registers, room-by-room table, RAG findings |
-| `docs/source-data/hiqa-benchmark.json` | HIQA sector tracker: ~81 centres, per-standard judgements, sector distribution per standard |
+| `docs/source-data/hiqa-benchmark.json` | HIQA sector tracker: 69 inspections across 52 centres, per-standard judgements, sector distribution per standard |
 | `docs/source-data/hiqa-standards.json` | The 40 National Standards across 10 themes (id + statement) |
 | `docs/source-data/kpi-framework.json` | KPI framework as specified in the descriptor (13 domains) |
 
@@ -248,6 +250,22 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   by the days elapsed since last persist, so a browser seeded days before
   a meeting still opens in the state it was left in instead of decaying
   into overdue red (reference data already re-anchors every load).
+- **Hardening for a live/borrowed machine**: the ErrorBoundary now takes
+  a `resetKey` and both the top-level (in `App.tsx`, covering the splash
+  and exec view that render outside the shell) and the shell boundary key
+  it on the route, so navigating away from a caught error recovers
+  instead of sticking. `ChartDialog` wraps its lazy `Suspense` in a
+  boundary so a failed chunk (e.g. a redeploy under an open tab) shows an
+  in-dialog "Try again", not a blank page. Every localStorage **write**
+  goes through `safeSet`/`safeRemove` (`data/safeStorage.ts`) — store
+  persist, profile save, colour mode — so private browsing / full quota
+  degrades to in-memory instead of throwing mid-mutation; the colour-mode
+  write moved out of the setState updater into a `useEffect`. Roboto is
+  loaded via a font `<link>` in `index.html` (falls back to system sans
+  offline); print CSS there forces `print-color-adjust: exact` and
+  `break-inside: avoid` so RAG chips and tables print intact. The splash
+  is wrapped in the always-light `printTheme`, so its launcher cards stay
+  white/legible in dark mode.
 - **Centre occupancy and roomCount are derived, never seeded**:
   `buildState` computes both from the (override-merged) room register, so
   the headline tile, Group Overview bars, exec view, board pack and both

@@ -9,6 +9,7 @@ import {
   buildRooms,
 } from "./seed";
 import { DataProfile, saveProfile } from "./profile";
+import { safeRemove, safeSet } from "./safeStorage";
 import {
   Centre,
   FireRegister,
@@ -182,7 +183,7 @@ let state: AppState = buildState();
 const listeners = new Set<() => void>();
 
 function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
+  safeSet(STORAGE_KEY, JSON.stringify(persisted));
 }
 
 // Recompute derived state from the persisted layer and notify subscribers.
@@ -387,7 +388,7 @@ export function updateFinding(id: string, input: FindingInput) {
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);
-  localStorage.removeItem(STORAGE_KEY);
+  safeRemove(STORAGE_KEY);
   persisted = {
     anchorDate: localDateIso(),
     findings: buildFindings(),

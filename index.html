@@ -5,6 +5,34 @@
     <link rel="icon" type="image/jpeg" href="/peppard-logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Peppard IPAS Operator Dashboard</title>
+    <!-- Roboto to match the Genisis3 platform typography; falls back to the
+         system sans (Arial/Helvetica) if the network is unavailable. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap"
+    />
+    <style>
+      /* Print fidelity for the generated documents: keep RAG chips and status
+         backgrounds when the browser's "background graphics" option is off,
+         and stop tables/section titles splitting across page breaks. */
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        tr,
+        .MuiTableRow-root,
+        .MuiChip-root {
+          break-inside: avoid;
+        }
+        h5,
+        h6 {
+          break-after: avoid;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

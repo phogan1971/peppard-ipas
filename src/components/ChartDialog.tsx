@@ -8,12 +8,14 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
+import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PieChartOutlineIcon from "@mui/icons-material/PieChartOutline";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { useTheme } from "@mui/material/styles";
 import { useSurfaces } from "../theme";
+import ErrorBoundary from "./ErrorBoundary";
 
 // recharts (and its d3 deps) live in ChartCanvas so they load as a lazy
 // chunk only when a chart is actually opened, keeping them out of the
@@ -119,18 +121,31 @@ export default function ChartDialog({ content, onClose }: { content: ChartConten
             {/* only mount once the dialog has finished opening (see `entered`);
                 Suspense covers the lazy recharts chunk on first open */}
             {entered && (
-              <Suspense fallback={<Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress size={28} /></Box>}>
-                <ChartCanvas
-                  type={type}
-                  data={data}
-                  valueLabel={valueLabel}
-                  animate={ANIMATE}
-                  axisFill={theme.palette.text.secondary}
-                  tooltipStyle={tooltipStyle}
-                  gridStroke={s.border}
-                  cursorFill={s.hoverBg}
-                />
-              </Suspense>
+              // A failed chunk load (e.g. the site was redeployed while this
+              // tab was open) must stay contained in the dialog, not crash the
+              // whole page — the boundary offers a retry and resets per open.
+              <ErrorBoundary
+                resetKey={type}
+                fallback={(_e, reset) => (
+                  <Box sx={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1 }}>
+                    <Typography sx={{ fontSize: "0.85rem", color: "text.secondary" }}>The chart couldn't load.</Typography>
+                    <Button size="small" variant="outlined" onClick={reset}>Try again</Button>
+                  </Box>
+                )}
+              >
+                <Suspense fallback={<Box sx={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress size={28} /></Box>}>
+                  <ChartCanvas
+                    type={type}
+                    data={data}
+                    valueLabel={valueLabel}
+                    animate={ANIMATE}
+                    axisFill={theme.palette.text.secondary}
+                    tooltipStyle={tooltipStyle}
+                    gridStroke={s.border}
+                    cursorFill={s.hoverBg}
+                  />
+                </Suspense>
+              </ErrorBoundary>
             )}
           </Box>
         )}

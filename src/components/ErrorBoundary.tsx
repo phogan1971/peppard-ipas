@@ -6,21 +6,39 @@ import Button from "@mui/material/Button";
 
 import { regenerateData } from "../data/store";
 
+interface Props {
+  children: ReactNode;
+  // When this value changes the boundary clears a caught error, so navigating
+  // away from a broken page recovers instead of staying stuck on the card.
+  resetKey?: string | number;
+  // Optional compact fallback (e.g. inside a dialog) instead of the full card.
+  fallback?: (error: Error, reset: () => void) => ReactNode;
+}
+
 interface State {
   error: Error | null;
 }
 
 // Live-demo insurance: a render error shows a recoverable card instead
 // of a blank page in front of the Department.
-export default class ErrorBoundary extends Component<{ children: ReactNode }, State> {
+export default class ErrorBoundary extends Component<Props, State> {
   state: State = { error: null };
 
   static getDerivedStateFromError(error: Error): State {
     return { error };
   }
 
+  componentDidUpdate(prev: Props) {
+    if (prev.resetKey !== this.props.resetKey && this.state.error) {
+      this.setState({ error: null });
+    }
+  }
+
+  reset = () => this.setState({ error: null });
+
   render() {
     if (!this.state.error) return this.props.children;
+    if (this.props.fallback) return this.props.fallback(this.state.error, this.reset);
     return (
       <Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
         <Paper sx={{ p: 3, maxWidth: 480 }}>

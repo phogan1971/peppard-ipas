@@ -9,7 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { brand, fonts } from "../theme/tokens";
 import { useSurfaces } from "../theme";
 import { useColorMode } from "../theme/ColorModeContext";
@@ -60,6 +60,7 @@ export function OriginLogo({ height = 36, dark = false }: { height?: number; dar
 // white chip so the logo's white background reads as intentional.
 export default function AppShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const s = useSurfaces();
   const { mode, toggleMode } = useColorMode();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -157,7 +158,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
       {/* offset for the fixed 64px AppBar */}
       <Box sx={{ pt: "64px", "@media print": { pt: 0 } }}>
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>
       </Box>
     </Box>
   );

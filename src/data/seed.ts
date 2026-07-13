@@ -232,6 +232,19 @@ export function buildRooms(centreId: string): Room[] {
       allocated += 1;
     }
   }
+  // A well-run group still has a few space-standard breaches — a demo centre
+  // with zero over-occupied rooms next to Riverside's ten reads as fabricated.
+  // Tip a compliance-scaled handful of rooms one over suitable, moving the bed
+  // from a donor room so the centre's occupancy total is unchanged.
+  const overCount = Math.min(3, Math.round((1 - getProfile().compliance / 100) * 4 * rand()));
+  const atSuitable = fillable.filter((r) => (r.currentOccupancy ?? 0) === (r.suitableOccupancy ?? 0) && (r.suitableOccupancy ?? 0) > 0);
+  for (let k = 0; k < overCount && k < atSuitable.length; k++) {
+    const over = atSuitable[k];
+    const donor = fillable.find((d) => d !== over && (d.currentOccupancy ?? 0) >= 2);
+    if (!donor) break;
+    over.currentOccupancy = (over.currentOccupancy ?? 0) + 1;
+    donor.currentOccupancy = (donor.currentOccupancy ?? 0) - 1;
+  }
   return rooms;
 }
 
@@ -279,6 +292,16 @@ const RIVERSIDE_REGISTER_GAPS: Record<string, string> = {
   "Resident comfort & wellbeing provision": "Baby lotions and hand soap not provided free of charge at 24.03.2026 inspection",
 };
 
+// Varied "needs attention" notes so every demo register doesn't read the
+// same verbatim string across all seven centres.
+const ATTENTION_NOTES = [
+  "Gaps identified at last internal audit — update in progress",
+  "Entries outstanding since the last senior-management review",
+  "Being brought up to date following a staff changeover",
+  "Partial record — remaining entries to be reconciled this week",
+  "Flagged at self-inspection; corrective update scheduled",
+] as const;
+
 export function buildRegisters(centreId: string): RegisterEntry[] {
   const c = getProfile().compliance / 100;
   const rand = mulberry(`registers-${centreId}-${Math.round(c * 100)}`);
@@ -307,7 +330,7 @@ export function buildRegisters(centreId: string): RegisterEntry[] {
       name,
       lastReviewed: isoDaysFromToday(-Math.round(rand() * 45)),
       status,
-      note: status === "attention" ? "Gaps identified at last internal audit — update in progress" : null,
+      note: status === "attention" ? pick(rand, ATTENTION_NOTES) : null,
       ippsSection: tag?.ipps ?? null,
       hiqaStandard: tag?.hiqa ?? null,
     };

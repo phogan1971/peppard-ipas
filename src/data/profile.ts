@@ -8,6 +8,8 @@ export interface DataProfile {
   kpi: number; // 0-100 — share of KPIs on target
 }
 
+import { safeSet } from "./safeStorage";
+
 export type PresetKey = "strong" | "mixed" | "pressure";
 
 export const PROFILE_PRESETS: Record<PresetKey, { label: string; description: string; profile: DataProfile }> = {
@@ -48,7 +50,7 @@ export function getProfile(): DataProfile {
 }
 
 export function saveProfile(profile: DataProfile) {
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  safeSet(PROFILE_KEY, JSON.stringify(profile));
 }
 
 export function matchingPreset(profile: DataProfile): PresetKey | null {
