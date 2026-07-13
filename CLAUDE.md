@@ -454,14 +454,17 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   IPAS-native rebuild of Genisis3's `components/compliance` module (which
   is 16k LOC of nursing-home JSX on an axios backend; NOT ported — the IA
   and design are the blueprint, built fresh in peppard's TS/localStorage/
-  Origin stack, no new deps). Tabbed sub-nav (Cockpit · Audit programme ·
-  Actions/CAPA · QIP register · Risk register) with a facility filter.
+  Origin stack, no new deps). **Full 18-tab Genesis IA** (13 Jul 2026)
+  with a facility filter: Cockpit · Dashboard · Audit types · Checklists ·
+  Scheduling · Conduct · Results · Findings · Actions/CAPA · QIP register ·
+  Risk register · QIP review · Meetings · Policies · Evidence · Alerts
+  (unread badge on the tab) · My queue · Settings. (The earlier "Audit
+  programme" tab was folded into Scheduling/Results; cockpit links there.)
   Phase 1 built: **Governance Cockpit** (`components/compliance/
   GovernanceCockpit.tsx`) — Regulatory Readiness (evidence timeliness,
   open/overdue actions, next internal audit due) + Operational Posture
   (open-actions domain×age matrix, risk posture, audit-programme %), all
-  from live findings/documents; **Audit programme** (internal audits +
-  inspections on a 90-day cycle, from `documentsByCentre`); **Actions/
+  from live findings/documents; **Actions/
   CAPA** (reuses `FindingsSummaryTable` — findings *are* the CAPA loop).
   Phase 2 built the two persisted registers:
   - **Risk register** (`Risk` type, `buildRisks`, `RiskRegister` +
@@ -477,6 +480,61 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   Both persist in the main state blob (`risks`/`qips` on `PersistedState`)
   and re-anchor their dates on load like findings; `regenerateData`
   reseeds them.
+  Phase 3 (13 Jul 2026) built the audit programme proper + the remaining
+  governance sections. New slices seed in `data/complianceSeed.ts`, all
+  persisted on `PersistedState`, re-anchored on load and reseeded by
+  `regenerateData`:
+  - **Audit types & checklists** (`AuditType` with `checklist` +
+    `checklistVersion`; `AuditTypesConfig`, `ChecklistEditor`): 7 seeded
+    IPAS audit types (IPPS self-inspection, fire, food/HACCP, safeguarding,
+    accommodation, wellbeing, Mackin EHS walk), each with a dual-axis
+    `sourceStandard` (e.g. "IPPS §2.3 · HIQA 3.1"), a target % and a
+    published checklist whose items carry a `critical` flag. Saving a
+    checklist bumps the version; Conduct always runs the latest.
+  - **Scheduling** (`AuditSchedule`; `AuditScheduling`): table + Monday
+    month-calendar views, priority/recurrence chips, schedule dialog;
+    "Conduct" on a scheduled row prefills the wizard and submitting
+    completes the schedule.
+  - **Conduct** (`ConductAudit`; `submitAudit` in store.ts): 3-step
+    Stepper — select facility/type → answer each item Compliant / Not
+    compliant / N/A with a live score — → review & submit. Submit files an
+    `AuditRecord`, logs an internal `SourceDocument`, and **auto-raises an
+    AMBER finding (14-day clock, source "Self-inspection") for every
+    critical item marked not compliant** — the write-through story.
+  - **Dashboard** (`AuditDashboard`): KPI strip, 12-month compliance trend
+    (hand-rolled SVG line so recharts stays in its lazy chunk), compliance
+    by audit type vs target, recent audits. **Results** (`AuditResults`):
+    register with a response-level view dialog (seeded history rows are
+    summary-only; `buildAuditRecords` seeds ~48 audits over 12 months).
+  - **Findings triage** (`FindingsTriage`; `triageFinding`): filterable
+    findings register where each finding is routed down a governance
+    pathway (CAPA / escalate to risk / QIP candidate / monitor) with a
+    mandatory rationale — escalation creates the linked Risk/Qip
+    (`triagePathway`/`linkedRiskId`/`linkedQipId` on `Finding`).
+  - **QIP review** (`QipReview`): queue of `under_review` QIPs, reviewed
+    via `QipFormDialog`. **Meetings** (`Meeting`; `MeetingsPanel`):
+    cadence-typed governance log (group governance / centre management /
+    safeguarding / fire safety / resident forum), quorum chips, action
+    follow-through %, record dialog. **Policies** (`Policy`;
+    `PolicyRegister`): the uniform group policy suite (12 seeded), annual
+    review cycle, derived current/due-soon/overdue status, "Mark reviewed"
+    stamps today and bumps the minor version. **Evidence**
+    (`EvidencePanel`): every `SourceDocument` in one library + PDF attach
+    (same 4 MB localStorage budget as Findings & Actions).
+  - **Alerts** (`data/alerts.ts` `computeAlerts`; `AlertsPanel`,
+    `ComplianceSettings`): alerts are **derived live from the registers**
+    (10 rules: RED finding, overdue action, extreme risk, missed/due-soon
+    audits, fire/risk/policy/QIP lapses) — never stored, so they can't
+    disagree with the data. Deterministic ids (`rule:entityId`) let
+    read-state (`alertsRead`) persist; Settings toggles rules
+    (`alertRulesDisabled`).
+  - **My queue** (`MyQueue`): the manager's work queue — overdue evidence,
+    registers needing review, lapsed fire checks, missing notices, risk
+    reviews, QIP targets and due audits — every row deep-linking to its
+    tab or centre page.
+  - `vite.config.ts` dev port honours a `PORT` env override and
+    `.claude/launch.json` sets `autoPort`, so two sessions can preview
+    this folder at once.
 
 ## What is NOT done yet
 

@@ -11,23 +11,41 @@ import {
   buildRooms,
   buildSourceDocuments,
 } from "./seed";
+import {
+  DEFAULT_ALERT_RULES,
+  buildAuditRecords,
+  buildAuditTypes,
+  buildMeetings,
+  buildPolicies,
+  buildSchedules,
+} from "./complianceSeed";
 import { DataProfile, saveProfile } from "./profile";
 import { safeRemove, safeSet } from "./safeStorage";
 import {
+  AlertRule,
+  AuditRecord,
+  AuditResponse,
+  AuditSchedule,
+  AuditType,
   Centre,
+  ChecklistItem,
   FireRegister,
   Finding,
   FindingPriority,
   FindingSource,
   FindingStatus,
   Judgement,
+  Meeting,
   NoticeItem,
+  Policy,
   Qip,
   RegisterEntry,
   Risk,
   Room,
   SourceDocument,
   StandardAssessment,
+  TriagePathway,
+  auditCompliancePct,
   fireCurrencyFor,
   suitableOccupancyFor,
 } from "./types";
@@ -68,6 +86,14 @@ interface PersistedState {
   assessments: StandardAssessment[];
   risks: Risk[];
   qips: Qip[];
+  // Compliance module slices (all user-mutable, so all persisted).
+  auditTypes: AuditType[];
+  schedules: AuditSchedule[];
+  auditRecords: AuditRecord[];
+  meetings: Meeting[];
+  policies: Policy[];
+  alertsRead: string[]; // deterministic alert ids the user has marked read
+  alertRulesDisabled: string[]; // rule keys switched off in Settings
   roomOverrides: Record<string, Room[]>; // centreId -> full edited room list
   registerOverrides: Record<string, RegisterOverride>; // `${centreId}::${name}`
   fireOverrides: Record<string, FireOverride>; // `${centreId}::${name}`
@@ -104,6 +130,13 @@ export interface AppState {
   assessments: StandardAssessment[];
   risks: Risk[];
   qips: Qip[];
+  auditTypes: AuditType[];
+  schedules: AuditSchedule[];
+  auditRecords: AuditRecord[];
+  meetings: Meeting[];
+  policies: Policy[];
+  alertsRead: string[];
+  alertRules: AlertRule[]; // DEFAULT_ALERT_RULES with persisted enablement applied
 }
 
 const emptyOverrides = () => ({ roomOverrides: {}, registerOverrides: {}, fireOverrides: {}, noticeOverrides: {} });
@@ -136,6 +169,18 @@ function reanchor(parsed: PersistedState, today: string): PersistedState {
       openedOn: shiftIsoDate(q.openedOn, delta),
       targetOn: q.targetOn ? shiftIsoDate(q.targetOn, delta) : null,
     })),
+    schedules: parsed.schedules.map((s) => ({ ...s, dueOn: shiftIsoDate(s.dueOn, delta) })),
+    auditRecords: parsed.auditRecords.map((a) => ({ ...a, conductedOn: shiftIsoDate(a.conductedOn, delta) })),
+    meetings: parsed.meetings.map((m) => ({
+      ...m,
+      heldOn: shiftIsoDate(m.heldOn, delta),
+      nextOn: m.nextOn ? shiftIsoDate(m.nextOn, delta) : null,
+    })),
+    policies: parsed.policies.map((p) => ({
+      ...p,
+      lastReviewed: shiftIsoDate(p.lastReviewed, delta),
+      nextReviewDue: shiftIsoDate(p.nextReviewDue, delta),
+    })),
   };
 }
 
@@ -153,6 +198,13 @@ function loadPersisted(): PersistedState {
             assessments: parsed.assessments,
             risks: parsed.risks ?? buildRisks(),
             qips: parsed.qips ?? buildQips(),
+            auditTypes: parsed.auditTypes ?? buildAuditTypes(),
+            schedules: parsed.schedules ?? buildSchedules(),
+            auditRecords: parsed.auditRecords ?? buildAuditRecords(),
+            meetings: parsed.meetings ?? buildMeetings(),
+            policies: parsed.policies ?? buildPolicies(),
+            alertsRead: parsed.alertsRead ?? [],
+            alertRulesDisabled: parsed.alertRulesDisabled ?? [],
             roomOverrides: parsed.roomOverrides ?? {},
             registerOverrides: parsed.registerOverrides ?? {},
             fireOverrides: parsed.fireOverrides ?? {},
@@ -165,7 +217,21 @@ function loadPersisted(): PersistedState {
   } catch {
     // corrupt storage — fall through to reseed
   }
-  return { anchorDate: today, findings: buildFindings(), assessments: buildAssessments(), risks: buildRisks(), qips: buildQips(), ...emptyOverrides() };
+  return {
+    anchorDate: today,
+    findings: buildFindings(),
+    assessments: buildAssessments(),
+    risks: buildRisks(),
+    qips: buildQips(),
+    auditTypes: buildAuditTypes(),
+    schedules: buildSchedules(),
+    auditRecords: buildAuditRecords(),
+    meetings: buildMeetings(),
+    policies: buildPolicies(),
+    alertsRead: [],
+    alertRulesDisabled: [],
+    ...emptyOverrides(),
+  };
 }
 
 let persisted: PersistedState = loadPersisted();
@@ -218,6 +284,13 @@ function buildState(): AppState {
     assessments: persisted.assessments,
     risks: persisted.risks,
     qips: persisted.qips,
+    auditTypes: persisted.auditTypes,
+    schedules: persisted.schedules,
+    auditRecords: persisted.auditRecords,
+    meetings: persisted.meetings,
+    policies: persisted.policies,
+    alertsRead: persisted.alertsRead,
+    alertRules: DEFAULT_ALERT_RULES.map((r) => ({ ...r, enabled: !persisted.alertRulesDisabled.includes(r.key) })),
   };
 }
 
@@ -492,6 +565,245 @@ export function updateQip(id: string, input: QipInput) {
   commit();
 }
 
+// ── Audit types & checklists ──────────────────────────────────────────
+export type AuditTypeInput = Omit<AuditType, "id" | "checklist" | "checklistVersion">;
+
+export function saveAuditType(input: AuditTypeInput, id?: string) {
+  if (id) {
+    persisted.auditTypes = persisted.auditTypes.map((t) => (t.id === id ? { ...t, ...input } : t));
+  } else {
+    persisted.auditTypes = [
+      ...persisted.auditTypes,
+      { ...input, id: `type-${Date.now()}`, checklistVersion: 1, checklist: [] },
+    ];
+  }
+  commit();
+}
+
+export function setAuditTypeActive(id: string, active: boolean) {
+  persisted.auditTypes = persisted.auditTypes.map((t) => (t.id === id ? { ...t, active } : t));
+  commit();
+}
+
+// Saving a checklist publishes a new version — Conduct always runs the
+// latest published set.
+export function saveChecklist(typeId: string, items: ChecklistItem[]) {
+  persisted.auditTypes = persisted.auditTypes.map((t) =>
+    t.id === typeId ? { ...t, checklist: items, checklistVersion: t.checklistVersion + 1 } : t,
+  );
+  commit();
+}
+
+// ── Audit scheduling ──────────────────────────────────────────────────
+export type ScheduleInput = Omit<AuditSchedule, "id">;
+
+export function addSchedule(input: ScheduleInput) {
+  persisted.schedules = [{ ...input, id: `sch-manual-${Date.now()}` }, ...persisted.schedules];
+  commit();
+}
+export function updateSchedule(id: string, patch: Partial<ScheduleInput>) {
+  persisted.schedules = persisted.schedules.map((s) => (s.id === id ? { ...s, ...patch } : s));
+  commit();
+}
+
+// ── Conducting an audit ───────────────────────────────────────────────
+export interface ConductInput {
+  centreId: string;
+  auditTypeId: string;
+  conductedBy: string;
+  responses: AuditResponse[];
+  scheduleId: string | null;
+}
+
+// Submitting an audit is the write-through moment: it files the scored
+// record, logs an internal-audit governance source, completes any linked
+// schedule, and raises an AMBER finding (14-day clock) for every critical
+// item marked not compliant.
+export function submitAudit(input: ConductInput): { compliancePct: number; findingsRaised: number } {
+  const type = persisted.auditTypes.find((t) => t.id === input.auditTypeId);
+  const today = localDateIso();
+  const compliancePct = auditCompliancePct(input.responses);
+  const criticalFails = input.responses.filter((r) => r.answer === "not_compliant" && r.critical);
+  const hiqa = type?.sourceStandard.match(/HIQA (\d+\.\d+)/)?.[1] ?? null;
+
+  for (const fail of criticalFails) {
+    const finding: Finding = {
+      id: `${input.centreId}-audit-${Date.now()}-${fail.itemId}`,
+      centreId: input.centreId,
+      source: "Self-inspection",
+      section: type?.sourceStandard.match(/§(\d+(?:\.\d+)?)/)?.[1] ?? "6. Summary Details",
+      hiqaStandard: hiqa,
+      finding: fail.text,
+      priority: "AMBER",
+      actionRequired: fail.note?.trim() || `Not compliant at ${type?.name ?? "internal audit"} — corrective action and evidence required within 14 days.`,
+      evidenceDueDays: 14,
+      raisedOn: today,
+      dueOn: computeDueOn(today, "AMBER", 14),
+      status: "open",
+      closedOn: null,
+      evidenceNote: null,
+    };
+    persisted.findings = [...persisted.findings, finding];
+  }
+
+  const record: AuditRecord = {
+    id: `ar-${input.centreId}-${Date.now()}`,
+    centreId: input.centreId,
+    auditTypeId: input.auditTypeId,
+    auditName: type?.name ?? "Internal audit",
+    conductedOn: today,
+    conductedBy: input.conductedBy,
+    compliancePct,
+    targetPct: type?.targetPct ?? 90,
+    responses: input.responses,
+    findingsRaised: criticalFails.length,
+    scheduleId: input.scheduleId,
+  };
+  persisted.auditRecords = [record, ...persisted.auditRecords];
+
+  if (input.scheduleId) {
+    persisted.schedules = persisted.schedules.map((s) => (s.id === input.scheduleId ? { ...s, status: "completed" as const } : s));
+  }
+
+  // The conducted audit is a governance source, same as Record internal audit.
+  const doc: SourceDocument = {
+    id: `${input.centreId}-audit-${Date.now()}`,
+    centreId: input.centreId,
+    name: `${type?.name ?? "Internal audit"} — ${today}`,
+    uploadedOn: today,
+    uploadedBy: input.conductedBy,
+    kind: "internal",
+  };
+  uploadedDocs = { ...uploadedDocs, [input.centreId]: [...(uploadedDocs[input.centreId] ?? []), doc] };
+  safeSet(DOCS_KEY, JSON.stringify(uploadedDocs));
+
+  commit();
+  return { compliancePct, findingsRaised: criticalFails.length };
+}
+
+// ── Finding triage (governance pathway routing) ───────────────────────
+function findingRiskCategory(text: string): string {
+  const t = text.toLowerCase();
+  if (/fire/.test(t)) return "Fire safety";
+  if (/food|kitchen|catering/.test(t)) return "Food, catering";
+  if (/safeguard|child|security|visitor|protection/.test(t)) return "Safeguarding";
+  if (/electric|mould|damp|fixture|overcrowd|room|fabric|maintenance/.test(t)) return "Accommodation";
+  return "Governance";
+}
+
+// Route a finding down a governance pathway. Escalation creates the linked
+// register entry (risk / QIP) so the loop is auditable end to end.
+export function triageFinding(id: string, pathway: TriagePathway, note: string): { linkedTo: string | null } {
+  const finding = persisted.findings.find((f) => f.id === id);
+  if (!finding) return { linkedTo: null };
+  const manager = state.centres.find((c) => c.id === finding.centreId)?.manager ?? "Centre manager";
+  let linkedRiskId: string | null = null;
+  let linkedQipId: string | null = null;
+  let linkedTo: string | null = null;
+
+  if (pathway === "risk_register") {
+    linkedRiskId = `risk-triage-${Date.now()}`;
+    const risk: Risk = {
+      id: linkedRiskId,
+      centreId: finding.centreId,
+      title: finding.finding,
+      category: findingRiskCategory(finding.finding),
+      likelihood: 3,
+      impact: finding.priority === "RED" ? 4 : finding.priority === "AMBER" ? 3 : 2,
+      controls: finding.actionRequired,
+      owner: manager,
+      openedOn: localDateIso(),
+      reviewOn: shiftIsoDate(localDateIso(), 30),
+      status: "open",
+    };
+    persisted.risks = [risk, ...persisted.risks];
+    linkedTo = "risk register";
+  }
+  if (pathway === "qip_candidate") {
+    linkedQipId = `qip-triage-${Date.now()}`;
+    const qip: Qip = {
+      id: linkedQipId,
+      centreId: finding.centreId,
+      title: finding.finding,
+      theme: finding.hiqaStandard ? `HIQA ${finding.hiqaStandard}` : "Compliance improvement",
+      objective: finding.actionRequired,
+      owner: manager,
+      status: "active",
+      openedOn: localDateIso(),
+      targetOn: shiftIsoDate(localDateIso(), 30),
+      actionsTotal: 3,
+      actionsDone: 0,
+    };
+    persisted.qips = [qip, ...persisted.qips];
+    linkedTo = "QIP register";
+  }
+
+  persisted.findings = persisted.findings.map((f) =>
+    f.id === id ? { ...f, triagePathway: pathway, triageNote: note.trim() || null, linkedRiskId, linkedQipId } : f,
+  );
+  commit();
+  return { linkedTo };
+}
+
+// ── Governance meetings ───────────────────────────────────────────────
+export type MeetingInput = Omit<Meeting, "id">;
+
+export function addMeeting(input: MeetingInput) {
+  persisted.meetings = [{ ...input, id: `mtg-manual-${Date.now()}` }, ...persisted.meetings];
+  commit();
+}
+export function updateMeeting(id: string, input: MeetingInput) {
+  persisted.meetings = persisted.meetings.map((m) => (m.id === id ? { ...m, ...input } : m));
+  commit();
+}
+
+// ── Policy register ───────────────────────────────────────────────────
+export type PolicyInput = Omit<Policy, "id" | "nextReviewDue">;
+
+export function addPolicy(input: PolicyInput) {
+  const policy: Policy = {
+    ...input,
+    id: `pol-manual-${Date.now()}`,
+    nextReviewDue: shiftIsoDate(input.lastReviewed, input.reviewCycleDays),
+  };
+  persisted.policies = [...persisted.policies, policy];
+  commit();
+}
+export function updatePolicy(id: string, input: PolicyInput) {
+  persisted.policies = persisted.policies.map((p) =>
+    p.id === id ? { ...p, ...input, nextReviewDue: shiftIsoDate(input.lastReviewed, input.reviewCycleDays) } : p,
+  );
+  commit();
+}
+
+// Reviewing a policy stamps today, restarts the cycle and bumps the minor
+// version — the register is the live record of the uniform policy suite.
+export function markPolicyReviewed(id: string) {
+  const today = localDateIso();
+  persisted.policies = persisted.policies.map((p) => {
+    if (p.id !== id) return p;
+    const m = p.version.match(/^v(\d+)\.(\d+)$/);
+    const version = m ? `v${m[1]}.${Number(m[2]) + 1}` : p.version;
+    return { ...p, version, lastReviewed: today, nextReviewDue: shiftIsoDate(today, p.reviewCycleDays) };
+  });
+  commit();
+}
+
+// ── Alerts ────────────────────────────────────────────────────────────
+export function markAlertsRead(ids: string[]) {
+  const merged = new Set([...persisted.alertsRead, ...ids]);
+  persisted.alertsRead = [...merged];
+  commit();
+}
+
+export function setAlertRuleEnabled(key: string, enabled: boolean) {
+  const disabled = new Set(persisted.alertRulesDisabled);
+  if (enabled) disabled.delete(key);
+  else disabled.add(key);
+  persisted.alertRulesDisabled = [...disabled];
+  commit();
+}
+
 // Regenerate the sample dataset, optionally under a new scenario profile.
 export function regenerateData(profile?: DataProfile) {
   if (profile) saveProfile(profile);
@@ -503,6 +815,13 @@ export function regenerateData(profile?: DataProfile) {
     assessments: buildAssessments(),
     risks: buildRisks(),
     qips: buildQips(),
+    auditTypes: buildAuditTypes(),
+    schedules: buildSchedules(),
+    auditRecords: buildAuditRecords(),
+    meetings: buildMeetings(),
+    policies: buildPolicies(),
+    alertsRead: [],
+    alertRulesDisabled: [],
     ...emptyOverrides(),
   };
   uploadedDocs = {};

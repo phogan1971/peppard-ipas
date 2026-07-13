@@ -62,7 +62,7 @@ const standardsSrc = standardsJson as unknown as StandardsJson;
 const benchmarkSrc = benchmarkJson as unknown as BenchmarkJson;
 
 // ── Deterministic PRNG so demo data is stable across reloads ────────────
-function mulberry(seedStr: string): () => number {
+export function mulberry(seedStr: string): () => number {
   let h = 1779033703;
   for (let i = 0; i < seedStr.length; i++) {
     h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
@@ -76,11 +76,11 @@ function mulberry(seedStr: string): () => number {
   };
 }
 
-function pick<T>(rand: () => number, arr: readonly T[]): T {
+export function pick<T>(rand: () => number, arr: readonly T[]): T {
   return arr[Math.floor(rand() * arr.length)];
 }
 
-function isoDaysFromToday(offset: number): string {
+export function isoDaysFromToday(offset: number): string {
   const d = new Date();
   d.setDate(d.getDate() + offset);
   // Local components (not toISOString/UTC) so seeded dates line up with the
