@@ -157,9 +157,6 @@ export function buildCentres(): Centre[] {
   return CENTRE_SPECS.map((spec) => {
     const real = spec.id === "riverside";
     const rand = mulberry(`centre-${spec.id}`);
-    const occupancy = real
-      ? riverside.centre.occupancyOnDay
-      : Math.round(spec.capacity * (0.78 + rand() * 0.18));
     return {
       id: spec.id,
       name: spec.name,
@@ -167,8 +164,10 @@ export function buildCentres(): Centre[] {
       location: spec.location,
       county: spec.county,
       contractCapacity: real ? riverside.centre.providerContractCapacity : spec.capacity,
-      occupancy,
-      roomCount: real ? riverside.rooms.length : Math.round(spec.capacity / 3.6),
+      // Placeholders — the store derives occupancy and roomCount from the
+      // (override-merged) room register so the two can never disagree.
+      occupancy: 0,
+      roomCount: 0,
       profile: spec.profile,
       manager: spec.manager,
       accommodationId: real ? riverside.centre.accommodationId : `IPPS-A-00${190 + CENTRE_SPECS.indexOf(spec)}`,
@@ -196,24 +195,43 @@ export function buildRooms(centreId: string): Room[] {
   const rand = mulberry(`rooms-${centreId}`);
   const count = Math.round(centre.capacity / 3.6);
   const rooms: Room[] = [];
+  const emptyIdx = new Set<number>();
   for (let i = 0; i < count; i++) {
     const floor = 1 + Math.floor(i / 20);
     const room = `${floor}${String((i % 20) + 1).padStart(2, "0")}`;
     const dimensions = Math.round((11 + rand() * 16) * 100) / 100;
     const suitable = suitableOccupancyFor(dimensions);
-    const empty = rand() < 0.08;
-    const occupancy = empty ? 0 : Math.max(1, Math.min(suitable, Math.round(rand() * (suitable + 1))));
+    if (rand() < 0.08) emptyIdx.add(i);
     const issues: string[] = [];
     const issueRate = 0.06 + 0.3 * (1 - getProfile().compliance / 100);
     if (rand() < issueRate) issues.push(pick(rand, DEMO_ROOM_ISSUES));
     rooms.push({
       room,
       bedConfig: pick(rand, DEMO_BED_CONFIGS),
-      currentOccupancy: occupancy,
+      currentOccupancy: 0,
       dimensionsM2: dimensions,
       suitableOccupancy: suitable,
       issues,
     });
+  }
+  // The centre's headline occupancy is derived from this register, so the
+  // per-room occupancies must sum to a commercially plausible level —
+  // distribute a 78–96%-of-capacity target proportionally across the
+  // non-empty rooms, never exceeding a room's suitable occupancy.
+  const fillable = rooms.filter((_, i) => !emptyIdx.has(i));
+  const suitableSum = fillable.reduce((s, r) => s + (r.suitableOccupancy ?? 0), 0);
+  const target = Math.min(Math.round(centre.capacity * (0.78 + rand() * 0.18)), suitableSum);
+  let allocated = 0;
+  for (const r of fillable) {
+    r.currentOccupancy = Math.floor(((r.suitableOccupancy ?? 0) * target) / suitableSum);
+    allocated += r.currentOccupancy;
+  }
+  for (const r of fillable) {
+    if (allocated >= target) break;
+    if ((r.currentOccupancy ?? 0) < (r.suitableOccupancy ?? 0)) {
+      r.currentOccupancy = (r.currentOccupancy ?? 0) + 1;
+      allocated += 1;
+    }
   }
   return rooms;
 }

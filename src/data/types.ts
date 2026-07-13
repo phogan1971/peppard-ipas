@@ -41,6 +41,11 @@ export interface Room {
   currentOccupancy: number | null;
   dimensionsM2: number | null;
   suitableOccupancy: number | null;
+  // Stored so an edit reopens with the entered dimensions instead of
+  // reconstructing them from the area (which silently changes the room).
+  // Absent on inspection-report rows, which record area only.
+  lengthM?: number;
+  widthM?: number;
   issues: string[];
   enteredBy?: string;
   enteredAt?: string; // ISO datetime — set when entered through the dashboard
@@ -157,6 +162,9 @@ export interface SectorDistribution {
 
 export const SPACE_STANDARD_M2_PER_PERSON = 4.65;
 
+// The epsilon guards exact multiples of 4.65: in IEEE doubles
+// 13.95 / 4.65 = 2.9999999999999996, which would floor to 2 when the
+// regulatorily correct answer is exactly 3.
 export function suitableOccupancyFor(dimensionsM2: number): number {
-  return Math.floor(dimensionsM2 / SPACE_STANDARD_M2_PER_PERSON);
+  return Math.floor(dimensionsM2 / SPACE_STANDARD_M2_PER_PERSON + 1e-9);
 }

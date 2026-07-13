@@ -23,6 +23,7 @@ export default function ReadinessPack() {
 
   const centre = state.centres.find((c) => c.id === centreId) ?? state.centres[0];
   const rooms = state.roomsByCentre[centre.id] ?? [];
+  const unrecordedRooms = rooms.filter((r) => r.currentOccupancy === null).length;
   const registers = state.registersByCentre[centre.id] ?? [];
   const fireRegisters = state.fireByCentre[centre.id] ?? [];
   const fireOverdue = fireRegisters.filter((r) => fireCurrencyFor(r).state === "overdue").length;
@@ -71,7 +72,10 @@ export default function ReadinessPack() {
               ["Centre profile", centre.profile],
               ["General Manager", centre.manager],
               ["Contract capacity", String(centre.contractCapacity)],
-              ["Occupancy today", String(centre.occupancy)],
+              [
+                "Occupancy (from room register)",
+                `${centre.occupancy}${unrecordedRooms ? ` — ${unrecordedRooms} rooms without recorded occupancy` : ""}`,
+              ],
               ["Rooms", String(rooms.length)],
               ["Last IPPS inspection", centre.lastIppsInspection ?? "—"],
               ["Fire risk assessment", "Mackin EHS — 2026 H&S audit & FRA programme"],

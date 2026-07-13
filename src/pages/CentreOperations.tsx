@@ -59,6 +59,7 @@ export default function CentreOperations() {
   const [toast, setToast] = useState<string | null>(null);
 
   const occupied = rooms.filter((r) => (r.currentOccupancy ?? 0) > 0);
+  const unrecorded = rooms.filter((r) => r.currentOccupancy === null).length;
   const overOccupied = rooms.filter(
     (r) => r.currentOccupancy !== null && r.suitableOccupancy !== null && r.currentOccupancy > r.suitableOccupancy,
   );
@@ -84,7 +85,7 @@ export default function CentreOperations() {
 
   const occupancyChart = (): ChartContent => ({
     title: "Bed utilisation",
-    subtitle: `${centre.occupancy} of ${centre.contractCapacity} contracted beds filled`,
+    subtitle: `${centre.occupancy} of ${centre.contractCapacity} contracted beds filled (from the room register${unrecorded ? `; ${unrecorded} rooms without recorded occupancy` : ""})`,
     defaultType: "pie",
     valueLabel: "Beds",
     data: [
@@ -188,7 +189,14 @@ export default function CentreOperations() {
           <StatCard label="Rooms" value={rooms.length} sub={`${occupied.length} occupied`} accent={accent.navy} icon={MeetingRoomIcon} onClick={() => setChart(roomStatusChart())} />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
-          <StatCard label="Occupancy" value={centre.occupancy} sub={`of ${centre.contractCapacity} contracted`} accent={accent.blue} icon={GroupsIcon} onClick={() => setChart(occupancyChart())} />
+          <StatCard
+            label="Occupancy"
+            value={centre.occupancy}
+            sub={`of ${centre.contractCapacity} contracted${unrecorded ? ` · ${unrecorded} rooms unrecorded` : ""}`}
+            accent={accent.blue}
+            icon={GroupsIcon}
+            onClick={() => setChart(occupancyChart())}
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={2.4}>
           <StatCard label="Suitable capacity" value={suitableTotal} sub={`derived @ ${SPACE_STANDARD_M2_PER_PERSON} m²/person`} accent={accent.purple} icon={SquareFootIcon} onClick={() => setChart(capacityChart())} />
@@ -404,6 +412,7 @@ export default function CentreOperations() {
         centreId={centre.id}
         enteredBy={centre.manager}
         existing={roomDialog.existing}
+        takenRooms={rooms.map((r) => r.room)}
         onClose={() => setRoomDialog({ open: false, existing: null })}
         onSaved={(roomName) => {
           setRoomDialog({ open: false, existing: null });

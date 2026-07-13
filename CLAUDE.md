@@ -242,7 +242,21 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   overdue roll-up), six stat tiles, needs-attention findings list,
   tappable centre list. Same store/selectors as the desktop screens.
 - localStorage persistence + ErrorBoundary so a render error never
-  blanks a live walkthrough.
+  blanks a live walkthrough. Storage key is `peppard-ipas:v2`; the
+  persisted blob carries an `anchorDate` and `loadPersisted` **re-anchors
+  on load** — findings' raisedOn/dueOn and assessment dates shift forward
+  by the days elapsed since last persist, so a browser seeded days before
+  a meeting still opens in the state it was left in instead of decaying
+  into overdue red (reference data already re-anchors every load).
+- **Centre occupancy and roomCount are derived, never seeded**:
+  `buildState` computes both from the (override-merged) room register, so
+  the headline tile, Group Overview bars, exec view, board pack and both
+  generated documents always agree with the room table and move when a
+  room is edited. Demo-centre room generation distributes a 78–96%-of-
+  capacity target across rooms (never above a room's suitable occupancy);
+  Riverside sums its real register (166 recorded, 4 rooms unrecorded —
+  the report's own "177 on day" gap is surfaced as an explicit
+  "N rooms without recorded occupancy" note, never silently).
 - **Help** (`HelpDialog`, ? icon in top bar): table-of-contents help
   covering every section; opens on the topic matching the current route.
 - **Stat-card drill-down**: summary cards open a detail view of the
@@ -288,7 +302,16 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
     Operations — enter length × width and suitable occupancy computes at
     4.65 m² live in the dialog; on save the stat tiles, KPI-11-02 and the
     Department return update. `upsertRoom` derives `suitableOccupancy`
-    (operator never keys it).
+    (operator never keys it). `suitableOccupancyFor` carries a 1e-9
+    epsilon: 13.95/4.65 is 2.999… in doubles and must floor to 3, not 2
+    (twelve real Riverside rooms are exactly 13.95 m²). Operator rooms
+    store `lengthM`/`widthM`; inspection rows record area only, so the
+    dialog reconstructs a square for display but **preserves the recorded
+    area and suitable occupancy unless length/width are actually edited**
+    (`dimensionsEdited` flag) — room 217's report value (24.8 m² →
+    suitable 4, vs formula 5) survives a no-op edit by design. Add mode
+    rejects duplicate room numbers. The dialog re-syncs its fields on
+    every open (it stays mounted).
   - **Fire registers** (`markRegisterReviewed`, `logFireCheck`): "Log
     check" stamps today and the currency chip recomputes.
   - **Findings** (`FindingFormDialog` → `addFinding` / `updateFinding`):

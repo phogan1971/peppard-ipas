@@ -24,6 +24,7 @@ export default function DeptReturn() {
 
   const centre = state.centres.find((c) => c.id === centreId) ?? state.centres[0];
   const rooms = state.roomsByCentre[centre.id] ?? [];
+  const unrecordedRooms = rooms.filter((r) => r.currentOccupancy === null).length;
   const registers = state.registersByCentre[centre.id] ?? [];
   const fireRegisters = state.fireByCentre[centre.id] ?? [];
   const findings = state.findings.filter((f) => f.centreId === centre.id);
@@ -46,7 +47,10 @@ export default function DeptReturn() {
             ["Centre profile", centre.profile],
             ["General Manager", centre.manager],
             ["Provider contract capacity", String(centre.contractCapacity)],
-            ["Occupancy on day", String(centre.occupancy)],
+            [
+              "Occupancy (from room register)",
+              `${centre.occupancy}${unrecordedRooms ? ` — ${unrecordedRooms} rooms without recorded occupancy` : ""}`,
+            ],
             ["Number of rooms", String(rooms.length)],
             ["Last Department inspection", centre.lastIppsInspection ?? "—"],
             ["Fire risk assessment", "Mackin EHS — 2026 H&S audit & FRA programme"],
