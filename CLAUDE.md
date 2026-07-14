@@ -269,7 +269,10 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   Default is **broadly positive** (green-dominant with a small amber
   tail) because the system is shown to the Department and HIQA. The
   Settings cog (top bar) offers Strong / Mixed / Under-pressure presets
-  plus sliders, and "Apply & regenerate" reseeds everything.
+  plus sliders, and "Apply & regenerate" reseeds everything. Settings is
+  tabbed (**Data** + **Users**); the Users tab is a read-only placeholder
+  (name · role · permissions, from the descriptor's §2.2 roles, "Add user"
+  disabled) pending backend/auth.
   **The UI never says "demo"** (Philip, 12 Jul 2026) — no demo chips,
   no reset-demo button; copy says "sample data" / "regenerate".
 - **Executive view** (`/exec`, linked from the splash's Peppard card):
