@@ -112,7 +112,7 @@ export default function MyQueue({ centreFilter, onOpenTab }: Props) {
           {items.map((item) => {
             const meta = URGENCY_META[item.urgency];
             return (
-              <Paper key={item.id} sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1.5, borderLeft: `4px solid ${meta.color}` }}>
+              <Paper key={item.id} sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", borderLeft: `4px solid ${meta.color}` }}>
                 <Box sx={{ minWidth: 0, flex: 1 }}>
                   <Typography sx={{ fontSize: "0.85rem", fontWeight: 700 }}>{item.what}</Typography>
                   <Typography sx={{ fontSize: "0.74rem", color: "text.secondary" }}>{item.detail}</Typography>

@@ -37,11 +37,20 @@ export default function PageShell({ icon: Icon, title, subtitle, actions, childr
         <PortalSubNav />
       </Box>
 
-      <Box sx={{ mb: 2, display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
+      <Box
+        sx={{
+          mb: 2,
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "stretch", sm: "flex-start" },
+          justifyContent: "space-between",
+          gap: { xs: 1.5, sm: 2 },
+        }}
+      >
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Icon sx={{ color: s.heading, fontSize: 28 }} />
-            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: "1.75rem" }}>
+            <Icon sx={{ color: s.heading, fontSize: { xs: 24, sm: 28 } }} />
+            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: "1.35rem", sm: "1.75rem" } }}>
               {title}
             </Typography>
           </Box>

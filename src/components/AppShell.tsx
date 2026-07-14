@@ -5,11 +5,16 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { brand, fonts } from "../theme/tokens";
 import { useSurfaces } from "../theme";
@@ -66,6 +71,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const { mode, toggleMode } = useColorMode();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  // On phones the four toolbar actions collapse into one overflow menu.
+  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
+  const closeMore = () => setMoreAnchor(null);
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: s.pageBg }}>
       <AppBar
@@ -89,7 +97,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               component="img"
               src="/origin-logo-white.png"
               alt="Origin Care Group"
-              sx={{ height: 42, width: "auto" }}
+              sx={{ height: { xs: 32, sm: 42 }, width: "auto" }}
             />
           </Box>
 
@@ -113,7 +121,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 alignItems: "center",
               }}
             >
-              <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: 40, width: "auto" }} />
+              <Box component="img" src="/peppard-logo.jpg" alt="Peppard Investments" sx={{ height: { xs: 30, sm: 40 }, width: "auto" }} />
             </Box>
             <Box sx={{ display: { xs: "none", md: "flex" }, flexDirection: "column" }}>
               <Typography sx={{ fontSize: "1rem", fontWeight: 600, lineHeight: 1.2, color: "#fff" }}>
@@ -126,42 +134,69 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Help">
-            <IconButton
-              aria-label="Help"
-              onClick={() => setHelpOpen(true)}
-              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
-            >
-              <HelpOutlineIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={mode === "light" ? "Dark mode" : "Light mode"}>
-            <IconButton
-              aria-label={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
-              onClick={toggleMode}
-              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
-            >
-              {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Settings">
-            <IconButton
-              aria-label="Settings"
-              onClick={() => setSettingsOpen(true)}
-              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
-            >
-              <SettingsIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Log out">
-            <IconButton
-              aria-label="Log out"
-              onClick={() => navigate("/", { state: { skipIntro: true } })}
-              sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
-            >
-              <LogoutIcon />
-            </IconButton>
-          </Tooltip>
+          <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+            <Tooltip title="Help">
+              <IconButton
+                aria-label="Help"
+                onClick={() => setHelpOpen(true)}
+                sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+              >
+                <HelpOutlineIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={mode === "light" ? "Dark mode" : "Light mode"}>
+              <IconButton
+                aria-label={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
+                onClick={toggleMode}
+                sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+              >
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Settings">
+              <IconButton
+                aria-label="Settings"
+                onClick={() => setSettingsOpen(true)}
+                sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+              >
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Log out">
+              <IconButton
+                aria-label="Log out"
+                onClick={() => navigate("/", { state: { skipIntro: true } })}
+                sx={{ color: "rgba(255,255,255,0.85)", "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" } }}
+              >
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <IconButton
+            aria-label="More options"
+            onClick={(e) => setMoreAnchor(e.currentTarget)}
+            sx={{ display: { xs: "inline-flex", sm: "none" }, color: "rgba(255,255,255,0.85)" }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={moreAnchor} open={!!moreAnchor} onClose={closeMore}>
+            <MenuItem onClick={() => { closeMore(); setHelpOpen(true); }}>
+              <ListItemIcon><HelpOutlineIcon fontSize="small" /></ListItemIcon>
+              <ListItemText>Help</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => { closeMore(); toggleMode(); }}>
+              <ListItemIcon>{mode === "light" ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}</ListItemIcon>
+              <ListItemText>{mode === "light" ? "Dark mode" : "Light mode"}</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => { closeMore(); setSettingsOpen(true); }}>
+              <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
+              <ListItemText>Settings</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => { closeMore(); navigate("/", { state: { skipIntro: true } }); }}>
+              <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+              <ListItemText>Log out</ListItemText>
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />

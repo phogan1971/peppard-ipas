@@ -15,6 +15,8 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import ViewAgendaIcon from "@mui/icons-material/ViewAgenda";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import PageShell from "../components/PageShell";
@@ -182,29 +184,46 @@ export default function FindingsTracker() {
       <DetailDialog content={detail} onClose={() => setDetail(null)} />
 
       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 2, alignItems: "center" }}>
-        {[{ id: "all", label: "All centres" }, ...centres.map((c) => ({ id: c.id, label: c.shortName }))].map((opt) => {
-          const selected = centreFilter === opt.id;
-          return (
-            <Button
-              key={opt.id}
-              size="small"
-              onClick={() => setCentreFilter(opt.id)}
-              sx={{
-                borderRadius: 2,
-                px: 1.5,
-                py: 0.5,
-                fontSize: "0.8rem",
-                border: "1px solid",
-                borderColor: selected ? brand.primary : s.border,
-                backgroundColor: selected ? brand.primary : s.pillIdleBg,
-                color: selected ? "#fff" : s.pillIdleColor,
-                "&:hover": { backgroundColor: selected ? brand.primaryDark : s.hoverBg },
-              }}
-            >
+        {/* On phones the nine centre pills collapse into one dropdown. */}
+        <TextField
+          select
+          size="small"
+          label="Centre"
+          value={centreFilter}
+          onChange={(e) => setCentreFilter(e.target.value)}
+          sx={{ display: { xs: "flex", sm: "none" }, flex: 1, minWidth: 170 }}
+        >
+          {[{ id: "all", label: "All centres" }, ...centres.map((c) => ({ id: c.id, label: c.shortName }))].map((opt) => (
+            <MenuItem key={opt.id} value={opt.id}>
               {opt.label}
-            </Button>
-          );
-        })}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 1, flexWrap: "wrap", alignItems: "center" }}>
+          {[{ id: "all", label: "All centres" }, ...centres.map((c) => ({ id: c.id, label: c.shortName }))].map((opt) => {
+            const selected = centreFilter === opt.id;
+            return (
+              <Button
+                key={opt.id}
+                size="small"
+                onClick={() => setCentreFilter(opt.id)}
+                sx={{
+                  borderRadius: 2,
+                  px: 1.5,
+                  py: 0.5,
+                  fontSize: "0.8rem",
+                  border: "1px solid",
+                  borderColor: selected ? brand.primary : s.border,
+                  backgroundColor: selected ? brand.primary : s.pillIdleBg,
+                  color: selected ? "#fff" : s.pillIdleColor,
+                  "&:hover": { backgroundColor: selected ? brand.primaryDark : s.hoverBg },
+                }}
+              >
+                {opt.label}
+              </Button>
+            );
+          })}
+        </Box>
         <Box sx={{ flexGrow: 1 }} />
         <ToggleButtonGroup
           size="small"

@@ -150,7 +150,7 @@ export default function InspectionReportsPanel({ documents, uploadCentreId, uplo
           {documents.map((d) => (
             <Box
               key={d.id}
-              sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1, p: 1, borderRadius: 1, backgroundColor: surf.subtleBg }}
+              sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1, flexWrap: "wrap", p: 1, borderRadius: 1, backgroundColor: surf.subtleBg }}
             >
               <Box sx={{ minWidth: 0 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexWrap: "wrap" }}>

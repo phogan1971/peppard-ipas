@@ -176,7 +176,20 @@ Follow `Genisis3/DESIGN_SYSTEM_HELPER.md` conventions, Peppard-toned:
   divider, content). Every page uses it.
 - **Pill-button sub-nav** — `src/components/PortalSubNav.tsx`: Genisis3
   PortalSubNav verbatim — pills with startIcons inside a #f0f2f5 rounded
-  container, borderless, navy-on-select with soft shadow.
+  container, borderless, navy-on-select with soft shadow. Below `md` the
+  six pills collapse to a **burger + current-section label** opening a
+  left Drawer (they would otherwise wrap into three sticky rows).
+- **Mobile responsiveness** (13 Jul 2026): the app is phone-usable
+  throughout — top-bar action icons collapse into one ⋮ overflow menu
+  below `sm` (logos shrink); PageShell stacks title/actions vertically on
+  xs and header Selects go full-width; the Compliance 18-tab strip becomes
+  a "Section" dropdown below `sm` (unread count inlined into the Alerts
+  label); Findings' nine centre pills become a Centre dropdown on xs;
+  every table sits in a `TableContainer` (scrolls internally, the page
+  never scrolls horizontally); and a theme-level `MuiDialog` override
+  makes all dialogs near-fullscreen (8px gutter) below `sm` — no
+  per-dialog fullScreen wiring. Verified: no route or compliance section
+  overflows a 375px viewport.
 - **Stat cards** — `src/components/StatCard.tsx`: Genesis "Alert Summary"
   pattern (large coloured value, tinted 48px icon chip top-right, hover
   lift). Accents from `tokens.accent` (navy/green/blue/orange/purple/red).

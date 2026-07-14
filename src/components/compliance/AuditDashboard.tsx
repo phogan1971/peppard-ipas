@@ -167,6 +167,7 @@ export default function AuditDashboard({ centreFilter, onOpenTab }: { centreFilt
             <Box sx={{ p: 2, pb: 1 }}>
               <Typography sx={{ fontWeight: 700 }}>Compliance by audit type</Typography>
             </Box>
+            <TableContainer>
             <Table size="small">
               <TableHead>
                 <TableRow>
@@ -199,6 +200,7 @@ export default function AuditDashboard({ centreFilter, onOpenTab }: { centreFilt
                 ))}
               </TableBody>
             </Table>
+            </TableContainer>
           </Paper>
         </Grid>
       </Grid>
