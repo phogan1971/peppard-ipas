@@ -102,7 +102,17 @@ export function buildPeppardTheme(mode: "light" | "dark"): Theme {
       },
       MuiDialog: {
         styleOverrides: {
-          paper: { borderRadius: "10px" },
+          // On phones every dialog goes near-fullscreen (8px gutter) so
+          // form dialogs stay usable without per-dialog fullScreen wiring.
+          paper: ({ theme }) => ({
+            borderRadius: "10px",
+            [theme.breakpoints.down("sm")]: {
+              margin: 8,
+              width: "calc(100% - 16px)",
+              maxWidth: "calc(100% - 16px)",
+              maxHeight: "calc(100% - 16px)",
+            },
+          }),
         },
       },
       MuiOutlinedInput: {

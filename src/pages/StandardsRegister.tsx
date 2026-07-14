@@ -192,7 +192,7 @@ export default function StandardsRegister() {
           value={centreId}
           onChange={(e) => setCentreId(e.target.value)}
           aria-label="Select centre or the group roll-up"
-          sx={{ minWidth: 240, backgroundColor: "background.paper" }}
+          sx={{ minWidth: 240, width: { xs: "100%", sm: "auto" }, backgroundColor: "background.paper" }}
         >
           <MenuItem value={GROUP}>All centres (group position)</MenuItem>
           <Divider component="li" />

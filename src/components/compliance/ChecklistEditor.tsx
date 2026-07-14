@@ -66,7 +66,7 @@ export default function ChecklistEditor() {
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 2, flexWrap: "wrap", mb: 2 }}>
-        <TextField select label="Audit type" value={type.id} onChange={(e) => setTypeId(e.target.value)} size="small" sx={{ minWidth: 320 }}>
+        <TextField select label="Audit type" value={type.id} onChange={(e) => setTypeId(e.target.value)} size="small" sx={{ minWidth: { xs: 0, sm: 320 }, width: { xs: "100%", sm: "auto" } }}>
           {active.map((t) => (
             <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
           ))}

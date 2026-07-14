@@ -105,6 +105,7 @@ export default function AuditResults({ centreFilter }: { centreFilter: string })
                   Summary record — item-level responses are captured for audits conducted in-app (Conduct tab).
                 </Typography>
               ) : (
+                <TableContainer>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -138,6 +139,7 @@ export default function AuditResults({ centreFilter }: { centreFilter: string })
                     })}
                   </TableBody>
                 </Table>
+                </TableContainer>
               )}
             </DialogContent>
             <DialogActions>

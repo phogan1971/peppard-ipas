@@ -157,13 +157,13 @@ export default function CentreOperations() {
       title="Centre Operations"
       subtitle={`Room register, occupancy and administration registers — space standard ${SPACE_STANDARD_M2_PER_PERSON} m² per person`}
       actions={
-        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: { xs: "stretch", sm: "flex-end" } }}>
           <Select
             size="small"
             value={centre.id}
             onChange={(e) => navigate(`/centres/${e.target.value}`)}
             aria-label="Select centre"
-            sx={{ minWidth: 220, backgroundColor: "background.paper" }}
+            sx={{ minWidth: 220, width: { xs: "100%", sm: "auto" }, backgroundColor: "background.paper" }}
           >
             {centres.map((c) => (
               <MenuItem key={c.id} value={c.id}>

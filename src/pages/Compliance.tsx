@@ -6,7 +6,10 @@ import Tab from "@mui/material/Tab";
 import Badge from "@mui/material/Badge";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useNavigate } from "react-router-dom";
 import PageShell from "../components/PageShell";
@@ -60,6 +63,10 @@ const TABS = [
 
 export default function Compliance() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  // 18 tabs don't scroll comfortably on a phone — below "sm" the tab strip
+  // becomes a section dropdown.
+  const phone = useMediaQuery(theme.breakpoints.down("sm"));
   const state = useAppState();
   const { centres, findings, documentsByCentre } = state;
   const [tab, setTab] = useState("cockpit");
@@ -92,7 +99,7 @@ export default function Compliance() {
           value={centreFilter}
           onChange={(e) => setCentreFilter(e.target.value)}
           aria-label="Facility"
-          sx={{ minWidth: 220, backgroundColor: "background.paper" }}
+          sx={{ minWidth: 220, width: { xs: "100%", sm: "auto" }, backgroundColor: "background.paper" }}
         >
           <MenuItem value="all">All facilities</MenuItem>
           {centres.map((c) => (
@@ -103,26 +110,45 @@ export default function Compliance() {
         </Select>
       }
     >
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto" aria-label="Compliance sections">
+      {phone ? (
+        <TextField
+          select
+          fullWidth
+          size="small"
+          label="Section"
+          value={tab}
+          onChange={(e) => setTab(e.target.value)}
+          sx={{ mb: 2 }}
+          SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 420 } } } }}
+        >
           {TABS.map((t) => (
-            <Tab
-              key={t.key}
-              value={t.key}
-              label={
-                t.key === "alerts" && unreadAlerts > 0 ? (
-                  <Badge badgeContent={unreadAlerts} color="error" sx={{ "& .MuiBadge-badge": { right: -12, fontSize: "0.62rem", height: 16, minWidth: 16 } }}>
-                    {t.label}
-                  </Badge>
-                ) : (
-                  t.label
-                )
-              }
-              sx={{ textTransform: "none", fontWeight: 600, minWidth: "auto", px: 1.75 }}
-            />
+            <MenuItem key={t.key} value={t.key}>
+              {t.key === "alerts" && unreadAlerts > 0 ? `${t.label} (${unreadAlerts} unread)` : t.label}
+            </MenuItem>
           ))}
-        </Tabs>
-      </Box>
+        </TextField>
+      ) : (
+        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto" aria-label="Compliance sections">
+            {TABS.map((t) => (
+              <Tab
+                key={t.key}
+                value={t.key}
+                label={
+                  t.key === "alerts" && unreadAlerts > 0 ? (
+                    <Badge badgeContent={unreadAlerts} color="error" sx={{ "& .MuiBadge-badge": { right: -12, fontSize: "0.62rem", height: 16, minWidth: 16 } }}>
+                      {t.label}
+                    </Badge>
+                  ) : (
+                    t.label
+                  )
+                }
+                sx={{ textTransform: "none", fontWeight: 600, minWidth: "auto", px: 1.75 }}
+              />
+            ))}
+          </Tabs>
+        </Box>
+      )}
 
       {tab === "cockpit" && <GovernanceCockpit centreFilter={centreFilter} onOpenTab={setTab} />}
       {tab === "dashboard" && <AuditDashboard centreFilter={centreFilter} onOpenTab={setTab} />}

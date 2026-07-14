@@ -81,7 +81,7 @@ export default function AlertsPanel({ centreFilter, onOpenTab }: Props) {
             const Icon = meta.icon;
             const isRead = read.has(a.id);
             return (
-              <Paper key={a.id} sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1.5, opacity: isRead ? 0.65 : 1, backgroundColor: isRead ? surf.subtleBg : undefined }}>
+              <Paper key={a.id} sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap", opacity: isRead ? 0.65 : 1, backgroundColor: isRead ? surf.subtleBg : undefined }}>
                 <Box sx={{ width: 36, height: 36, borderRadius: 1.5, backgroundColor: meta.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <Icon sx={{ fontSize: 20, color: meta.color }} />
                 </Box>
